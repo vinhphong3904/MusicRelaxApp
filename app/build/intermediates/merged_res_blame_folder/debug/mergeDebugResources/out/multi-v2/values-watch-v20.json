@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.musicapp-mergeDebugResources-68:/values-watch-v20/values-watch-v20.xml",
+            "outputFile": "com.example.musicapp-mergeDebugResources-2:/values-watch-v20/values-watch-v20.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\Cuong\\.gradle\\caches\\8.13\\transforms\\fd1059556096f932c9182ed09bef752e\\transformed\\appcompat-1.7.1\\res\\values-watch-v20\\values-watch-v20.xml",
+                    "source": "E:\\Download\\gradle-8.5\\caches\\8.13\\transforms\\fd1059556096f932c9182ed09bef752e\\transformed\\appcompat-1.7.1\\res\\values-watch-v20\\values-watch-v20.xml",
                     "from": {
                         "startLines": "2,5,8",
                         "startColumns": "4,4,4",
@@ -23,7 +23,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\Cuong\\.gradle\\caches\\8.13\\transforms\\4e26d11b841030c331e5a486255ea5a9\\transformed\\core-splashscreen-1.0.1\\res\\values-watch-v20\\values-watch-v20.xml",
+                    "source": "E:\\Download\\gradle-8.5\\caches\\8.13\\transforms\\4e26d11b841030c331e5a486255ea5a9\\transformed\\core-splashscreen-1.0.1\\res\\values-watch-v20\\values-watch-v20.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9",
                         "startColumns": "4,4,4,4,4,4,4,4",

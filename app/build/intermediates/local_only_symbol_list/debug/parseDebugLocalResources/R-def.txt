@@ -12,9 +12,16 @@ color teal_200
 color white
 drawable ic_launcher_background
 drawable ic_launcher_foreground
+drawable icon
+drawable nen
 drawable splash_background
 drawable splash_logo
-id main
+drawable tieude
+id imgBackground
+id imgIcon
+id imgLogo
+id progressBar
+id tvPercentage
 layout activity_splash
 mipmap ic_launcher
 mipmap ic_launcher_round
