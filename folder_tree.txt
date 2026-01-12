@@ -1,0 +1,32 @@
+presentation/
+│
+├── MainActivity.kt
+│
+├── auth/
+│   ├── AuthViewModel.kt
+│   ├── LoginScreen.kt
+│   └── RegisterScreen.kt
+│
+├── component/
+│   ├── MiniPlayer.kt
+│   └── ProfileActivity.kt
+│
+├── history/
+│   └── HistoryScreen.kt
+│
+├── home/
+│   └── HomeScreen.kt
+│
+├── library/
+│   ├── PlaylistsScreen.kt
+│   └── FavoriteScreen.kt
+│
+├── player/
+│   ├── LyricsScreen.kt
+│   └── PlayerScreen.kt
+│
+├── search/
+│   └── SearchScreen.kt
+│
+├── setting/
+│   └── SettingScreen.kt
