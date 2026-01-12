@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Logo cho splash screen
+    Simple music note icon
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <!-- Background circle -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M100,100m-80,0a80,80 0,1 1,160 0a80,80 0,1 1,-160 0" />
+
+    <!-- Music note -->
+    <path
+        android:fillColor="#1DB954"
+        android:pathData="M120,60 L120,140 C120,150 110,160 100,160 C90,160 80,150 80,140 C80,130 90,120 100,120 C105,120 110,122 114,125 L114,70 L140,60 L140,110 L120,120 Z" />
+
+    <path
+        android:fillColor="#1DB954"
+        android:pathData="M140,55 C145,55 150,60 150,65 C150,70 145,75 140,75 C135,75 130,70 130,65 C130,60 135,55 140,55 Z" />
+</vector>
