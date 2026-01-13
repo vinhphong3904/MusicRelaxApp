@@ -14,6 +14,7 @@ import com.example.musicapp.presentation.history.HistoryScreen
 import com.example.musicapp.presentation.settings.SettingsScreen
 import com.example.musicapp.presentation.auth.LoginScreen
 import com.example.musicapp.presentation.auth.RegisterScreen
+import com.example.musicapp.presentation.player.PlayerScreen
 
 @Composable
 fun NavGraph(
@@ -46,6 +47,10 @@ fun NavGraph(
         }
         composable(route = Screen.Register.route) {
             RegisterScreen(navController = navController)
+        }
+        // Đã thêm màn hình Player vào NavGraph
+        composable(route = Screen.Player.route) {
+            PlayerScreen(navController = navController)
         }
         composable(route = "history") {
             HistoryScreen(navController = navController)
