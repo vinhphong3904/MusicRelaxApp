@@ -3311,7 +3311,6 @@ drawable notification_template_icon_low_bg
 drawable notification_tile_bg
 drawable notify_panel_notification_icon_bg
 drawable splash_background
-drawable splash_logo
 drawable test_level_drawable
 drawable tieude
 drawable tooltip_frame_dark

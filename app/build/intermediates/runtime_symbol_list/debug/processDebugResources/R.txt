@@ -3310,11 +3310,10 @@ int drawable notification_template_icon_low_bg 0x7f08013c
 int drawable notification_tile_bg 0x7f08013d
 int drawable notify_panel_notification_icon_bg 0x7f08013e
 int drawable splash_background 0x7f08013f
-int drawable splash_logo 0x7f080140
-int drawable test_level_drawable 0x7f080141
-int drawable tieude 0x7f080142
-int drawable tooltip_frame_dark 0x7f080143
-int drawable tooltip_frame_light 0x7f080144
+int drawable test_level_drawable 0x7f080140
+int drawable tieude 0x7f080141
+int drawable tooltip_frame_dark 0x7f080142
+int drawable tooltip_frame_light 0x7f080143
 int font roboto_medium_numbers 0x7f090000
 int id ALT 0x7f0a0000
 int id BOTTOM_END 0x7f0a0001

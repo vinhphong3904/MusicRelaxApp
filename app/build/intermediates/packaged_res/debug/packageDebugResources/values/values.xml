@@ -10,7 +10,7 @@
     <color name="status_bar">#000000</color>
     <color name="teal_200">#03DAC5</color>
     <color name="white">#FFFFFF</color>
-    <string name="app_name">Music App</string>
+    <string name="app_name">MusicRelaxApp</string>
     <style name="Theme.MusicApp" parent="Theme.Material3.DayNight.NoActionBar">
         
         <item name="colorPrimary">@color/purple_500</item>

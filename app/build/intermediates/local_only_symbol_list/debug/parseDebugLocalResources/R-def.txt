@@ -15,7 +15,6 @@ drawable ic_launcher_foreground
 drawable icon
 drawable nen
 drawable splash_background
-drawable splash_logo
 drawable tieude
 id imgBackground
 id imgIcon

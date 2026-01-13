@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <!-- Background gradient -->
     <item>
         <shape android:shape="rectangle">
             <gradient
@@ -12,10 +10,8 @@
                 android:type="linear" />
         </shape>
     </item>
-
-    <!-- Logo vector ở giữa -->
     <item
-        android:drawable="@drawable/splash_logo"
+        android:drawable="@drawable/icon"
         android:gravity="center"
         android:width="200dp"
         android:height="200dp"/>

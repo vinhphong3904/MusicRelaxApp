@@ -1,86 +1,127 @@
 package com.example.musicapp.presentation.auth
 
-import android.widget.Toast
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.musicapp.core.common.Resource
-import com.example.musicapp.core.common.UiState
+import com.example.musicapp.R
+import com.example.musicapp.presentation.navigation.Screen
 
-/**
- * Màn hình Login
- * 
- * Compose UI:
- * - TextField cho email/password
- * - Button login
- * - Text link "Chưa có tài khoản?"
- * - Hiện loading/error state
- * 
- * @param onLoginSuccess: Callback khi login thành công → navigate to Home
- * @param onNavigateToRegister: Callback navigate to Register screen
- * @param viewModel: Hilt tự inject
- */
 @Composable
-fun LoginScreen(
-    navController: NavController,
-    viewModel: AuthViewModel = hiltViewModel()
-) {
-    val context = LocalContext.current
+fun LoginScreen(navController: NavController) {
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
 
-    // Lắng nghe sự kiện Login thành công hay thất bại
-    LaunchedEffect(Unit) {
-        viewModel.loginState.collect { result ->
-            when (result) {
-                is Resource.Success -> {
-                    // Chuyển sang màn hình Home và xóa BackStack login
-                    navController.navigate("home_screen") {
-                        popUpTo("login_screen") { inclusive = true }
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Ảnh nền từ drawable (nen.png)
+        Image(
+            painter = painterResource(id = R.drawable.nen),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            // Icon app từ drawable (icon.png)
+            Image(
+                painter = painterResource(id = R.drawable.icon),
+                contentDescription = "App Icon",
+                modifier = Modifier.size(100.dp)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Ảnh Tiêu đề từ drawable (tieude.png)
+            Image(
+                painter = painterResource(id = R.drawable.tieude),
+                contentDescription = "Title",
+                modifier = Modifier.height(60.dp),
+                contentScale = ContentScale.Fit
+            )
+
+            Spacer(modifier = Modifier.height(48.dp))
+
+            Text(
+                "Đăng nhập",
+                color = Color.White,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.align(Alignment.Start)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            AuthTextField(value = email, onValueChange = { email = it }, placeholder = "Email hoặc Tên tài khoản")
+            Spacer(modifier = Modifier.height(12.dp))
+            AuthTextField(value = password, onValueChange = { password = it }, placeholder = "Mật khẩu", isPassword = true)
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Button(
+                onClick = { 
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
                     }
-                }
-                is Resource.Error -> {
-                    Toast.makeText(context, result.message, Toast.LENGTH_SHORT).show()
-                }
-                is Resource.Loading -> {
-                    // Có thể show dialog loading ở đây
-                }
+                },
+                modifier = Modifier.fillMaxWidth().height(56.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF38BDF8)),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Text("ĐĂNG NHẬP", color = Color.Black, fontSize = 16.sp, fontWeight = FontWeight.ExtraBold)
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            TextButton(onClick = { navController.navigate(Screen.Register.route) }) {
+                Text(
+                    "Bạn chưa có tài khoản? Đăng ký ngay", 
+                    color = Color(0xFF38BDF8), 
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }
+}
 
-    Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
-        verticalArrangement = Arrangement.Center
-    ) {
-        OutlinedTextField(
-            value = viewModel.email,
-            onValueChange = { viewModel.email = it },
-            label = { Text("Email") }
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = viewModel.password,
-            onValueChange = { viewModel.password = it },
-            label = { Text("Password") },
-            visualTransformation = PasswordVisualTransformation()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-            onClick = { viewModel.login() },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Đăng nhập")
-        }
-    }
+@Composable
+fun AuthTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholder: String,
+    isPassword: Boolean = false
+) {
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        placeholder = { Text(placeholder, color = Color.LightGray) },
+        modifier = Modifier.fillMaxWidth(),
+        visualTransformation = if (isPassword) PasswordVisualTransformation() else androidx.compose.ui.text.input.VisualTransformation.None,
+        colors = TextFieldDefaults.colors(
+            focusedTextColor = Color.White,
+            unfocusedTextColor = Color.White,
+            focusedContainerColor = Color.White.copy(alpha = 0.1f),
+            unfocusedContainerColor = Color.White.copy(alpha = 0.05f),
+            focusedIndicatorColor = Color(0xFF38BDF8),
+            unfocusedIndicatorColor = Color.Gray
+        ),
+        shape = RoundedCornerShape(8.dp)
+    )
 }
