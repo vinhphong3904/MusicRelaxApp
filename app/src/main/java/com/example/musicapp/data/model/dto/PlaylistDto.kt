@@ -1,52 +1,55 @@
 package com.example.musicapp.data.model.dto
 
-import com.google.gson.annotations.SerializedName
-
-/**
- * DTO cho Playlist API response
- * 
- * VD JSON:
- * {
- *   "id": "playlist123",
- *   "name": "My Favorites",
- *   "description": "Best songs ever",
- *   "owner_id": "user123",
- *   "songs": [...],
- *   "created_at": "2024-01-10T10:00:00Z"
- * }
- */
 data class PlaylistDto(
-    @SerializedName("id")
-    val id: String,
-    
-    @SerializedName("name")
+    val id: Int,
+    val user_id: Int?,
     val name: String,
-    
-    @SerializedName("description")
-    val description: String? = null,
-    
-    /**
-     * ID của user tạo playlist
-     */
-    @SerializedName("owner_id")
-    val ownerId: String,
-    
-    /**
-     * Danh sách bài hát trong playlist
-     * Có thể empty list nếu playlist mới tạo
-     */
-    @SerializedName("songs")
-    val songs: List<SongDto> = emptyList(),
-    
-    /**
-     * Timestamp tạo playlist
-     */
-    @SerializedName("created_at")
-    val createdAt: String,
-    
-    /**
-     * URL ảnh cover (lấy từ bài hát đầu tiên hoặc custom)
-     */
-    @SerializedName("cover_url")
-    val coverUrl: String? = null
+    val description: String?,
+    val is_public: Boolean,
+    val thumbnail_url: String?,
+    val song_count: Int?,
+    val created_at: String,
+    val updated_at: String?,
+    val deleted_at: String? = null,
+    val username: String? = null,
+    val full_name: String? = null,
+    val songs: List<PlaylistSongDto>? = null
+)
+
+data class PlaylistSongDto(
+    val id: Int,
+    val title: String,
+    val duration: Int,
+    val src: String,
+    val cover_image_url: String?,
+    val artist_name: String,
+    val artist_id: Int,
+    val order_index: Int?,
+    val added_at: String?
+)
+
+data class PlaylistsResponse(
+    val success: Boolean,
+    val data: List<PlaylistDto>
+)
+
+data class PlaylistDetailResponse(
+    val success: Boolean,
+    val data: PlaylistDto
+)
+
+data class CreatePlaylistRequest(
+    val name: String,
+    val description: String,
+    val isPublic: Boolean
+)
+
+data class CreatePlaylistResponse(
+    val success: Boolean,
+    val data: PlaylistDto
+)
+
+data class SimpleResponse(
+    val success: Boolean,
+    val message: String
 )

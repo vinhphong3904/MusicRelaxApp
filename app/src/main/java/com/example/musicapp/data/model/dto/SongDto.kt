@@ -1,36 +1,33 @@
 package com.example.musicapp.data.model.dto
 
-import com.google.gson.annotations.SerializedName
-import java.time.Instant
-
-/**
- * DTO cho Song API response
- * 
- * VD JSON:
- * {
- *   "id": "song123",
- *   "title": "Bohemian Rhapsody",
- *   "artist": "Queen",
- *   "audio_url": "https://...",
- *   "cover_url": "https://...",
- *   "duration": 354000,
- *   "genre": "Rock"
- * }
- */
 data class SongDto(
     val id: Int,
     val title: String,
-    val artistId: Int,
-    val albumId: Int? = null,
-    val genreId: Int? = null,
-    val durationSeconds: Int,
-    val audioUrl: String,
-    val coverImageUrl: String? = null,
-    val lyricsContent: String? = null,
-    val viewCount: Long = 0L,
-    val slug: String? = null,
-    val status: Boolean = true,
-    val createdAt: Instant,
-    val updatedAt: Instant? = null,
-    val deletedAt: Instant? = null
+    val duration: Int,
+    val src: String,
+    val cover_image_url: String,
+    val view_count: Int,
+    val slug: String,
+    val artist_id: Int,
+    val artist_name: String,
+    val genre_id: Int,
+    val genre_name: String
+)
+
+data class SongsResponse(
+    val success: Boolean,
+    val data: List<SongDto>,
+    val pagination: PaginationDto
+)
+
+data class SongDetailResponse(
+    val success: Boolean,
+    val data: SongDto
+)
+
+data class PaginationDto(
+    val page: Int,
+    val limit: Int,
+    val total: Int,
+    val totalPages: Int
 )

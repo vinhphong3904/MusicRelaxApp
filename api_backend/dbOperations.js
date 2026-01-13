@@ -677,36 +677,65 @@ module.exports = {
     return res.recordset[0];
   },
 
-  deletePlaylist: async (playlistId) => {
-    if (!(await isPlaylistOwner(playlistId, userId))) return false;
+  deletePlaylist: async (playlistId, userId) => {
     if (!Number.isInteger(playlistId)) return false;
+    if (!Number.isInteger(userId)) return false;
+
+    // check ownership
+    if (!(await isPlaylistOwner(playlistId, userId))) return false;
+
     const pool = await getPool();
     const res = await pool.request()
       .input('id', sql.Int, playlistId)
-      .query('UPDATE playlists SET deleted_at = SYSDATETIME() WHERE id = @id AND deleted_at IS NULL');
+      .query(`
+        UPDATE playlists
+        SET deleted_at = SYSDATETIME()
+        WHERE id = @id AND deleted_at IS NULL
+      `);
+
     return res.rowsAffected[0] > 0;
   },
 
-  addSongToPlaylist: async (playlistId, songId) => {
-    if (!(await isPlaylistOwner(playlistId, userId)))
-    return { success: false, message: 'Forbidden' };
-    if (!Number.isInteger(playlistId) || !Number.isInteger(songId)) return { success: false, message: 'Invalid input' };
+  addSongToPlaylist: async (playlistId, songId, userId) => {
+    if (!Number.isInteger(playlistId) || !Number.isInteger(songId)) {
+      return { success: false, message: 'Invalid input' };
+    }
+
+    // check owner
+    const isOwner = await isPlaylistOwner(playlistId, userId);
+    if (!isOwner) {
+      return { success: false, message: 'Forbidden' };
+    }
+
     const pool = await getPool();
+
     try {
+      // check song exists in playlist
       const chk = await pool.request()
         .input('playlistId', sql.Int, playlistId)
         .input('songId', sql.Int, songId)
-        .query('SELECT id FROM playlist_songs WHERE playlist_id = @playlistId AND song_id = @songId');
+        .query(`
+          SELECT id 
+          FROM playlist_songs 
+          WHERE playlist_id = @playlistId AND song_id = @songId
+        `);
 
-      if (chk.recordset.length) return { success: false, message: 'Bài hát đã có trong playlist' };
+      if (chk.recordset.length) {
+        return { success: false, message: 'Bài hát đã có trong playlist' };
+      }
 
+      // insert with order
       await pool.request()
         .input('playlistId', sql.Int, playlistId)
         .input('songId', sql.Int, songId)
         .query(`
           DECLARE @maxOrder INT;
-          SELECT @maxOrder = ISNULL(MAX(order_index), 0) FROM playlist_songs WHERE playlist_id = @playlistId;
-          INSERT INTO playlist_songs (playlist_id, song_id, order_index) VALUES (@playlistId, @songId, @maxOrder + 1)
+          SELECT @maxOrder = ISNULL(MAX(order_index), 0)
+          FROM playlist_songs
+          WHERE playlist_id = @playlistId;
+
+          INSERT INTO playlist_songs (playlist_id, song_id, order_index)
+          VALUES (@playlistId, @songId, @maxOrder + 1);
         `);
 
       return { success: true, message: 'Đã thêm bài hát vào playlist' };
@@ -716,15 +745,56 @@ module.exports = {
     }
   },
 
-  removeSongFromPlaylist: async (playlistId, songId) => {
-    if (!(await isPlaylistOwner(playlistId, userId))) return false;
+  removeSongFromPlaylist: async (playlistId, songId, userId) => { 
     if (!Number.isInteger(playlistId) || !Number.isInteger(songId)) return false;
+
+    const isOwner = await isPlaylistOwner(playlistId, userId);
+    if (!isOwner) return false;
+
     const pool = await getPool();
     const res = await pool.request()
       .input('playlistId', sql.Int, playlistId)
       .input('songId', sql.Int, songId)
-      .query('DELETE FROM playlist_songs WHERE playlist_id = @playlistId AND song_id = @songId');
+      .query(`
+        DELETE FROM playlist_songs
+        WHERE playlist_id = @playlistId AND song_id = @songId
+      `);
+
     return res.rowsAffected[0] > 0;
+  },
+
+  // ---------- GENRES ----------
+  getAllGenres: async() => {
+    try {
+      const pool = await getPool();
+      const res = await pool.request().query(`
+        SELECT id, name, slug, description, created_at
+        FROM genres
+        ORDER BY name;
+      `);
+      return res.recordset;
+    } catch (err) {
+      console.error('getAllGenres error:', err);
+      return [];
+    }
+  },
+
+  getGenreById: async (id) => {
+    if (!Number.isInteger(id)) return null;
+    try {
+      const pool = await getPool();
+      const res = await pool.request()
+        .input('id', sql.Int, id)
+        .query(`
+          SELECT id, name, slug, description, created_at
+          FROM genres
+          WHERE id = @id;
+        `);
+      return res.recordset[0] || null;
+    } catch (err) {
+      console.error('getGenreById error:', err);
+      return null;
+    }
   },
 
   // ---------- FAVORITES ----------

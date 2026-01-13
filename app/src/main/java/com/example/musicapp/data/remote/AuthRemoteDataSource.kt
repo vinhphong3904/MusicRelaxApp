@@ -1,3 +1,18 @@
-package com.example.musicapp.data.remote// remote chứa các nguồn dữ liệu từ xa (Retrofit, API, mạng)
-// AuthRemoteDataSource.kt chứa Wrapper cho ApiService liên quan đến xác thực người dùng
-class AuthRemoteDataSource {}
+package com.example.musicapp.data.remote
+
+import com.example.musicapp.core.network.ApiService
+import com.example.musicapp.data.model.dto.*
+
+class AuthRemoteDataSource(private val api: ApiService) {
+    suspend fun register(request: RegisterRequest): RegisterResponse {
+        return api.register(request)
+    }
+
+    suspend fun login(request: LoginRequest): LoginResponse {
+        return api.login(request)
+    }
+
+    suspend fun getCurrentUser(token: String): MeResponse {
+        return api.getCurrentUser("Bearer $token")
+    }
+}

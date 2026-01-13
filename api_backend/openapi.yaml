@@ -226,17 +226,50 @@ components:
       properties:
         id:
           type: integer
+          example: 1
         name:
           type: string
+          example: Pop
         slug:
           type: string
-          nullable: true
+          example: pop
         description:
           type: string
-          nullable: true
+          example: Nhạc Pop phổ biến
         created_at:
           type: string
           format: date-time
+          example: "2026-01-01T10:00:00.000Z"
+
+    GenreListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Genre"
+
+    GenreDetailResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: "#/components/schemas/Genre"
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Not found
 
     Playlist:
       type: object
@@ -869,22 +902,43 @@ paths:
 
   /api/genres:
     get:
-      tags: [Genres]
-      summary: Lấy danh sách thể loại
+      tags:
+        - Genres
+      summary: Lấy danh sách thể loại nhạc
+      description: Lấy tất cả genre đang hoạt động
       responses:
         "200":
-          description: Danh sách thể loại
+          description: Thành công
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  data:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/Genre"
+                $ref: "#/components/schemas/GenreListResponse"
+
+  /api/genres/{id}:
+    get:
+      tags:
+        - Genres
+      summary: Lấy chi tiết thể loại
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "200":
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenreDetailResponse"
+        "404":
+          description: Không tìm thấy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
   /api/playlists:
     get:

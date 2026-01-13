@@ -1,40 +1,64 @@
-package com.example.musicapp.domain.repository
+package com.example.musicapp.data.repository
 
-import kotlinx.coroutines.flow.Flow
+import com.example.musicapp.data.remote.SongRemoteDataSource
+import com.example.musicapp.domain.model.Song
 
-/**
- * Repository Interface cho Songs
- * Domain layer chỉ define contract, không implement
- * 
- * Implementation: SongRepositoryImpl trong data layer
- * 
- * Lợi ích:
- * - Domain layer không phụ thuộc vào data layer
- * - Dễ test (mock repository)
- * - Tuân thủ Dependency Inversion Principle
- */
-//interface SongRepository {
-//
-//    /**
-//     * Lấy danh sách tất cả songs
-//     *
-//     * @return Flow tự động update khi có data mới
-//     */
-//    fun getSongs(): Flow<List<Song>>
-//
-//    /**
-//     * Lấy chi tiết 1 bài hát
-//     *
-//     * @param id: Song ID
-//     * @return Song hoặc null nếu không tìm thấy
-//     */
-//    suspend fun getSongById(id: String): Song?
-//
-//    /**
-//     * Tìm kiếm bài hát
-//     *
-//     * @param query: Từ khóa tìm kiếm
-//     * @return Flow danh sách kết quả
-//     */
-//    fun searchSongs(query: String): Flow<List<Song>>
-//}
+interface SongRepositoryInterface {
+    suspend fun getSongs(
+        keyword: String? = null,
+        genreId: Int? = null,
+        artistId: Int? = null,
+        page: Int = 1,
+        limit: Int = 20
+    ): List<Song>
+
+    suspend fun getSongDetail(id: Int): Song
+}
+
+class SongRepository(
+    private val remoteDataSource: SongRemoteDataSource
+) : SongRepositoryInterface {
+
+    override suspend fun getSongs(
+        keyword: String?,
+        genreId: Int?,
+        artistId: Int?,
+        page: Int,
+        limit: Int
+    ): List<Song> {
+        val response = remoteDataSource.fetchSongs(keyword, genreId, artistId, page, limit)
+        return response.data.map {
+            Song(
+                id = it.id,
+                title = it.title,
+                duration = it.duration,
+                src = it.src,
+                coverImageUrl = it.cover_image_url,
+                viewCount = it.view_count,
+                slug = it.slug,
+                artistId = it.artist_id,
+                artistName = it.artist_name,
+                genreId = it.genre_id,
+                genreName = it.genre_name
+            )
+        }
+    }
+
+    override suspend fun getSongDetail(id: Int): Song {
+        val response = remoteDataSource.fetchSongDetail(id)
+        val it = response.data
+        return Song(
+            id = it.id,
+            title = it.title,
+            duration = it.duration,
+            src = it.src,
+            coverImageUrl = it.cover_image_url,
+            viewCount = it.view_count,
+            slug = it.slug,
+            artistId = it.artist_id,
+            artistName = it.artist_name,
+            genreId = it.genre_id,
+            genreName = it.genre_name
+        )
+    }
+}

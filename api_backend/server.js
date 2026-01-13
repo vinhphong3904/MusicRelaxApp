@@ -287,6 +287,23 @@ app.put('/api/settings',
   })
 );
 
+// ---------- GENRES ----------
+app.get('/api/genres', asyncHandler(async (req, res) => {
+  const genres = await db.getAllGenres();
+  return res.json({ success: true, data: genres });
+}));
+
+app.get('/api/genres/:id',
+  validate([ param('id').isInt() ]),
+  asyncHandler(async (req, res) => {
+    const genre = await db.getGenreById(parseInt(req.params.id));
+    if (!genre) {
+      return res.status(404).json({ success: false, message: 'Genre not found' });
+    }
+    return res.json({ success: true, data: genre });
+  })
+);
+
 /* -------------------------
    Songs Routes
    ------------------------- */

@@ -1,11 +1,19 @@
 package com.example.musicapp.data.model.dto
 
-import java.time.Instant
-
 data class GenreDto(
     val id: Int,
     val name: String,
-    val slug: String? = null,
-    val description: String? = null,
-    val createdAt: Instant
+    val slug: String,
+    val description: String,
+    val created_at: String
+)
+
+data class GenresResponse(
+    val success: Boolean,
+    val data: List<GenreDto>
+)
+
+data class GenreDetailResponse(
+    val success: Boolean,
+    val data: GenreDto
 )
