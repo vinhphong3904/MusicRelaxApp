@@ -1,6 +1,5 @@
 package com.example.musicapp.di
 
-import com.example.musicapp.core.network.ApiClient
 import com.example.musicapp.core.network.ApiService
 import com.example.musicapp.data.remote.*
 import com.example.musicapp.data.repository.*
@@ -9,201 +8,217 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import retrofit2.Retrofit
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    // ================= CORE =================
-    @Provides
-    @Singleton
-    fun provideRetrofit(): Retrofit = ApiClient.retrofit
-
-    @Provides
-    @Singleton
-    fun provideApiService(retrofit: Retrofit): ApiService =
-        retrofit.create(ApiService::class.java)
-
     // ================= AUTH =================
-    @Provides
-    @Singleton
+    @Provides @Singleton
     fun provideAuthRemoteDataSource(api: ApiService): AuthRemoteDataSource =
         AuthRemoteDataSource(api)
 
-    @Provides
-    @Singleton
+    @Provides @Singleton
     fun provideAuthRepository(remote: AuthRemoteDataSource): AuthRepositoryInterface =
         AuthRepository(remote)
 
-    @Provides
-    @Singleton
-    fun provideRegisterUseCase(repository: AuthRepositoryInterface): RegisterUseCase =
+    @Provides @Singleton
+    fun provideRegisterUseCase(repository: AuthRepositoryInterface) =
         RegisterUseCase(repository)
 
-    @Provides
-    @Singleton
-    fun provideLoginUseCase(repository: AuthRepositoryInterface): LoginUseCase =
+    @Provides @Singleton
+    fun provideLoginUseCase(repository: AuthRepositoryInterface) =
         LoginUseCase(repository)
 
-    @Provides
-    @Singleton
-    fun provideGetCurrentUserUseCase(repository: AuthRepositoryInterface): GetCurrentUserUseCase =
+    @Provides @Singleton
+    fun provideGetCurrentUserUseCase(repository: AuthRepositoryInterface) =
         GetCurrentUserUseCase(repository)
 
     // ================= SONGS =================
-    @Provides
-    @Singleton
+    @Provides @Singleton
     fun provideSongRemoteDataSource(api: ApiService): SongRemoteDataSource =
         SongRemoteDataSource(api)
 
-    @Provides
-    @Singleton
+    @Provides @Singleton
     fun provideSongRepository(remote: SongRemoteDataSource): SongRepositoryInterface =
         SongRepository(remote)
 
-    @Provides
-    @Singleton
-    fun provideGetSongsUseCase(repository: SongRepositoryInterface): GetSongsUseCase =
+    @Provides @Singleton
+    fun provideGetSongsUseCase(repository: SongRepositoryInterface) =
         GetSongsUseCase(repository)
 
-    @Provides
-    @Singleton
-    fun provideGetSongDetailUseCase(repository: SongRepositoryInterface): GetSongDetailUseCase =
+    @Provides @Singleton
+    fun provideGetSongDetailUseCase(repository: SongRepositoryInterface) =
         GetSongDetailUseCase(repository)
 
     // ================= PROFILE =================
-    @Provides
-    @Singleton
+    @Provides @Singleton
     fun provideProfileRemoteDataSource(api: ApiService): ProfileRemoteDataSource =
         ProfileRemoteDataSource(api)
 
-    @Provides
-    @Singleton
+    @Provides @Singleton
     fun provideProfileRepository(remote: ProfileRemoteDataSource): ProfileRepositoryInterface =
         ProfileRepository(remote)
 
-    @Provides
-    @Singleton
-    fun provideGetProfileUseCase(repository: ProfileRepositoryInterface): GetProfileUseCase =
+    @Provides @Singleton
+    fun provideGetProfileUseCase(repository: ProfileRepositoryInterface) =
         GetProfileUseCase(repository)
 
-    @Provides
-    @Singleton
-    fun provideUpdateProfileUseCase(repository: ProfileRepositoryInterface): UpdateProfileUseCase =
+    @Provides @Singleton
+    fun provideUpdateProfileUseCase(repository: ProfileRepositoryInterface) =
         UpdateProfileUseCase(repository)
 
-    @Provides
-    @Singleton
-    fun provideUploadAvatarUseCase(repository: ProfileRepositoryInterface): UploadAvatarUseCase =
+    @Provides @Singleton
+    fun provideUploadAvatarUseCase(repository: ProfileRepositoryInterface) =
         UploadAvatarUseCase(repository)
 
-    @Provides
-    @Singleton
-    fun provideResetAvatarUseCase(repository: ProfileRepositoryInterface): ResetAvatarUseCase =
+    @Provides @Singleton
+    fun provideResetAvatarUseCase(repository: ProfileRepositoryInterface) =
         ResetAvatarUseCase(repository)
 
     // ================= ALBUMS =================
-    @Provides
-    @Singleton
+    @Provides @Singleton
     fun provideAlbumRemoteDataSource(api: ApiService): AlbumRemoteDataSource =
         AlbumRemoteDataSource(api)
 
-    @Provides
-    @Singleton
+    @Provides @Singleton
     fun provideAlbumRepository(remote: AlbumRemoteDataSource): AlbumRepositoryInterface =
         AlbumRepository(remote)
 
-    @Provides
-    @Singleton
-    fun provideGetAlbumsUseCase(repository: AlbumRepositoryInterface): GetAlbumsUseCase =
+    @Provides @Singleton
+    fun provideGetAlbumsUseCase(repository: AlbumRepositoryInterface) =
         GetAlbumsUseCase(repository)
 
-    @Provides
-    @Singleton
-    fun provideGetAlbumDetailUseCase(repository: AlbumRepositoryInterface): GetAlbumDetailUseCase =
+    @Provides @Singleton
+    fun provideGetAlbumDetailUseCase(repository: AlbumRepositoryInterface) =
         GetAlbumDetailUseCase(repository)
 
     // ================= ARTISTS =================
-    @Provides
-    @Singleton
+    @Provides @Singleton
     fun provideArtistRemoteDataSource(api: ApiService): ArtistRemoteDataSource =
         ArtistRemoteDataSource(api)
 
-    @Provides
-    @Singleton
+    @Provides @Singleton
     fun provideArtistRepository(remote: ArtistRemoteDataSource): ArtistRepositoryInterface =
         ArtistRepository(remote)
 
-    @Provides
-    @Singleton
-    fun provideGetArtistsUseCase(repository: ArtistRepositoryInterface): GetArtistsUseCase =
+    @Provides @Singleton
+    fun provideGetArtistsUseCase(repository: ArtistRepositoryInterface) =
         GetArtistsUseCase(repository)
 
-    @Provides
-    @Singleton
-    fun provideGetArtistDetailUseCase(repository: ArtistRepositoryInterface): GetArtistDetailUseCase =
+    @Provides @Singleton
+    fun provideGetArtistDetailUseCase(repository: ArtistRepositoryInterface) =
         GetArtistDetailUseCase(repository)
 
     // ================= GENRES =================
-    @Provides
-    @Singleton
+    @Provides @Singleton
     fun provideGenreRemoteDataSource(api: ApiService): GenreRemoteDataSource =
         GenreRemoteDataSource(api)
 
-    @Provides
-    @Singleton
+    @Provides @Singleton
     fun provideGenreRepository(remote: GenreRemoteDataSource): GenreRepositoryInterface =
         GenreRepository(remote)
 
-    @Provides
-    @Singleton
-    fun provideGetGenresUseCase(repo: GenreRepositoryInterface) = GetGenresUseCase(repo)
+    @Provides @Singleton
+    fun provideGetGenresUseCase(repo: GenreRepositoryInterface) =
+        GetGenresUseCase(repo)
 
-    @Provides
-    @Singleton
-    fun provideGetGenreDetailUseCase(repo: GenreRepositoryInterface) = GetGenreDetailUseCase(repo)
+    @Provides @Singleton
+    fun provideGetGenreDetailUseCase(repo: GenreRepositoryInterface) =
+        GetGenreDetailUseCase(repo)
 
     // ================= PLAYLISTS =================
-    @Provides
-    @Singleton
+    @Provides @Singleton
     fun providePlaylistRemoteDataSource(api: ApiService): PlaylistRemoteDataSource =
         PlaylistRemoteDataSource(api)
 
-    @Provides
-    @Singleton
+    @Provides @Singleton
     fun providePlaylistRepository(remote: PlaylistRemoteDataSource): PlaylistRepositoryInterface =
         PlaylistRepository(remote)
 
-    @Provides
-    @Singleton
-    fun provideGetPlaylistsUseCase(repo: PlaylistRepositoryInterface) = GetPlaylistsUseCase(repo)
+    @Provides @Singleton
+    fun provideGetPlaylistsUseCase(repo: PlaylistRepositoryInterface) =
+        GetPlaylistsUseCase(repo)
 
-    @Provides
-    @Singleton
-    fun provideCreatePlaylistUseCase(repo: PlaylistRepositoryInterface) = CreatePlaylistUse
+    @Provides @Singleton
+    fun provideCreatePlaylistUseCase(repo: PlaylistRepositoryInterface) =
+        CreatePlaylistUseCase(repo)
+
+    @Provides @Singleton
+    fun provideGetPlaylistDetailUseCase(repo: PlaylistRepositoryInterface) =
+        GetPlaylistDetailUseCase(repo)
+
+    @Provides @Singleton
+    fun provideDeletePlaylistUseCase(repo: PlaylistRepositoryInterface) =
+        DeletePlaylistUseCase(repo)
+
+    @Provides @Singleton
+    fun provideAddSongToPlaylistUseCase(repo: PlaylistRepositoryInterface) =
+        AddSongToPlaylistUseCase(repo)
+
+    @Provides @Singleton
+    fun provideRemoveSongFromPlaylistUseCase(repo: PlaylistRepositoryInterface) =
+        RemoveSongFromPlaylistUseCase(repo)
 
     // ================= FAVORITES =================
-    @Provides
-    @Singleton
+    @Provides @Singleton
     fun provideFavoriteRemoteDataSource(api: ApiService): FavoriteRemoteDataSource =
         FavoriteRemoteDataSource(api)
 
-    @Provides
-    @Singleton
+    @Provides @Singleton
     fun provideFavoriteRepository(remote: FavoriteRemoteDataSource): FavoriteRepositoryInterface =
         FavoriteRepository(remote)
 
-    @Provides
-    @Singleton
-    fun provideGetFavoritesUseCase(repo: FavoriteRepositoryInterface) = GetFavoritesUseCase(repo)
+    @Provides @Singleton
+    fun provideGetFavoritesUseCase(repo: FavoriteRepositoryInterface) =
+        GetFavoritesUseCase(repo)
 
-    @Provides
-    @Singleton
-    fun provideAddFavoriteUseCase(repo: FavoriteRepositoryInterface) = AddFavoriteUseCase(repo)
+    @Provides @Singleton
+    fun provideAddFavoriteUseCase(repo: FavoriteRepositoryInterface) =
+        AddFavoriteUseCase(repo)
 
-    @Provides
-    @Singleton
-    fun provideRemoveFavoriteUseCase(repo: FavoriteRepositoryInterface) = RemoveFavoriteUseCase(repo)
+    @Provides @Singleton
+    fun provideRemoveFavoriteUseCase(repo: FavoriteRepositoryInterface) =
+        RemoveFavoriteUseCase(repo)
+
+    // ================= HISTORIES =================
+    @Provides @Singleton
+    fun provideHistoryRemoteDataSource(api: ApiService): HistoryRemoteDataSource =
+        HistoryRemoteDataSource(api)
+
+    @Provides @Singleton
+    fun provideHistoryRepository(remote: HistoryRemoteDataSource): HistoryRepositoryInterface =
+        HistoryRepository(remote)
+
+    @Provides @Singleton
+    fun provideGetHistoriesUseCase(repo: HistoryRepositoryInterface) =
+        GetHistoriesUseCase(repo)
+
+    @Provides @Singleton
+    fun provideAddHistoryUseCase(repo: HistoryRepositoryInterface) =
+        AddHistoryUseCase(repo)
+
+    // ================= SEARCH =================
+    @Provides @Singleton
+    fun provideSearchRemoteDataSource(api: ApiService): SearchRemoteDataSource =
+        SearchRemoteDataSource(api)
+
+    @Provides @Singleton
+    fun provideSearchRepository(remote: SearchRemoteDataSource): SearchRepositoryInterface =
+        SearchRepository(remote)
+
+    @Provides @Singleton
+    fun provideSearchUseCase(repo: SearchRepositoryInterface) =
+        SearchUseCase(repo)
+
+
+    // ================= SETTINGS =================
+    @Provides @Singleton
+    fun provideGetSettingsUseCase(repo: SettingsRepositoryInterface) =
+        GetSettingsUseCase(repo)
+
+    @Provides @Singleton
+    fun provideUpdateSettingsUseCase(repo: SettingsRepositoryInterface) =
+        UpdateSettingsUseCase(repo)
 }

@@ -3,7 +3,17 @@ package com.example.musicapp;
 import com.example.musicapp.core.network.NetworkModule;
 import com.example.musicapp.di.AppModule;
 import com.example.musicapp.presentation.MainActivity_GeneratedInjector;
-import com.example.musicapp.presentation.auth.AuthViewModel_HiltModules;
+import com.example.musicapp.presentation.viewmodel.AlbumsViewModel_HiltModules;
+import com.example.musicapp.presentation.viewmodel.ArtistsViewModel_HiltModules;
+import com.example.musicapp.presentation.viewmodel.AuthViewModel_HiltModules;
+import com.example.musicapp.presentation.viewmodel.FavoritesViewModel_HiltModules;
+import com.example.musicapp.presentation.viewmodel.GenresViewModel_HiltModules;
+import com.example.musicapp.presentation.viewmodel.HistoriesViewModel_HiltModules;
+import com.example.musicapp.presentation.viewmodel.PlaylistsViewModel_HiltModules;
+import com.example.musicapp.presentation.viewmodel.ProfileViewModel_HiltModules;
+import com.example.musicapp.presentation.viewmodel.SearchViewModel_HiltModules;
+import com.example.musicapp.presentation.viewmodel.SettingsViewModel_HiltModules;
+import com.example.musicapp.presentation.viewmodel.SongsViewModel_HiltModules;
 import dagger.Binds;
 import dagger.Component;
 import dagger.Module;
@@ -156,11 +166,21 @@ public final class MyApplication_HiltComponents {
 
   @Subcomponent(
       modules = {
+          AlbumsViewModel_HiltModules.KeyModule.class,
+          ArtistsViewModel_HiltModules.KeyModule.class,
           AuthViewModel_HiltModules.KeyModule.class,
+          FavoritesViewModel_HiltModules.KeyModule.class,
+          GenresViewModel_HiltModules.KeyModule.class,
           HiltWrapper_ActivityRetainedComponentManager_LifecycleModule.class,
           HiltWrapper_SavedStateHandleModule.class,
+          HistoriesViewModel_HiltModules.KeyModule.class,
           ActivityCBuilderModule.class,
-          ViewModelCBuilderModule.class
+          ViewModelCBuilderModule.class,
+          PlaylistsViewModel_HiltModules.KeyModule.class,
+          ProfileViewModel_HiltModules.KeyModule.class,
+          SearchViewModel_HiltModules.KeyModule.class,
+          SettingsViewModel_HiltModules.KeyModule.class,
+          SongsViewModel_HiltModules.KeyModule.class
       }
   )
   @ActivityRetainedScoped
@@ -196,8 +216,18 @@ public final class MyApplication_HiltComponents {
 
   @Subcomponent(
       modules = {
+          AlbumsViewModel_HiltModules.BindsModule.class,
+          ArtistsViewModel_HiltModules.BindsModule.class,
           AuthViewModel_HiltModules.BindsModule.class,
-          HiltWrapper_HiltViewModelFactory_ViewModelModule.class
+          FavoritesViewModel_HiltModules.BindsModule.class,
+          GenresViewModel_HiltModules.BindsModule.class,
+          HiltWrapper_HiltViewModelFactory_ViewModelModule.class,
+          HistoriesViewModel_HiltModules.BindsModule.class,
+          PlaylistsViewModel_HiltModules.BindsModule.class,
+          ProfileViewModel_HiltModules.BindsModule.class,
+          SearchViewModel_HiltModules.BindsModule.class,
+          SettingsViewModel_HiltModules.BindsModule.class,
+          SongsViewModel_HiltModules.BindsModule.class
       }
   )
   @ViewModelScoped

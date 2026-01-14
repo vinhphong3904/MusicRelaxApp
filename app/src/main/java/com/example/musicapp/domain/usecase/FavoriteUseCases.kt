@@ -10,13 +10,13 @@ class GetFavoritesUseCase(private val repo: FavoriteRepositoryInterface) {
 }
 
 class AddFavoriteUseCase(private val repo: FavoriteRepositoryInterface) {
-    suspend operator fun invoke(token: String, songId: Int): String {
+    suspend operator fun invoke(token: String, songId: Int): String? {
         return repo.addFavorite(token, songId)
     }
 }
 
 class RemoveFavoriteUseCase(private val repo: FavoriteRepositoryInterface) {
-    suspend operator fun invoke(token: String, songId: Int): String {
+    suspend operator fun invoke(token: String, songId: Int): String? {
         return repo.removeFavorite(token, songId)
     }
 }

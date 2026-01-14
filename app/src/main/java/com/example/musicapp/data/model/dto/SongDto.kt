@@ -5,9 +5,9 @@ data class SongDto(
     val title: String,
     val duration: Int,
     val src: String,
-    val cover_image_url: String,
+    val cover_image_url: String?,
     val view_count: Int,
-    val slug: String,
+    val slug: String?,
     val artist_id: Int,
     val artist_name: String,
     val genre_id: Int,
@@ -20,9 +20,28 @@ data class SongsResponse(
     val pagination: PaginationDto
 )
 
+data class SongDetailDto(
+    val id: Int,
+    val title: String,
+    val src: String,
+    val duration: Int,
+    val cover_image_url: String?,
+    val lyrics_content: String?,
+    val view_count: Int,
+    val slug: String?,
+    val artist_id: Int,
+    val artist_name: String,
+    val artist_image: String?,
+    val genre_id: Int,
+    val genre_name: String,
+    val album_id: Int?,
+    val album_title: String?,
+    val album_cover: String?
+)
+
 data class SongDetailResponse(
     val success: Boolean,
-    val data: SongDto
+    val data: SongDetailDto
 )
 
 data class PaginationDto(

@@ -1,7 +1,7 @@
 package com.example.musicapp.domain.usecase
 
 import com.example.musicapp.data.repository.SettingsRepositoryInterface
-import com.example.musicapp.data.model.dto.SettingsDto
+import com.example.musicapp.data.model.dto.UpdateSettingsRequest
 
 class GetSettingsUseCase(private val repo: SettingsRepositoryInterface) {
     suspend operator fun invoke(token: String) = repo.getSettings(token)

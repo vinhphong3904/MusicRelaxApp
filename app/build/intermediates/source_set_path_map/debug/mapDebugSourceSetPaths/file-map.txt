@@ -1,74 +1,74 @@
-com.example.musicapp-pngs-0 D:\DoAnDiDongKha\MusicRelaxApp\app\build\generated\res\pngs\debug
-com.example.musicapp-resValues-1 D:\DoAnDiDongKha\MusicRelaxApp\app\build\generated\res\resValues\debug
-com.example.musicapp-updated_navigation_xml-2 D:\DoAnDiDongKha\MusicRelaxApp\app\build\generated\updated_navigation_xml\debug
-com.example.musicapp-packageDebugResources-3 D:\DoAnDiDongKha\MusicRelaxApp\app\build\intermediates\incremental\debug\packageDebugResources\merged.dir
-com.example.musicapp-packageDebugResources-4 D:\DoAnDiDongKha\MusicRelaxApp\app\build\intermediates\incremental\debug\packageDebugResources\stripped.dir
-com.example.musicapp-debug-5 D:\DoAnDiDongKha\MusicRelaxApp\app\build\intermediates\merged_res\debug\mergeDebugResources
-com.example.musicapp-debug-6 D:\DoAnDiDongKha\MusicRelaxApp\app\src\debug\res
-com.example.musicapp-main-7 D:\DoAnDiDongKha\MusicRelaxApp\app\src\main\res
-com.example.musicapp-room-ktx-2.6.1-8 E:\Download\gradle-8.5\caches\8.13\transforms\075d465f62abfd35adf07a48de4003a3\transformed\room-ktx-2.6.1\res
-com.example.musicapp-navigation-compose-2.5.1-9 E:\Download\gradle-8.5\caches\8.13\transforms\0991803b4de3563c3c37134ac1a7406b\transformed\navigation-compose-2.5.1\res
-com.example.musicapp-activity-compose-1.12.2-10 E:\Download\gradle-8.5\caches\8.13\transforms\0ce4c1b7ef6cdefb79be28c221de0b79\transformed\activity-compose-1.12.2\res
-com.example.musicapp-navigation-runtime-ktx-2.5.1-11 E:\Download\gradle-8.5\caches\8.13\transforms\14945c7e4485cd4459ed255cc48c375e\transformed\navigation-runtime-ktx-2.5.1\res
-com.example.musicapp-media3-session-1.3.1-12 E:\Download\gradle-8.5\caches\8.13\transforms\194df738b22e61a2fcfaafaeda134da3\transformed\media3-session-1.3.1\res
-com.example.musicapp-lifecycle-viewmodel-release-13 E:\Download\gradle-8.5\caches\8.13\transforms\1a762c5318aac4c26dbe1e255da8b19a\transformed\lifecycle-viewmodel-release\res
-com.example.musicapp-lifecycle-runtime-compose-release-14 E:\Download\gradle-8.5\caches\8.13\transforms\1ab151297d833d0555c6197b6c6bd163\transformed\lifecycle-runtime-compose-release\res
-com.example.musicapp-lifecycle-viewmodel-savedstate-release-15 E:\Download\gradle-8.5\caches\8.13\transforms\1bd5fbfce4d73f0927bac115d35b64e1\transformed\lifecycle-viewmodel-savedstate-release\res
-com.example.musicapp-coordinatorlayout-1.1.0-16 E:\Download\gradle-8.5\caches\8.13\transforms\203bb213ec8e155432550ca299d4842a\transformed\coordinatorlayout-1.1.0\res
-com.example.musicapp-profileinstaller-1.4.0-17 E:\Download\gradle-8.5\caches\8.13\transforms\2073b0740182bcf8d93eedc3b6f1d254\transformed\profileinstaller-1.4.0\res
-com.example.musicapp-drawerlayout-1.1.1-18 E:\Download\gradle-8.5\caches\8.13\transforms\23095cb9f16826dab03ead6c96b864b3\transformed\drawerlayout-1.1.1\res
-com.example.musicapp-ui-release-19 E:\Download\gradle-8.5\caches\8.13\transforms\24502f9bef8a3dc5ce95fce86b131321\transformed\ui-release\res
-com.example.musicapp-emoji2-views-helper-1.4.0-20 E:\Download\gradle-8.5\caches\8.13\transforms\25858aded04160e7647570437559150a\transformed\emoji2-views-helper-1.4.0\res
-com.example.musicapp-navigation-common-ktx-2.5.1-21 E:\Download\gradle-8.5\caches\8.13\transforms\2a9e648f7c9e5570608d57fbe8ece5e7\transformed\navigation-common-ktx-2.5.1\res
-com.example.musicapp-lifecycle-viewmodel-ktx-2.9.4-22 E:\Download\gradle-8.5\caches\8.13\transforms\2b7143f28231a02d7dacbebaaa9a509a\transformed\lifecycle-viewmodel-ktx-2.9.4\res
-com.example.musicapp-lifecycle-viewmodel-compose-release-23 E:\Download\gradle-8.5\caches\8.13\transforms\2bcb9dc9defcfba9c395526f81fd6acf\transformed\lifecycle-viewmodel-compose-release\res
-com.example.musicapp-core-1.17.0-24 E:\Download\gradle-8.5\caches\8.13\transforms\348571f53b5675df22057f9a388ec337\transformed\core-1.17.0\res
-com.example.musicapp-material-1.11.0-25 E:\Download\gradle-8.5\caches\8.13\transforms\34a7735e4f625e9f3ee29eb468cb0709\transformed\material-1.11.0\res
-com.example.musicapp-recyclerview-1.3.0-26 E:\Download\gradle-8.5\caches\8.13\transforms\34d8bfd2d69d26bb70e8d275aa4c5da1\transformed\recyclerview-1.3.0\res
-com.example.musicapp-material-ripple-release-27 E:\Download\gradle-8.5\caches\8.13\transforms\36d5b11297e86588b6259b70f0c1dddd\transformed\material-ripple-release\res
-com.example.musicapp-startup-runtime-1.1.1-28 E:\Download\gradle-8.5\caches\8.13\transforms\40f61162541de01c240cd60855c5e8d6\transformed\startup-runtime-1.1.1\res
-com.example.musicapp-media3-ui-1.3.1-29 E:\Download\gradle-8.5\caches\8.13\transforms\4bb3fcccfb41ed6f372eac0095933b01\transformed\media3-ui-1.3.1\res
-com.example.musicapp-room-runtime-2.6.1-30 E:\Download\gradle-8.5\caches\8.13\transforms\4d4b1a0f3749058e74d1277b35f8caeb\transformed\room-runtime-2.6.1\res
-com.example.musicapp-core-splashscreen-1.0.1-31 E:\Download\gradle-8.5\caches\8.13\transforms\4e26d11b841030c331e5a486255ea5a9\transformed\core-splashscreen-1.0.1\res
-com.example.musicapp-ui-test-manifest-1.9.2-32 E:\Download\gradle-8.5\caches\8.13\transforms\50fd667a9573f726cab06ef7dc46371d\transformed\ui-test-manifest-1.9.2\res
-com.example.musicapp-core-viewtree-1.0.0-33 E:\Download\gradle-8.5\caches\8.13\transforms\5452c9b66f43732bd6859952496d04a5\transformed\core-viewtree-1.0.0\res
-com.example.musicapp-datastore-preferences-release-34 E:\Download\gradle-8.5\caches\8.13\transforms\582c4d3d5642ffdf4955266426d391cf\transformed\datastore-preferences-release\res
-com.example.musicapp-material3-release-35 E:\Download\gradle-8.5\caches\8.13\transforms\59056d0aefeb7a474d8919132982a120\transformed\material3-release\res
-com.example.musicapp-cardview-1.0.0-36 E:\Download\gradle-8.5\caches\8.13\transforms\5dbd4994b08075a518a7ee4f0c0ce36f\transformed\cardview-1.0.0\res
-com.example.musicapp-appcompat-resources-1.7.1-37 E:\Download\gradle-8.5\caches\8.13\transforms\5dc77896a4dcf2d50c9d58340ad137fc\transformed\appcompat-resources-1.7.1\res
-com.example.musicapp-hilt-navigation-compose-1.2.0-38 E:\Download\gradle-8.5\caches\8.13\transforms\5e79ffcb8fe1e276131ceec2de41b692\transformed\hilt-navigation-compose-1.2.0\res
-com.example.musicapp-media3-exoplayer-1.3.1-39 E:\Download\gradle-8.5\caches\8.13\transforms\62a6fbc5e5c82195beeee8f2ebb443ac\transformed\media3-exoplayer-1.3.1\res
-com.example.musicapp-sqlite-2.4.0-40 E:\Download\gradle-8.5\caches\8.13\transforms\661cd83eca7dbd12e3bb060d384b7c43\transformed\sqlite-2.4.0\res
-com.example.musicapp-lifecycle-livedata-2.9.4-41 E:\Download\gradle-8.5\caches\8.13\transforms\693d38cf737250c327e7b876b7ea4651\transformed\lifecycle-livedata-2.9.4\res
-com.example.musicapp-core-ktx-1.17.0-42 E:\Download\gradle-8.5\caches\8.13\transforms\700fcbfe4c47a1334d3d055b0e16f9fd\transformed\core-ktx-1.17.0\res
-com.example.musicapp-material-release-43 E:\Download\gradle-8.5\caches\8.13\transforms\7255bddb08a8391c4cdf34e6e0c85176\transformed\material-release\res
-com.example.musicapp-customview-poolingcontainer-1.0.0-44 E:\Download\gradle-8.5\caches\8.13\transforms\731fd30830fdfa4f35df9b79aeda12cb\transformed\customview-poolingcontainer-1.0.0\res
-com.example.musicapp-fragment-1.5.4-45 E:\Download\gradle-8.5\caches\8.13\transforms\77a7fcd189c4b00dbfc7de2fcb8b5344\transformed\fragment-1.5.4\res
-com.example.musicapp-foundation-release-46 E:\Download\gradle-8.5\caches\8.13\transforms\7c2fe1e03afa25b1c3fdb65b53127fe3\transformed\foundation-release\res
-com.example.musicapp-datastore-release-47 E:\Download\gradle-8.5\caches\8.13\transforms\83054766c9a27daf4e8fb5ecefd11569\transformed\datastore-release\res
-com.example.musicapp-activity-1.12.2-48 E:\Download\gradle-8.5\caches\8.13\transforms\897025c0257bac79e5c160798abf064a\transformed\activity-1.12.2\res
-com.example.musicapp-datastore-core-release-49 E:\Download\gradle-8.5\caches\8.13\transforms\8f82a05d42b0813af7e8b73b2031ab3c\transformed\datastore-core-release\res
-com.example.musicapp-core-runtime-2.2.0-50 E:\Download\gradle-8.5\caches\8.13\transforms\902e21531b33ada77457d8a1a7404a85\transformed\core-runtime-2.2.0\res
-com.example.musicapp-navigation-common-2.5.1-51 E:\Download\gradle-8.5\caches\8.13\transforms\963846320b0912692c5ef7c9b816093b\transformed\navigation-common-2.5.1\res
-com.example.musicapp-tracing-1.2.0-52 E:\Download\gradle-8.5\caches\8.13\transforms\977e4f487597deabda174907f35bee73\transformed\tracing-1.2.0\res
-com.example.musicapp-constraintlayout-2.2.1-53 E:\Download\gradle-8.5\caches\8.13\transforms\9796c09509f4abca0dcdd29f7342a93d\transformed\constraintlayout-2.2.1\res
-com.example.musicapp-navigationevent-54 E:\Download\gradle-8.5\caches\8.13\transforms\98d954a76d1d3a332aaaffa41fe1194d\transformed\navigationevent\res
-com.example.musicapp-media-1.7.0-55 E:\Download\gradle-8.5\caches\8.13\transforms\9cdd5a22ee171f1e0f292b5c32788ba9\transformed\media-1.7.0\res
-com.example.musicapp-sqlite-framework-2.4.0-56 E:\Download\gradle-8.5\caches\8.13\transforms\9f0e8654aaae17ac1690587a80c00ee8\transformed\sqlite-framework-2.4.0\res
-com.example.musicapp-emoji2-1.4.0-57 E:\Download\gradle-8.5\caches\8.13\transforms\a181b8ec6a89eff2e03e08a6acd097db\transformed\emoji2-1.4.0\res
-com.example.musicapp-transition-1.2.0-58 E:\Download\gradle-8.5\caches\8.13\transforms\af2c17de82d5235a85d00c935a97a0d1\transformed\transition-1.2.0\res
-com.example.musicapp-annotation-experimental-1.4.1-59 E:\Download\gradle-8.5\caches\8.13\transforms\b2532a6ff8f942292279706318fee333\transformed\annotation-experimental-1.4.1\res
-com.example.musicapp-ui-graphics-release-60 E:\Download\gradle-8.5\caches\8.13\transforms\b5e3c92cf82000a560005b21e94b26c4\transformed\ui-graphics-release\res
-com.example.musicapp-savedstate-release-61 E:\Download\gradle-8.5\caches\8.13\transforms\be34b937a537863c8d3f3bb5d89c583d\transformed\savedstate-release\res
-com.example.musicapp-graphics-path-1.0.1-62 E:\Download\gradle-8.5\caches\8.13\transforms\cc3f9e0dc93ddb7ff6c46bc274c936ac\transformed\graphics-path-1.0.1\res
-com.example.musicapp-lifecycle-runtime-release-63 E:\Download\gradle-8.5\caches\8.13\transforms\ce09dffa7f9dc43330d56acc4a2ee1bc\transformed\lifecycle-runtime-release\res
-com.example.musicapp-savedstate-ktx-1.3.3-64 E:\Download\gradle-8.5\caches\8.13\transforms\d543092b2f789959ac7fd88c3acde815\transformed\savedstate-ktx-1.3.3\res
-com.example.musicapp-material-icons-core-release-65 E:\Download\gradle-8.5\caches\8.13\transforms\d70d643d45d16a352a7394623ad1e1f8\transformed\material-icons-core-release\res
-com.example.musicapp-lifecycle-livedata-core-2.9.4-66 E:\Download\gradle-8.5\caches\8.13\transforms\e112e2c13c213c6cf961fa51590ed69d\transformed\lifecycle-livedata-core-2.9.4\res
-com.example.musicapp-viewpager2-1.0.0-67 E:\Download\gradle-8.5\caches\8.13\transforms\e2aaaf21a73eac4c2f36f344cfda51cf\transformed\viewpager2-1.0.0\res
-com.example.musicapp-lifecycle-livedata-core-ktx-2.9.4-68 E:\Download\gradle-8.5\caches\8.13\transforms\e4264c019a0aa246b002e6e031917068\transformed\lifecycle-livedata-core-ktx-2.9.4\res
-com.example.musicapp-activity-ktx-1.12.2-69 E:\Download\gradle-8.5\caches\8.13\transforms\e45a28d6d713ada5ed41fb97d1e90170\transformed\activity-ktx-1.12.2\res
-com.example.musicapp-hilt-navigation-1.2.0-70 E:\Download\gradle-8.5\caches\8.13\transforms\ee403968af252ca2b0711435095d2119\transformed\hilt-navigation-1.2.0\res
-com.example.musicapp-navigation-runtime-2.5.1-71 E:\Download\gradle-8.5\caches\8.13\transforms\fa5e72b1f7a2008eb612d582c73a95ba\transformed\navigation-runtime-2.5.1\res
-com.example.musicapp-lifecycle-process-2.9.4-72 E:\Download\gradle-8.5\caches\8.13\transforms\fcf5a43542e8f7f644b216f3f243729b\transformed\lifecycle-process-2.9.4\res
-com.example.musicapp-appcompat-1.7.1-73 E:\Download\gradle-8.5\caches\8.13\transforms\fd1059556096f932c9182ed09bef752e\transformed\appcompat-1.7.1\res
+com.example.musicapp-room-ktx-2.6.1-0 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\075d465f62abfd35adf07a48de4003a3\transformed\room-ktx-2.6.1\res
+com.example.musicapp-navigation-compose-2.5.1-1 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\0991803b4de3563c3c37134ac1a7406b\transformed\navigation-compose-2.5.1\res
+com.example.musicapp-activity-compose-1.12.2-2 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\0ce4c1b7ef6cdefb79be28c221de0b79\transformed\activity-compose-1.12.2\res
+com.example.musicapp-navigation-runtime-ktx-2.5.1-3 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\14945c7e4485cd4459ed255cc48c375e\transformed\navigation-runtime-ktx-2.5.1\res
+com.example.musicapp-media3-session-1.3.1-4 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\194df738b22e61a2fcfaafaeda134da3\transformed\media3-session-1.3.1\res
+com.example.musicapp-lifecycle-viewmodel-release-5 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\1a762c5318aac4c26dbe1e255da8b19a\transformed\lifecycle-viewmodel-release\res
+com.example.musicapp-lifecycle-runtime-compose-release-6 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\1ab151297d833d0555c6197b6c6bd163\transformed\lifecycle-runtime-compose-release\res
+com.example.musicapp-lifecycle-viewmodel-savedstate-release-7 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\1bd5fbfce4d73f0927bac115d35b64e1\transformed\lifecycle-viewmodel-savedstate-release\res
+com.example.musicapp-coordinatorlayout-1.1.0-8 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\203bb213ec8e155432550ca299d4842a\transformed\coordinatorlayout-1.1.0\res
+com.example.musicapp-profileinstaller-1.4.0-9 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\2073b0740182bcf8d93eedc3b6f1d254\transformed\profileinstaller-1.4.0\res
+com.example.musicapp-drawerlayout-1.1.1-10 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\23095cb9f16826dab03ead6c96b864b3\transformed\drawerlayout-1.1.1\res
+com.example.musicapp-ui-release-11 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\24502f9bef8a3dc5ce95fce86b131321\transformed\ui-release\res
+com.example.musicapp-emoji2-views-helper-1.4.0-12 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\25858aded04160e7647570437559150a\transformed\emoji2-views-helper-1.4.0\res
+com.example.musicapp-navigation-common-ktx-2.5.1-13 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\2a9e648f7c9e5570608d57fbe8ece5e7\transformed\navigation-common-ktx-2.5.1\res
+com.example.musicapp-lifecycle-viewmodel-ktx-2.9.4-14 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\2b7143f28231a02d7dacbebaaa9a509a\transformed\lifecycle-viewmodel-ktx-2.9.4\res
+com.example.musicapp-lifecycle-viewmodel-compose-release-15 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\2bcb9dc9defcfba9c395526f81fd6acf\transformed\lifecycle-viewmodel-compose-release\res
+com.example.musicapp-core-1.17.0-16 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\348571f53b5675df22057f9a388ec337\transformed\core-1.17.0\res
+com.example.musicapp-material-1.11.0-17 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\34a7735e4f625e9f3ee29eb468cb0709\transformed\material-1.11.0\res
+com.example.musicapp-recyclerview-1.3.0-18 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\34d8bfd2d69d26bb70e8d275aa4c5da1\transformed\recyclerview-1.3.0\res
+com.example.musicapp-material-ripple-release-19 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\36d5b11297e86588b6259b70f0c1dddd\transformed\material-ripple-release\res
+com.example.musicapp-startup-runtime-1.1.1-20 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\40f61162541de01c240cd60855c5e8d6\transformed\startup-runtime-1.1.1\res
+com.example.musicapp-media3-ui-1.3.1-21 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\4bb3fcccfb41ed6f372eac0095933b01\transformed\media3-ui-1.3.1\res
+com.example.musicapp-room-runtime-2.6.1-22 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\4d4b1a0f3749058e74d1277b35f8caeb\transformed\room-runtime-2.6.1\res
+com.example.musicapp-core-splashscreen-1.0.1-23 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\4e26d11b841030c331e5a486255ea5a9\transformed\core-splashscreen-1.0.1\res
+com.example.musicapp-ui-test-manifest-1.9.2-24 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\50fd667a9573f726cab06ef7dc46371d\transformed\ui-test-manifest-1.9.2\res
+com.example.musicapp-core-viewtree-1.0.0-25 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\5452c9b66f43732bd6859952496d04a5\transformed\core-viewtree-1.0.0\res
+com.example.musicapp-datastore-preferences-release-26 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\582c4d3d5642ffdf4955266426d391cf\transformed\datastore-preferences-release\res
+com.example.musicapp-material3-release-27 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\59056d0aefeb7a474d8919132982a120\transformed\material3-release\res
+com.example.musicapp-cardview-1.0.0-28 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\5dbd4994b08075a518a7ee4f0c0ce36f\transformed\cardview-1.0.0\res
+com.example.musicapp-appcompat-resources-1.7.1-29 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\5dc77896a4dcf2d50c9d58340ad137fc\transformed\appcompat-resources-1.7.1\res
+com.example.musicapp-hilt-navigation-compose-1.2.0-30 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\5e79ffcb8fe1e276131ceec2de41b692\transformed\hilt-navigation-compose-1.2.0\res
+com.example.musicapp-media3-exoplayer-1.3.1-31 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\62a6fbc5e5c82195beeee8f2ebb443ac\transformed\media3-exoplayer-1.3.1\res
+com.example.musicapp-sqlite-2.4.0-32 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\661cd83eca7dbd12e3bb060d384b7c43\transformed\sqlite-2.4.0\res
+com.example.musicapp-lifecycle-livedata-2.9.4-33 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\693d38cf737250c327e7b876b7ea4651\transformed\lifecycle-livedata-2.9.4\res
+com.example.musicapp-core-ktx-1.17.0-34 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\700fcbfe4c47a1334d3d055b0e16f9fd\transformed\core-ktx-1.17.0\res
+com.example.musicapp-material-release-35 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\7255bddb08a8391c4cdf34e6e0c85176\transformed\material-release\res
+com.example.musicapp-customview-poolingcontainer-1.0.0-36 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\731fd30830fdfa4f35df9b79aeda12cb\transformed\customview-poolingcontainer-1.0.0\res
+com.example.musicapp-fragment-1.5.4-37 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\77a7fcd189c4b00dbfc7de2fcb8b5344\transformed\fragment-1.5.4\res
+com.example.musicapp-foundation-release-38 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\7c2fe1e03afa25b1c3fdb65b53127fe3\transformed\foundation-release\res
+com.example.musicapp-datastore-release-39 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\83054766c9a27daf4e8fb5ecefd11569\transformed\datastore-release\res
+com.example.musicapp-activity-1.12.2-40 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\897025c0257bac79e5c160798abf064a\transformed\activity-1.12.2\res
+com.example.musicapp-datastore-core-release-41 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\8f82a05d42b0813af7e8b73b2031ab3c\transformed\datastore-core-release\res
+com.example.musicapp-core-runtime-2.2.0-42 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\902e21531b33ada77457d8a1a7404a85\transformed\core-runtime-2.2.0\res
+com.example.musicapp-navigation-common-2.5.1-43 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\963846320b0912692c5ef7c9b816093b\transformed\navigation-common-2.5.1\res
+com.example.musicapp-tracing-1.2.0-44 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\977e4f487597deabda174907f35bee73\transformed\tracing-1.2.0\res
+com.example.musicapp-constraintlayout-2.2.1-45 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\9796c09509f4abca0dcdd29f7342a93d\transformed\constraintlayout-2.2.1\res
+com.example.musicapp-navigationevent-46 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\98d954a76d1d3a332aaaffa41fe1194d\transformed\navigationevent\res
+com.example.musicapp-media-1.7.0-47 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\9cdd5a22ee171f1e0f292b5c32788ba9\transformed\media-1.7.0\res
+com.example.musicapp-sqlite-framework-2.4.0-48 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\9f0e8654aaae17ac1690587a80c00ee8\transformed\sqlite-framework-2.4.0\res
+com.example.musicapp-emoji2-1.4.0-49 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\a181b8ec6a89eff2e03e08a6acd097db\transformed\emoji2-1.4.0\res
+com.example.musicapp-transition-1.2.0-50 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\af2c17de82d5235a85d00c935a97a0d1\transformed\transition-1.2.0\res
+com.example.musicapp-annotation-experimental-1.4.1-51 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\b2532a6ff8f942292279706318fee333\transformed\annotation-experimental-1.4.1\res
+com.example.musicapp-ui-graphics-release-52 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\b5e3c92cf82000a560005b21e94b26c4\transformed\ui-graphics-release\res
+com.example.musicapp-savedstate-release-53 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\be34b937a537863c8d3f3bb5d89c583d\transformed\savedstate-release\res
+com.example.musicapp-graphics-path-1.0.1-54 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\cc3f9e0dc93ddb7ff6c46bc274c936ac\transformed\graphics-path-1.0.1\res
+com.example.musicapp-lifecycle-runtime-release-55 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\ce09dffa7f9dc43330d56acc4a2ee1bc\transformed\lifecycle-runtime-release\res
+com.example.musicapp-savedstate-ktx-1.3.3-56 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\d543092b2f789959ac7fd88c3acde815\transformed\savedstate-ktx-1.3.3\res
+com.example.musicapp-material-icons-core-release-57 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\d70d643d45d16a352a7394623ad1e1f8\transformed\material-icons-core-release\res
+com.example.musicapp-lifecycle-livedata-core-2.9.4-58 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\e112e2c13c213c6cf961fa51590ed69d\transformed\lifecycle-livedata-core-2.9.4\res
+com.example.musicapp-viewpager2-1.0.0-59 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\e2aaaf21a73eac4c2f36f344cfda51cf\transformed\viewpager2-1.0.0\res
+com.example.musicapp-lifecycle-livedata-core-ktx-2.9.4-60 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\e4264c019a0aa246b002e6e031917068\transformed\lifecycle-livedata-core-ktx-2.9.4\res
+com.example.musicapp-activity-ktx-1.12.2-61 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\e45a28d6d713ada5ed41fb97d1e90170\transformed\activity-ktx-1.12.2\res
+com.example.musicapp-hilt-navigation-1.2.0-62 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\ee403968af252ca2b0711435095d2119\transformed\hilt-navigation-1.2.0\res
+com.example.musicapp-navigation-runtime-2.5.1-63 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\fa5e72b1f7a2008eb612d582c73a95ba\transformed\navigation-runtime-2.5.1\res
+com.example.musicapp-lifecycle-process-2.9.4-64 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\fcf5a43542e8f7f644b216f3f243729b\transformed\lifecycle-process-2.9.4\res
+com.example.musicapp-appcompat-1.7.1-65 C:\Users\Chau Quynh\.gradle\caches\8.13\transforms\fd1059556096f932c9182ed09bef752e\transformed\appcompat-1.7.1\res
+com.example.musicapp-pngs-66 C:\VinhPhong\MusicAppWebAPI\MusicRelaxApp\app\build\generated\res\pngs\debug
+com.example.musicapp-resValues-67 C:\VinhPhong\MusicAppWebAPI\MusicRelaxApp\app\build\generated\res\resValues\debug
+com.example.musicapp-updated_navigation_xml-68 C:\VinhPhong\MusicAppWebAPI\MusicRelaxApp\app\build\generated\updated_navigation_xml\debug
+com.example.musicapp-packageDebugResources-69 C:\VinhPhong\MusicAppWebAPI\MusicRelaxApp\app\build\intermediates\incremental\debug\packageDebugResources\merged.dir
+com.example.musicapp-packageDebugResources-70 C:\VinhPhong\MusicAppWebAPI\MusicRelaxApp\app\build\intermediates\incremental\debug\packageDebugResources\stripped.dir
+com.example.musicapp-debug-71 C:\VinhPhong\MusicAppWebAPI\MusicRelaxApp\app\build\intermediates\merged_res\debug\mergeDebugResources
+com.example.musicapp-debug-72 C:\VinhPhong\MusicAppWebAPI\MusicRelaxApp\app\src\debug\res
+com.example.musicapp-main-73 C:\VinhPhong\MusicAppWebAPI\MusicRelaxApp\app\src\main\res

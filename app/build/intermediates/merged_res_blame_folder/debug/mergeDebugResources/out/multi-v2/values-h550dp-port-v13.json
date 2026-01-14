@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.musicapp-mergeDebugResources-2:/values-h550dp-port-v13/values-h550dp-port-v13.xml",
+            "outputFile": "com.example.musicapp-mergeDebugResources-68:/values-h550dp-port-v13/values-h550dp-port-v13.xml",
             "map": [
                 {
-                    "source": "E:\\Download\\gradle-8.5\\caches\\8.13\\transforms\\34a7735e4f625e9f3ee29eb468cb0709\\transformed\\material-1.11.0\\res\\values-h550dp-port-v13\\values-h550dp-port-v13.xml",
+                    "source": "C:\\Users\\Chau Quynh\\.gradle\\caches\\8.13\\transforms\\34a7735e4f625e9f3ee29eb468cb0709\\transformed\\material-1.11.0\\res\\values-h550dp-port-v13\\values-h550dp-port-v13.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

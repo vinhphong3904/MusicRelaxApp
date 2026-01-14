@@ -57,7 +57,7 @@ interface ApiService {
     ): SongsResponse
 
     @GET("api/songs/{id}")
-    suspend fun getSongById(
+    suspend fun getSongDetail(
         @Path("id") id: Int
     ): SongDetailResponse
 

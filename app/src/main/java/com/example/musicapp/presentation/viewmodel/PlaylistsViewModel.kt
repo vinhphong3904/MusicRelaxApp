@@ -2,7 +2,7 @@ package com.example.musicapp.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.musicapp.domain.model.Artist
+import com.example.musicapp.data.model.dto.CreatePlaylistRequest
 import com.example.musicapp.domain.usecase.GetPlaylistsUseCase
 import com.example.musicapp.domain.usecase.CreatePlaylistUseCase
 import com.example.musicapp.domain.usecase.GetPlaylistDetailUseCase

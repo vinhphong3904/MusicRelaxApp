@@ -1,8 +1,8 @@
 package com.example.musicapp.domain.usecase
 
+import com.example.musicapp.data.model.dto.CreatePlaylistRequest
 import com.example.musicapp.data.repository.PlaylistRepositoryInterface
-import com.example.musicapp.domain.model.*
-import com.example.musicapp.domain.model.Playlist
+
 
 class GetPlaylistsUseCase(private val repo: PlaylistRepositoryInterface) {
     suspend operator fun invoke(token: String) = repo.getPlaylists(token)

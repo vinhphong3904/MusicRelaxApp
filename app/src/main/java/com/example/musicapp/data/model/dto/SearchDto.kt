@@ -10,13 +10,3 @@ data class SearchData(
     val albums: List<AlbumDto>,
     val songs: List<SongDto>
 )
-
-data class ArtistDto(
-    val id: Int,
-    val name: String,
-    val bio: String?,
-    val image_url: String?,
-    val is_verified: Boolean,
-    val slug: String,
-    val created_at: String
-)

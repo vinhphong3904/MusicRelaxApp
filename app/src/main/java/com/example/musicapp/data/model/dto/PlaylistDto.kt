@@ -48,8 +48,3 @@ data class CreatePlaylistResponse(
     val success: Boolean,
     val data: PlaylistDto
 )
-
-data class SimpleResponse(
-    val success: Boolean,
-    val message: String
-)

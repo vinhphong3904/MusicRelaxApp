@@ -1,8 +1,7 @@
 package com.example.musicapp.di;
 
-import com.example.musicapp.core.datastore.UserDataStore;
-import com.example.musicapp.core.network.ApiService;
-import com.example.musicapp.domain.repository.AuthRepository;
+import com.example.musicapp.data.remote.AuthRemoteDataSource;
+import com.example.musicapp.data.repository.AuthRepositoryInterface;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.Factory;
 import dagger.internal.Preconditions;
@@ -26,28 +25,24 @@ import javax.inject.Provider;
     "cast",
     "deprecation"
 })
-public final class AppModule_ProvideAuthRepositoryFactory implements Factory<AuthRepository> {
-  private final Provider<ApiService> apiProvider;
+public final class AppModule_ProvideAuthRepositoryFactory implements Factory<AuthRepositoryInterface> {
+  private final Provider<AuthRemoteDataSource> remoteProvider;
 
-  private final Provider<UserDataStore> storeProvider;
-
-  public AppModule_ProvideAuthRepositoryFactory(Provider<ApiService> apiProvider,
-      Provider<UserDataStore> storeProvider) {
-    this.apiProvider = apiProvider;
-    this.storeProvider = storeProvider;
+  public AppModule_ProvideAuthRepositoryFactory(Provider<AuthRemoteDataSource> remoteProvider) {
+    this.remoteProvider = remoteProvider;
   }
 
   @Override
-  public AuthRepository get() {
-    return provideAuthRepository(apiProvider.get(), storeProvider.get());
+  public AuthRepositoryInterface get() {
+    return provideAuthRepository(remoteProvider.get());
   }
 
-  public static AppModule_ProvideAuthRepositoryFactory create(Provider<ApiService> apiProvider,
-      Provider<UserDataStore> storeProvider) {
-    return new AppModule_ProvideAuthRepositoryFactory(apiProvider, storeProvider);
+  public static AppModule_ProvideAuthRepositoryFactory create(
+      Provider<AuthRemoteDataSource> remoteProvider) {
+    return new AppModule_ProvideAuthRepositoryFactory(remoteProvider);
   }
 
-  public static AuthRepository provideAuthRepository(ApiService api, UserDataStore store) {
-    return Preconditions.checkNotNullFromProvides(AppModule.INSTANCE.provideAuthRepository(api, store));
+  public static AuthRepositoryInterface provideAuthRepository(AuthRemoteDataSource remote) {
+    return Preconditions.checkNotNullFromProvides(AppModule.INSTANCE.provideAuthRepository(remote));
   }
 }

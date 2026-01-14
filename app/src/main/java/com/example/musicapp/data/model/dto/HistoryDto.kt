@@ -22,8 +22,3 @@ data class AddHistoryRequest(
     val songId: Int,
     val duration_played: Int
 )
-
-data class SimpleResponse(
-    val success: Boolean,
-    val message: String? = null
-)

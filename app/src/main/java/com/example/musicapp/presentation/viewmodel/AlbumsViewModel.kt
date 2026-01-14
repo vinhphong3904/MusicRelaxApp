@@ -1,4 +1,4 @@
-package com.example.musicapp.presentation.albums
+package com.example.musicapp.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

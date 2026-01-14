@@ -2,6 +2,7 @@ package com.example.musicapp.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.musicapp.data.model.dto.AddHistoryRequest
 import com.example.musicapp.domain.usecase.*
 import com.example.musicapp.data.model.dto.HistoryDto
 import dagger.hilt.android.lifecycle.HiltViewModel
