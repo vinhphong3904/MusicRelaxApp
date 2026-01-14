@@ -20,7 +20,14 @@ import com.example.musicapp.presentation.player.PlayerScreen
 fun NavGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    startDestination: String = Screen.Home.route
+    startDestination: String = Screen.Home.route,
+    currentPlayingSong: Triple<String, String, Int>?,
+    isPlaying: Boolean,
+    progress: Float,
+    onSongSelect: (Triple<String, String, Int>) -> Unit,
+    onPlayPauseChange: (Boolean) -> Unit,
+    onProgressChange: (Float) -> Unit,
+    onNextPrev: (Int) -> Unit
 ) {
     NavHost(
         navController = navController,
@@ -28,10 +35,22 @@ fun NavGraph(
         modifier = modifier
     ) {
         composable(route = Screen.Home.route) {
-            HomeScreen(navController = navController)
+            HomeScreen(
+                navController = navController,
+                onSongSelect = { song: Triple<String, String, Int> ->
+                    onSongSelect(song)
+                    navController.navigate(Screen.Player.route)
+                }
+            )
         }
         composable(route = Screen.Search.route) {
-            SearchScreen(navController = navController)
+            SearchScreen(
+                navController = navController,
+                onSongSelect = { song: Triple<String, String, Int> ->
+                    onSongSelect(song)
+                    navController.navigate(Screen.Player.route)
+                }
+            )
         }
         composable(route = Screen.Library.route) {
             LibraryScreen(navController = navController)
@@ -48,9 +67,16 @@ fun NavGraph(
         composable(route = Screen.Register.route) {
             RegisterScreen(navController = navController)
         }
-        // Đã thêm màn hình Player vào NavGraph
         composable(route = Screen.Player.route) {
-            PlayerScreen(navController = navController)
+            PlayerScreen(
+                navController = navController,
+                currentPlayingSong = currentPlayingSong,
+                isPlaying = isPlaying,
+                progress = progress,
+                onPlayPauseChange = onPlayPauseChange,
+                onProgressChange = onProgressChange,
+                onNextPrev = onNextPrev
+            )
         }
         composable(route = "history") {
             HistoryScreen(navController = navController)

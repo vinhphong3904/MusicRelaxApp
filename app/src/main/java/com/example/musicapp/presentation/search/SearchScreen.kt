@@ -1,15 +1,16 @@
 package com.example.musicapp.presentation.search
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -18,133 +19,157 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.musicapp.presentation.home.MusicBottomNavigation
-import com.example.musicapp.presentation.navigation.Screen
+import com.example.musicapp.R
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(navController: NavHostController) {
+fun SearchScreen(
+    navController: NavHostController,
+    onSongSelect: (Triple<String, String, Int>) -> Unit
+) {
     var searchText by remember { mutableStateOf("") }
     
-    val allSongs = listOf(
-        "3107 - 2", "3107 - 3", "Dù Cho Mai Về Sau", "Liệu Giờ", "Đường Tôi Chở Em Về",
-        "Sơn Tùng M-TP", "Jack - J97", "SOOBIN", "HIEUTHUHAI", "MONO"
+    val playlist = listOf(
+        Triple("Đừng Làm Trái Tim Anh Đau", "Sơn Tùng M-TP", R.drawable.icon),
+        Triple("Chúng Ta Của Tương Lai", "Sơn Tùng M-TP", R.drawable.tieude),
+        Triple("Thiên Lý Ơi", "Jack - J97", R.drawable.nen),
+        Triple("Giá Như", "SOOBIN", R.drawable.tieude),
+        Triple("Exit Sign", "HIEUTHUHAI", R.drawable.icon),
+        Triple("Em Xinh", "MONO", R.drawable.nen),
+        Triple("Lệ Lưu Ly", "Vũ Phụng Tiên", R.drawable.tieude),
+        Triple("Cắt Đôi Nỗi Sầu", "Tăng Duy Tân", R.drawable.icon),
+        Triple("Ngày Mai Người Ta Lấy Chồng", "Anh Tú", R.drawable.nen),
+        Triple("Mưa Tháng Sáu", "Văn Mai Hương", R.drawable.tieude)
     )
     
     val filteredSongs = remember(searchText) {
         if (searchText.isBlank()) emptyList()
-        else allSongs.filter { it.contains(searchText, ignoreCase = true) }
+        else playlist.filter { it.first.contains(searchText, ignoreCase = true) || it.second.contains(searchText, ignoreCase = true) }
     }
 
-    Scaffold(
-        containerColor = Color.Black,
-        bottomBar = { MusicBottomNavigation(navController) }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = 16.dp)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black)
+            .statusBarsPadding()
+            .padding(horizontal = 16.dp)
+            .padding(top = 12.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFFFF8A80)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("K", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                }
+                Spacer(modifier = Modifier.width(12.dp))
+                Text("Tìm kiếm", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            }
+            Icon(Icons.Default.Settings, contentDescription = null, tint = Color.White)
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
+                .clip(RoundedCornerShape(4.dp)),
+            color = Color.White
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(horizontal = 12.dp)
+            ) {
+                Icon(Icons.Default.Search, contentDescription = null, tint = Color.Black)
+                Spacer(modifier = Modifier.width(12.dp))
+                BasicTextField(
+                    value = searchText,
+                    onValueChange = { searchText = it },
+                    modifier = Modifier.weight(1f),
+                    textStyle = TextStyle(color = Color.Black, fontSize = 16.sp),
+                    decorationBox = { innerTextField ->
+                        if (searchText.isEmpty()) {
+                            Text("Bạn muốn nghe gì?", color = Color.DarkGray)
+                        }
+                        innerTextField()
+                    }
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        if (searchText.isEmpty()) {
+            Text(
+                "Duyệt tìm tất cả", 
+                color = Color.White, 
+                fontWeight = FontWeight.Bold, 
+                fontSize = 18.sp
+            )
             Spacer(modifier = Modifier.height(16.dp))
             
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(
-                        modifier = Modifier
-                            .size(32.dp)
-                            .clip(CircleShape)
-                            .background(Color(0xFFFF8A80)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("K", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                    }
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text("Tìm kiếm", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                }
-                Icon(Icons.Default.Settings, contentDescription = null, tint = Color.White)
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            TextField(
-                value = searchText,
-                onValueChange = { searchText = it },
-                placeholder = { Text("Bạn muốn nghe gì?", color = Color.DarkGray) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-                    .clip(RoundedCornerShape(4.dp)),
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Color.Black) },
-                trailingIcon = {
-                    if (searchText.isNotEmpty()) {
-                        IconButton(onClick = { searchText = "" }) {
-                            Icon(Icons.Default.Close, contentDescription = null, tint = Color.Black)
-                        }
-                    }
-                },
-                colors = TextFieldDefaults.colors(
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black,
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
-                )
+            val categories = listOf(
+                CategoryData("Bản phát hành sắp ra mắt", Color(0xFF0D725B)),
+                CategoryData("Mới phát hành", Color(0xFF778F13)),
+                CategoryData("Nhạc Việt", Color(0xFF477D95)),
+                CategoryData("Pop", Color(0xFF477D95)),
+                CategoryData("K-Pop", Color(0xFFE91E63)),
+                CategoryData("Hip-Hop", Color(0xFFE8115B)),
+                CategoryData("Bảng xếp hạng", Color(0xFF8D67AB)),
+                CategoryData("Bảng xếp hạng Podcast", Color(0xFF006450)),
+                CategoryData("Sự phạm", Color(0xFFAF2896)),
+                CategoryData("Tài liệu", Color(0xFF503750)),
+                CategoryData("Hài kịch", Color(0xFFAF2896)),
+                CategoryData("Khám phá", Color(0xFF8D67AB)),
+                CategoryData("Radio", Color(0xFFEB1E32)),
+                CategoryData("Fresh Finds", Color(0xFFFF00FF)),
+                CategoryData("EQUAL", Color(0xFF05691B)),
+                CategoryData("GLOW", Color(0xFF1E3264)),
+                CategoryData("RADAR", Color(0xFF7D4B32)),
+                CategoryData("Karaoke", Color(0xFF1E3264)),
+                CategoryData("Tâm trạng", Color(0xFFE1118C)),
+                CategoryData("Rock", Color(0xFFE91E63)),
+                CategoryData("La-tinh", Color(0xFFE1118C)),
+                CategoryData("Dance/Điện tử", Color(0xFF477D95)),
+                CategoryData("Indie", Color(0xFFE91E63)),
+                CategoryData("Tập luyện", Color(0xFF777777)),
+                CategoryData("Đồng quê", Color(0xFFD84000)),
+                CategoryData("R&B", Color(0xFFD84000)),
+                CategoryData("Thư giãn", Color(0xFF7D4B32)),
+                CategoryData("Ngủ ngon", Color(0xFF1E3264)),
+                CategoryData("Tiệc tùng", Color(0xFFAF2896)),
+                CategoryData("Ở nhà", Color(0xFF477D95))
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Đã bọc AnimatedVisibility vào Column để fix lỗi Scope
-            Column(modifier = Modifier.fillMaxSize()) {
-                AnimatedVisibility(
-                    visible = searchText.isNotEmpty(),
-                    enter = fadeIn(),
-                    exit = fadeOut()
-                ) {
-                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                        items(filteredSongs) { song ->
-                            SearchSuggestionItem(song) {
-                                navController.navigate(Screen.Player.route)
-                            }
-                        }
-                        if (filteredSongs.isEmpty() && searchText.isNotEmpty()) {
-                            item {
-                                Text(
-                                    "Không tìm thấy kết quả cho \"$searchText\"",
-                                    color = Color.Gray,
-                                    modifier = Modifier.padding(16.dp)
-                                )
-                            }
-                        }
-                    }
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(bottom = 16.dp)
+            ) {
+                items(categories) { category ->
+                    CategoryCard(category.title, category.color)
                 }
-
-                AnimatedVisibility(
-                    visible = searchText.isEmpty(),
-                    enter = fadeIn(),
-                    exit = fadeOut()
-                ) {
-                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                        item {
-                            Text("Khám phá nội dung mới mẻ", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                            Spacer(modifier = Modifier.height(16.dp))
-                            ExploreRow()
-                            Spacer(modifier = Modifier.height(24.dp))
-                            Text("Duyệt tìm tất cả", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                            Spacer(modifier = Modifier.height(16.dp))
-                        }
-                        item {
-                            CategoryGrid()
-                        }
+            }
+        } else {
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(filteredSongs) { song ->
+                    SearchSuggestionItem(song.first, song.second) {
+                        onSongSelect(song)
                     }
                 }
             }
@@ -152,8 +177,30 @@ fun SearchScreen(navController: NavHostController) {
     }
 }
 
+data class CategoryData(val title: String, val color: Color)
+
 @Composable
-fun SearchSuggestionItem(text: String, onClick: () -> Unit) {
+fun CategoryCard(title: String, color: Color) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(100.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(color)
+            .padding(12.dp)
+    ) {
+        Text(
+            text = title,
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
+            fontSize = 14.sp,
+            modifier = Modifier.align(Alignment.TopStart).fillMaxWidth(0.7f)
+        )
+    }
+}
+
+@Composable
+fun SearchSuggestionItem(title: String, artist: String, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -162,88 +209,18 @@ fun SearchSuggestionItem(text: String, onClick: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
-            modifier = Modifier.size(48.dp).clip(RoundedCornerShape(4.dp)).background(Color.DarkGray),
+            modifier = Modifier
+                .size(48.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .background(Color.DarkGray),
             contentAlignment = Alignment.Center
         ) {
-            // Đã thay MusicNote bằng PlayArrow để tránh lỗi Unresolved reference
             Icon(Icons.Default.PlayArrow, contentDescription = null, tint = Color.Gray)
         }
         Spacer(modifier = Modifier.width(16.dp))
-        Text(text, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Medium)
-    }
-}
-
-@Composable
-fun ExploreRow() {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        ExploreItem("#v-pop", Color(0xFF3F51B5))
-        ExploreItem("#indie việt", Color(0xFF4CAF50))
-        ExploreItem("#delulu", Color(0xFFE91E63))
-    }
-}
-
-@Composable
-fun ExploreItem(tag: String, bgColor: Color) {
-    Box(
-        modifier = Modifier
-            .width(110.dp)
-            .height(160.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .background(bgColor)
-    ) {
-        Text(
-            tag,
-            color = Color.White,
-            modifier = Modifier.align(Alignment.BottomStart).padding(8.dp),
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Bold
-        )
-    }
-}
-
-@Composable
-fun CategoryGrid() {
-    val categories = listOf(
-        Pair("Nhạc", Color(0xFFE91E63)),
-        Pair("Podcasts", Color(0xFF009688)),
-        Pair("Sự kiện trực tiếp", Color(0xFF673AB7)),
-        Pair("Mới phát hành", Color(0xFF827717)),
-        Pair("Nhạc Việt", Color(0xFF37474F)),
-        Pair("Pop", Color(0xFF455A64))
-    )
-
-    Column {
-        for (i in categories.indices step 2) {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                CategoryCard(categories[i].first, categories[i].second, Modifier.weight(1f))
-                if (i + 1 < categories.size) {
-                    CategoryCard(categories[i+1].first, categories[i+1].second, Modifier.weight(1f))
-                }
-            }
+        Column {
+            Text(title, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Medium)
+            Text(artist, color = Color.Gray, fontSize = 14.sp)
         }
-    }
-}
-
-@Composable
-fun CategoryCard(title: String, color: Color, modifier: Modifier) {
-    Box(
-        modifier = modifier
-            .height(100.dp)
-            .clip(RoundedCornerShape(4.dp))
-            .background(color)
-            .padding(12.dp)
-    ) {
-        Text(
-            title,
-            color = Color.White,
-            fontWeight = FontWeight.Bold,
-            fontSize = 14.sp
-        )
     }
 }

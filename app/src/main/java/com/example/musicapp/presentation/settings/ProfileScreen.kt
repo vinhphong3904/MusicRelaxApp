@@ -1,5 +1,6 @@
 package com.example.musicapp.presentation.settings
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,7 +19,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.musicapp.presentation.home.MusicBottomNavigation
 import com.example.musicapp.presentation.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,8 +33,8 @@ fun ProfileScreen(navController: NavHostController) {
     var tempName by remember { mutableStateOf(userName) }
 
     Scaffold(
-        containerColor = Color.Black,
-        bottomBar = { MusicBottomNavigation(navController) }
+        containerColor = Color.Black
+        // Đã xóa MusicBottomNavigation vì đã được quản lý tập trung ở MainActivity
     ) { padding ->
         LazyColumn(
             modifier = Modifier
@@ -61,19 +61,40 @@ fun ProfileScreen(navController: NavHostController) {
                             Icon(Icons.Default.Person, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(40.dp))
                         }
                         Spacer(modifier = Modifier.height(16.dp))
-                        Text("Bạn chưa đăng nhập", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        Text("Bạn chưa đăng nhập", color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold)
                         Text("Đăng nhập để trải nghiệm đầy đủ tính năng", color = Color.Gray, fontSize = 14.sp)
-                        Spacer(modifier = Modifier.height(24.dp))
+                        
+                        Spacer(modifier = Modifier.height(32.dp))
+                        
+                        // Nút Đăng nhập (Màu xanh nổi bật)
                         Button(
                             onClick = { 
-                                // Nhấn đăng nhập chuyển qua màn hình Login
                                 navController.navigate(Screen.Login.route)
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1DB954)),
                             shape = RoundedCornerShape(20.dp),
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth().height(48.dp)
                         ) {
-                            Text("Đăng nhập", color = Color.Black, fontWeight = FontWeight.Bold)
+                            Text("Đăng nhập", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        }
+                        
+                        Spacer(modifier = Modifier.height(12.dp))
+                        
+                        // Nút Vào Home (Khám phá ngay - Style hiện đại)
+                        OutlinedButton(
+                            onClick = { 
+                                navController.navigate(Screen.Home.route)
+                            },
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
+                            border = BorderStroke(1.dp, Color.White.copy(alpha = 0.5f)),
+                            shape = RoundedCornerShape(20.dp),
+                            modifier = Modifier.fillMaxWidth().height(48.dp)
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.PlayArrow, contentDescription = null, modifier = Modifier.size(18.dp))
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("Khám phá ngay", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                            }
                         }
                     }
                 } else {
@@ -108,7 +129,6 @@ fun ProfileScreen(navController: NavHostController) {
             // Menu Options
             item {
                 ProfileMenuItem("Thêm tài khoản", Icons.Default.Add) {
-                    // Nhấn thêm tài khoản chuyển qua màn hình Đăng ký
                     navController.navigate(Screen.Register.route)
                 }
                 ProfileMenuItem("Có gì mới", Icons.Default.Info) {}

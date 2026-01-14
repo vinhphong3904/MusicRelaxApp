@@ -28,12 +28,12 @@
         "source": "E:\\Download\\gradle-8.5\\daemon\\8.13\\com.example.musicapp-main-6:\\mipmap-xxhdpi\\ic_launcher_round.webp"
     },
     {
-        "merged": "com.example.musicapp-debug-4:/drawable_splash_background.xml.flat",
-        "source": "com.example.musicapp-main-6:/drawable/splash_background.xml"
-    },
-    {
         "merged": "E:\\Download\\gradle-8.5\\daemon\\8.13\\com.example.musicapp-debug-4:\\mipmap-hdpi_ic_launcher_round.webp.flat",
         "source": "E:\\Download\\gradle-8.5\\daemon\\8.13\\com.example.musicapp-main-6:\\mipmap-hdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.example.musicapp-debug-4:/layout_activity_splash.xml.flat",
+        "source": "com.example.musicapp-main-6:/layout/activity_splash.xml"
     },
     {
         "merged": "E:\\Download\\gradle-8.5\\daemon\\8.13\\com.example.musicapp-debug-4:\\drawable_splash_background.xml.flat",
@@ -74,10 +74,6 @@
     {
         "merged": "E:\\Download\\gradle-8.5\\daemon\\8.13\\com.example.musicapp-debug-4:\\mipmap-mdpi_ic_launcher_round.webp.flat",
         "source": "E:\\Download\\gradle-8.5\\daemon\\8.13\\com.example.musicapp-main-6:\\mipmap-mdpi\\ic_launcher_round.webp"
-    },
-    {
-        "merged": "E:\\Download\\gradle-8.5\\daemon\\8.13\\com.example.musicapp-debug-4:\\drawable_splash_logo.xml.flat",
-        "source": "E:\\Download\\gradle-8.5\\daemon\\8.13\\com.example.musicapp-main-6:\\drawable\\splash_logo.xml"
     },
     {
         "merged": "E:\\Download\\gradle-8.5\\daemon\\8.13\\com.example.musicapp-debug-4:\\layout_activity_splash.xml.flat",

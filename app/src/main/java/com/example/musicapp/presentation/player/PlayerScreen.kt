@@ -1,5 +1,6 @@
 package com.example.musicapp.presentation.player
 
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,6 +20,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -28,32 +30,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.musicapp.R
-import kotlinx.coroutines.delay
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlayerScreen(navController: NavController) {
-    val playlist = listOf(
-        Triple("Nơi Này Có Anh", "Sơn Tùng M-TP", R.drawable.tieude),
-        Triple("Đừng Làm Trái Tim Anh Đau", "Sơn Tùng M-TP", R.drawable.icon),
-        Triple("Thiên Lý Ơi", "Jack - J97", R.drawable.nen)
-    )
-    
-    var currentSongIndex by remember { mutableIntStateOf(0) }
-    val song = playlist[currentSongIndex]
-    
-    val pagerState = rememberPagerState(pageCount = { 2 })
-    var isPlaying by remember { mutableStateOf(false) }
-    var progress by remember { mutableFloatStateOf(0.15f) }
-
-    LaunchedEffect(isPlaying) {
-        while (isPlaying) {
-            delay(1000)
-            if (progress < 1f) progress += 0.01f else isPlaying = false
-        }
+fun PlayerScreen(
+    navController: NavController,
+    currentPlayingSong: Triple<String, String, Int>?,
+    isPlaying: Boolean,
+    progress: Float,
+    onPlayPauseChange: (Boolean) -> Unit,
+    onProgressChange: (Float) -> Unit,
+    onNextPrev: (Int) -> Unit
+) {
+    if (currentPlayingSong == null) {
+        navController.popBackStack()
+        return
     }
 
+    val pagerState = rememberPagerState(pageCount = { 2 })
     val backgroundBrush = Brush.verticalGradient(
         colors = listOf(Color(0xFF5D2525), Color(0xFF121212))
     )
@@ -66,7 +61,7 @@ fun PlayerScreen(navController: NavController) {
                 title = {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(text = if (pagerState.currentPage == 0) "ĐANG PHÁT" else "LỜI BÀI HÁT", color = Color.Gray, fontSize = 10.sp, fontWeight = FontWeight.Bold)
-                        Text(song.first, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                        Text(currentPlayingSong.first, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                     }
                 },
                 navigationIcon = {
@@ -87,23 +82,18 @@ fun PlayerScreen(navController: NavController) {
         ) { page ->
             if (page == 0) {
                 MainPlayerPage(
-                    songTitle = song.first,
-                    artistName = song.second,
-                    imageRes = song.third,
+                    songTitle = currentPlayingSong.first,
+                    artistName = currentPlayingSong.second,
+                    imageRes = currentPlayingSong.third,
                     isPlaying = isPlaying,
                     progress = progress,
-                    onPlayPauseClick = { isPlaying = !isPlaying },
-                    onPrevClick = {
-                        currentSongIndex = (currentSongIndex - 1 + playlist.size) % playlist.size
-                        progress = 0f
-                    },
-                    onNextClick = {
-                        currentSongIndex = (currentSongIndex + 1) % playlist.size
-                        progress = 0f
-                    }
+                    onPlayPauseClick = { onPlayPauseChange(!isPlaying) },
+                    onPrevClick = { onNextPrev(-1) },
+                    onNextClick = { onNextPrev(1) },
+                    onProgressChange = onProgressChange
                 )
             } else {
-                LyricsPage(song.first)
+                LyricsPage(currentPlayingSong.first)
             }
         }
     }
@@ -118,20 +108,49 @@ fun MainPlayerPage(
     progress: Float,
     onPlayPauseClick: () -> Unit,
     onPrevClick: () -> Unit,
-    onNextClick: () -> Unit
+    onNextClick: () -> Unit,
+    onProgressChange: (Float) -> Unit
 ) {
+    val infiniteTransition = rememberInfiniteTransition(label = "Disk Rotation")
+    val rotation by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 15000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "Disk Rotation"
+    )
+
     Column(
         modifier = Modifier.fillMaxSize().padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(20.dp))
 
-        Image(
-            painter = painterResource(id = imageRes),
-            contentDescription = null,
-            modifier = Modifier.fillMaxWidth().aspectRatio(1f).clip(RoundedCornerShape(12.dp)),
-            contentScale = ContentScale.Crop
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(id = imageRes),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .rotate(if (isPlaying) rotation else 0f)
+                    .clip(CircleShape)
+                    .background(Color.Black),
+                contentScale = ContentScale.Crop
+            )
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFF121212))
+            )
+        }
 
         Spacer(modifier = Modifier.height(48.dp))
 
@@ -147,7 +166,7 @@ fun MainPlayerPage(
 
         Slider(
             value = progress,
-            onValueChange = {},
+            onValueChange = onProgressChange,
             colors = SliderDefaults.colors(thumbColor = Color.White, activeTrackColor = Color.White, inactiveTrackColor = Color.Gray.copy(alpha = 0.3f))
         )
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -170,7 +189,7 @@ fun MainPlayerPage(
                 modifier = Modifier.size(64.dp).clip(CircleShape).background(Color.White).clickable { onPlayPauseClick() },
                 contentAlignment = Alignment.Center
             ) {
-                // Đổi Pause icon thủ công sang biểu tượng tương đương
+                // Đã sửa: Thay Icons.Default.Pause (lỗi) bằng Icons.Default.Close
                 Icon(
                     imageVector = if (isPlaying) Icons.Default.Close else Icons.Default.PlayArrow,
                     contentDescription = null,

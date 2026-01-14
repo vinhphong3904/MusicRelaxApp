@@ -1,107 +1,114 @@
-//package com.example.musicapp.presentation.components
-//
-//import androidx.compose.foundation.clickable
-//import androidx.compose.foundation.layout.*
-//import androidx.compose.material.icons.Icons
-//import androidx.compose.material.icons.filled.PlayArrow
-//import androidx.compose.material3.*
-//import androidx.compose.runtime.Composable
-//import androidx.compose.runtime.getValue
-//import androidx.compose.ui.Alignment
-//import androidx.compose.ui.Modifier
-//import androidx.compose.ui.layout.ContentScale
-//import androidx.compose.ui.text.style.TextOverflow
-//import androidx.compose.ui.unit.dp
-//import androidx.hilt.navigation.compose.hiltViewModel
-//import androidx.lifecycle.compose.collectAsStateWithLifecycle
-//
-///**
-// * Mini Player bar ở bottom navigation
-// * Hiển thị khi có bài hát đang phát
-// *
-// * Features:
-// * - Show current song info
-// * - Play/Pause button
-// * - Click → expand to full player
-// *
-// * @param onExpand: Callback navigate to PlayerScreen
-// * @param viewModel: Shared PlayerViewModel
-// */
-//@Composable
-//fun MiniPlayer(
-//    onExpand: () -> Unit,
-//    viewModel: PlayerViewModel = hiltViewModel()
-//) {
-//    /**
-//     * Observe player state
-//     */
-//    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-//
-//    /**
-//     * Chỉ hiện khi có song đang phát
-//     */
-//    if (uiState.currentSong == null) return
-//
-//    Card(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .height(72.dp)
-//            .clickable(onClick = onExpand),
-//        elevation = CardDefaults.cardElevation(8.dp)
-//    ) {
-//        Row(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(8.dp),
-//            verticalAlignment = Alignment.CenterVertically
-//        ) {
-//            /**
-//             * Cover Image (nhỏ - 56x56)
-//             */
-//            AsyncImage(
-//                model = uiState.currentSong?.coverUrl ?: "",
-//                contentDescription = "Song cover",
-//                modifier = Modifier.size(56.dp),
-//                contentScale = ContentScale.Crop
-//            )
-//
-//            Spacer(modifier = Modifier.width(12.dp))
-//
-//            /**
-//             * Song Info
-//             */
-//            Column(
-//                modifier = Modifier.weight(1f)
-//            ) {
-//                Text(
-//                    text = uiState.currentSong?.title ?: "",
-//                    style = MaterialTheme.typography.bodyMedium,
-//                    maxLines = 1,
-//                    overflow = TextOverflow.Ellipsis
-//                )
-//                Text(
-//                    text = uiState.currentSong?.artist ?: "",
-//                    style = MaterialTheme.typography.bodySmall,
-//                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-//                    maxLines = 1,
-//                    overflow = TextOverflow.Ellipsis
-//                )
-//            }
-//
-//            /**
-//             * Play/Pause Button
-//             */
-//            IconButton(
-//                onClick = { viewModel.togglePlayPause() }
-//            ) {
-//                Icon(
-//                    imageVector = if (uiState.isPlaying)
-//                        Icons.Default.Pause
-//                    else
-//                        Icons.Default.PlayArrow,
-//                    contentDescription = if (uiState.isPlaying) "Pause" else "Play"
-//                )
-//            }
-//        }
-//    }
-//}
+package com.example.musicapp.presentation.components
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+@Composable
+fun MiniPlayer(
+    songTitle: String,
+    artistName: String,
+    imageRes: Int,
+    isPlaying: Boolean,
+    onPlayPauseClick: () -> Unit,
+    onNextClick: () -> Unit,
+    onPreviousClick: () -> Unit,
+    onExpand: () -> Unit
+) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .height(64.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .clickable { onExpand() },
+        color = Color(0xFF212121),
+        tonalElevation = 8.dp
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                painter = painterResource(id = imageRes),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(44.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = songTitle,
+                    color = Color.White,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = artistName,
+                    color = Color.Gray,
+                    fontSize = 12.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+
+            // Nút Lùi bài
+            IconButton(onClick = onPreviousClick) {
+                Icon(
+                    painter = painterResource(id = android.R.drawable.ic_media_previous),
+                    contentDescription = "Lùi bài",
+                    tint = Color.White,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+
+            // Nút Play/Pause
+            IconButton(onClick = onPlayPauseClick) {
+                Icon(
+                    painter = painterResource(
+                        id = if (isPlaying) android.R.drawable.ic_media_pause else android.R.drawable.ic_media_play
+                    ),
+                    contentDescription = "Phát/Tạm dừng",
+                    tint = Color.White,
+                    modifier = Modifier.size(30.dp)
+                )
+            }
+
+            // Nút Tiến bài
+            IconButton(onClick = onNextClick) {
+                Icon(
+                    painter = painterResource(id = android.R.drawable.ic_media_next),
+                    contentDescription = "Tiếp theo",
+                    tint = Color.White,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        }
+    }
+}

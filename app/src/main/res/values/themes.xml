@@ -1,35 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources
-    xmlns:tools="http://schemas.android.com/tools">
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- SPLASH -->
-<!--    <style name="Theme.MusicApp.Splash" parent="Theme.SplashScreen">-->
-<!--        <item name="windowSplashScreenBackground">@color/splash_background</item>-->
-<!--        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_logo</item>-->
-<!--        <item name="windowSplashScreenAnimationDuration">1000</item>-->
-<!--        <item name="postSplashScreenTheme">@style/Theme.MusicApp</item>-->
+    <!-- Theme chính của app (Dark Mode làm chủ đạo) -->
+    <style name="Theme.MusicApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Chỉnh toàn bộ nền ứng dụng thành màu đen -->
+        <item name="android:windowBackground">#000000</item>
+        <item name="android:statusBarColor">#000000</item>
+        <item name="android:navigationBarColor">#000000</item>
+        
+        <!-- Màu chủ đạo (Xanh Spotify) -->
+        <item name="colorPrimary">#1DB954</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+    </style>
 
-<!--        <item name="android:statusBarColor">@android:color/transparent</item>-->
-<!--        <item name="android:navigationBarColor">@android:color/transparent</item>-->
-<!--    </style>-->
-
-<!--    &lt;!&ndash; MAIN THEME &ndash;&gt;-->
-<!--    <style name="Theme.MusicApp" parent="android:Theme.Material.Light.NoActionBar">-->
-<!--        <item name="android:windowBackground">@color/white</item>-->
-<!--        <item name="android:statusBarColor">@android:color/transparent</item>-->
-<!--        <item name="android:navigationBarColor">@android:color/transparent</item>-->
-
-<!--        <item name="android:windowLightStatusBar">true</item>-->
-
-<!--        &lt;!&ndash; API 27+ &ndash;&gt;-->
-<!--        <item-->
-<!--            name="android:windowLightNavigationBar"-->
-<!--            tools:targetApi="27">true</item>-->
-
-<!--        &lt;!&ndash; API 28+ &ndash;&gt;-->
-<!--        <item-->
-<!--            name="android:windowLayoutInDisplayCutoutMode"-->
-<!--            tools:targetApi="28">shortEdges</item>-->
-<!--    </style>-->
+    <!-- Theme riêng cho Splash (Nền đen) -->
+    <style name="Theme.MusicApp.Splash" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:statusBarColor">#000000</item>
+        <item name="android:navigationBarColor">#000000</item>
+    </style>
 
 </resources>
