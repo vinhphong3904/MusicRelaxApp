@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -29,13 +30,40 @@ import com.example.musicapp.presentation.navigation.Screen
 import kotlinx.coroutines.launch
 
 @Composable
-fun HomeScreen(navController: NavHostController) {
+fun HomeScreen(
+    navController: NavHostController,
+    onSongSelect: (Triple<String, String, Int>) -> Unit
+) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     
     var userName by remember { mutableStateOf("Kha") }
     var showEditDialog by remember { mutableStateOf(false) }
     val userInitial = if (userName.isNotEmpty()) userName.take(1).uppercase() else "U"
+
+    // DANH SÁCH BÀI HÁT MỚI (ĐỒNG BỘ VỚI MAIN ACTIVITY)
+    val playlist = listOf(
+        Triple("Đừng Làm Trái Tim Anh Đau", "Sơn Tùng M-TP", R.drawable.icon),
+        Triple("Chúng Ta Của Tương Lai", "Sơn Tùng M-TP", R.drawable.tieude),
+        Triple("Thiên Lý Ơi", "Jack - J97", R.drawable.nen),
+        Triple("Giá Như", "SOOBIN", R.drawable.tieude),
+        Triple("Exit Sign", "HIEUTHUHAI", R.drawable.icon),
+        Triple("Em Xinh", "MONO", R.drawable.nen),
+        Triple("Lệ Lưu Ly", "Vũ Phụng Tiên", R.drawable.tieude),
+        Triple("Cắt Đôi Nỗi Sầu", "Tăng Duy Tân", R.drawable.icon),
+        Triple("Ngày Mai Người Ta Lấy Chồng", "Anh Tú", R.drawable.nen),
+        Triple("Mưa Tháng Sáu", "Văn Mai Hương", R.drawable.tieude),
+        Triple("Nơi Này Có Anh", "Sơn Tùng M-TP", R.drawable.icon),
+        Triple("Lạc Trôi", "Sơn Tùng M-TP", R.drawable.nen),
+        Triple("Sau Lời Từ Khước", "Phan Mạnh Quỳnh", R.drawable.tieude),
+        Triple("Thanh Xuân", "Da LAB", R.drawable.icon),
+        Triple("Thằng Điên", "JustaTee", R.drawable.nen),
+        Triple("Anh Nhà Ở Đâu Thế", "AMEE", R.drawable.tieude),
+        Triple("Tòng Phu", "Keyo", R.drawable.icon),
+        Triple("See Tình", "Hoàng Thùy Linh", R.drawable.nen),
+        Triple("Waiting For You", "MONO", R.drawable.tieude),
+        Triple("Khuất Lối", "H-Kray", R.drawable.icon)
+    )
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -48,54 +76,54 @@ fun HomeScreen(navController: NavHostController) {
             }
         }
     ) {
-        Scaffold(
-            containerColor = Color(0xFF121212),
-            bottomBar = { MusicBottomNavigation(navController) }
-        ) { padding ->
-            Column(
-                modifier = Modifier
-                    .padding(padding)
-                    .fillMaxSize()
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFF121212))
+        ) {
+            HomeHeader(userInitial, onProfileClick = { scope.launch { drawerState.open() } })
+
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(bottom = 16.dp)
             ) {
-                HomeHeader(userInitial, onProfileClick = { scope.launch { drawerState.open() } })
-
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    item {
-                        Text(
-                            text = "Giai điệu thịnh hành",
-                            color = Color.White,
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
-                    }
-
-                    val mockSongs = listOf(
-                        Triple("Đừng Làm Trái Tim Anh Đau", "Sơn Tùng M-TP", R.drawable.icon),
-                        Triple("Thiên Lý Ơi", "Jack - J97", R.drawable.nen),
-                        Triple("Giá Như", "SOOBIN", R.drawable.tieude),
-                        Triple("Exit Sign", "HIEUTHUHAI", R.drawable.icon),
-                        Triple("Em Xinh", "MONO", R.drawable.nen)
+                // Mục: Dành cho bạn (LazyRow)
+                item {
+                    Text(
+                        text = "Dành cho bạn",
+                        color = Color.White,
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(16.dp)
                     )
-
-                    items(15) { index ->
-                        val song = mockSongs[index % mockSongs.size]
-                        MusicModernCard(
-                            artistName = song.second,
-                            songName = song.first,
-                            artistImage = song.third,
-                            onClick = { 
-                                // ĐÃ FIX: Chuyển hướng sang màn hình Player
-                                navController.navigate(Screen.Player.route) 
-                            }
-                        )
+                    LazyRow(
+                        contentPadding = PaddingValues(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        items(playlist.take(6)) { song ->
+                            SongSquareCard(song.first, song.second, song.third) { onSongSelect(song) }
+                        }
                     }
-                    
-                    item { Spacer(modifier = Modifier.height(80.dp)) }
+                }
+
+                // Mục: Giai điệu thịnh hành (Danh sách dọc)
+                item {
+                    Text(
+                        text = "Giai điệu thịnh hành",
+                        color = Color.White,
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(start = 16.dp, top = 24.dp, bottom = 12.dp)
+                    )
+                }
+
+                items(playlist.drop(6)) { song ->
+                    MusicModernCard(
+                        artistName = song.second,
+                        songName = song.first,
+                        artistImage = song.third,
+                        onClick = { onSongSelect(song) }
+                    )
                 }
             }
         }
@@ -137,30 +165,52 @@ fun HomeScreen(navController: NavHostController) {
 }
 
 @Composable
+fun SongSquareCard(title: String, artist: String, imageRes: Int, onClick: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .width(140.dp)
+            .clickable { onClick() }
+    ) {
+        Image(
+            painter = painterResource(id = imageRes),
+            contentDescription = null,
+            modifier = Modifier
+                .size(140.dp)
+                .clip(RoundedCornerShape(8.dp)),
+            contentScale = ContentScale.Crop
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(title, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+        Text(artist, color = Color.Gray, fontSize = 12.sp, maxLines = 1)
+    }
+}
+
+@Composable
 fun MusicModernCard(artistName: String, songName: String, artistImage: Int, onClick: () -> Unit) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() }, // Đã kích hoạt sự kiện nhấn
-        color = Color(0xFFD1D5DB),
-        shape = RoundedCornerShape(16.dp)
+            .padding(horizontal = 16.dp, vertical = 6.dp)
+            .clickable { onClick() },
+        color = Color(0xFF1E1E1E), // Chỉnh lại màu cho chuyên nghiệp hơn (tối)
+        shape = RoundedCornerShape(12.dp)
     ) {
         Row(
-            modifier = Modifier.padding(12.dp).fillMaxWidth(),
+            modifier = Modifier.padding(8.dp).fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
                 painter = painterResource(id = artistImage),
                 contentDescription = null,
-                modifier = Modifier.size(60.dp).clip(RoundedCornerShape(12.dp)),
+                modifier = Modifier.size(56.dp).clip(RoundedCornerShape(8.dp)),
                 contentScale = ContentScale.Crop
             )
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = artistName, color = Color(0xFF6B7280), fontSize = 13.sp, fontWeight = FontWeight.Medium)
-                Text(text = songName, color = Color.Black, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold, maxLines = 1)
+                Text(text = songName, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+                Text(text = artistName, color = Color.Gray, fontSize = 13.sp, fontWeight = FontWeight.Medium)
             }
-            Icon(Icons.Default.PlayArrow, contentDescription = null, tint = Color.DarkGray, modifier = Modifier.size(28.dp))
+            Icon(Icons.Default.MoreVert, contentDescription = null, tint = Color.Gray)
         }
     }
 }
@@ -168,7 +218,10 @@ fun MusicModernCard(artistName: String, songName: String, artistImage: Int, onCl
 @Composable
 fun HomeHeader(userInitial: String, onProfileClick: () -> Unit) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .statusBarsPadding()
+            .padding(top = 12.dp, start = 16.dp, end = 16.dp, bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
@@ -247,43 +300,6 @@ fun FilterChipSimple(text: String, isSelected: Boolean) {
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium
-        )
-    }
-}
-
-@Composable
-fun MusicBottomNavigation(navController: NavHostController) {
-    val currentRoute = navController.currentBackStackEntry?.destination?.route
-    NavigationBar(containerColor = Color.Black.copy(alpha = 0.9f), tonalElevation = 0.dp) {
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.Home, contentDescription = null) },
-            label = { Text("Home", fontSize = 10.sp) },
-            selected = currentRoute == Screen.Home.route,
-            onClick = { if (currentRoute != Screen.Home.route) navController.navigate(Screen.Home.route) }
-        )
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.Search, contentDescription = null) },
-            label = { Text("Search", fontSize = 10.sp) },
-            selected = currentRoute == Screen.Search.route,
-            onClick = { if (currentRoute != Screen.Search.route) navController.navigate(Screen.Search.route) }
-        )
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.AddCircle, contentDescription = null) },
-            label = { Text("PlayList", fontSize = 10.sp) },
-            selected = currentRoute == Screen.Playlist.route,
-            onClick = { if (currentRoute != Screen.Playlist.route) navController.navigate(Screen.Playlist.route) }
-        )
-        NavigationBarItem(
-            icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = null) },
-            label = { Text("Library", fontSize = 10.sp) },
-            selected = currentRoute == Screen.Library.route,
-            onClick = { if (currentRoute != Screen.Library.route) navController.navigate(Screen.Library.route) }
-        )
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.Person, contentDescription = null) },
-            label = { Text("Profile", fontSize = 10.sp) },
-            selected = currentRoute == Screen.Profile.route,
-            onClick = { if (currentRoute != Screen.Profile.route) navController.navigate(Screen.Profile.route) }
         )
     }
 }

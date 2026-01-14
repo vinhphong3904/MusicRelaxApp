@@ -1,4 +1,4 @@
-//package com.example.musicapp.presentation.components
+//package com.example.musicapp.presentation.library
 //
 //import androidx.compose.foundation.clickable
 //import androidx.compose.foundation.layout.*
