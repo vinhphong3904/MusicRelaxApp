@@ -89,7 +89,8 @@ const registerSchema = Joi.object({
   username: Joi.string().min(3).max(100).required(),
   email: Joi.string().email().required(),
   password: Joi.string().min(6).required(),
-  full_name: Joi.string().max(255).required()
+  confirmPassword: Joi.string().valid(Joi.ref('password')).required()
+    .messages({ 'any.only': 'Mật khẩu xác nhận không khớp' })
 });
 
 async function isPlaylistOwner(playlistId, userId) {
@@ -275,6 +276,10 @@ async function searchAll(keyword, page = 1, limit = 10) {
   };
 }
 
+function generateOTP() {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
 
 /* =========================
    Exported DB operations
@@ -293,14 +298,27 @@ module.exports = {
   getArtistById,
 
   // ---------- AUTH ----------
-  registerUser: async (username, email, password, full_name, req) => {
-    // validate
+  registerUser: async (username, email, password, confirmPassword, req) => {
     const DEFAULT_AVATAR_PATH = '/uploads/avatars/avatar_default.jpg';
-    const avatar_url = `${req.protocol}://${req.get('host')}${DEFAULT_AVATAR_PATH}`;
-    const { error } = registerSchema.validate({ username, email, password, full_name }, { abortEarly: false });
+    let avatar_url = DEFAULT_AVATAR_PATH;
+
+    if (req) {
+      avatar_url = `${req.protocol}://${req.get('host')}${DEFAULT_AVATAR_PATH}`;
+    }
+
+    // validate cơ bản
+    const { error } = registerSchema.validate(
+      { username, email, password, confirmPassword },
+      { abortEarly: false }
+    );
     if (error) {
       console.error('Joi validation failed:', error.details);
       return { success: false, message: 'Validation failed', details: error.details };
+    }
+
+    // kiểm tra confirm password
+    if (password !== confirmPassword) {
+      return { success: false, message: 'Mật khẩu xác nhận không khớp' };
     }
 
     const pool = await getPool();
@@ -328,52 +346,36 @@ module.exports = {
 
       const password_hash = await bcrypt.hash(password, 12);
 
-      const avatar_url =
-      `${req.protocol}://${req.get('host')}${DEFAULT_AVATAR_PATH}`;
-
       // insert vào bảng users
       const insertUser = await transaction.request()
-      .input('username', sql.NVarChar(100), username)
-      .input('email', sql.NVarChar(255), email)
-      .input('password_hash', sql.NVarChar(255), password_hash)
-      .input('avatar_url', sql.NVarChar(500), avatar_url)
-      .query(`
-        INSERT INTO users (username, email, password_hash, avatar_url, role, status)
-        OUTPUT INSERTED.id, INSERTED.username, INSERTED.email, INSERTED.avatar_url, INSERTED.role, INSERTED.created_at
-        VALUES (@username, @email, @password_hash, @avatar_url, 'user', 1)
-      `);
-
+        .input('username', sql.NVarChar(100), username)
+        .input('email', sql.NVarChar(255), email)
+        .input('password_hash', sql.NVarChar(255), password_hash)
+        .input('avatar_url', sql.NVarChar(500), avatar_url)
+        .query(`
+          INSERT INTO users (username, email, password_hash, avatar_url, role, status)
+          OUTPUT INSERTED.id, INSERTED.username, INSERTED.email, INSERTED.avatar_url, INSERTED.role, INSERTED.created_at
+          VALUES (@username, @email, @password_hash, @avatar_url, 'user', 1)
+        `);
 
       const user = insertUser.recordset[0];
-
-      // insert vào bảng profiles
-      await transaction.request()
-        .input('user_id', sql.Int, user.id)
-        .input('full_name', sql.NVarChar(255), full_name)
-        .query(`
-          INSERT INTO profiles (user_id, full_name)
-          VALUES (@user_id, @full_name)
-        `);
 
       // insert vào bảng settings (default values)
       await transaction.request()
         .input('user_id', sql.Int, user.id)
-        .query(`
-          INSERT INTO settings (user_id)
-          VALUES (@user_id)
-        `);
+        .query(`INSERT INTO settings (user_id) VALUES (@user_id)`);
 
       await transaction.commit();
 
-      // gửi mail chào mừng
+      const otp = generateOTP();
       sendMailNonBlocking({
         from: `"Music App" <${MAIL_USER}>`,
         to: user.email,
         subject: 'Chào mừng đến với Music App',
-        html: `<p>Xin chào ${full_name},<br/>Cảm ơn bạn đã đăng ký.</p>`
+        html: `<p>Xin chào ${username}<br/>Mã OTP của bạn là: ${otp}</p>`
       });
 
-      return { success: true, message: 'Đăng ký thành công', user: { ...user, full_name } };
+      return { success: true, message: 'Đăng ký thành công', user };
     } catch (err) {
       try { await transaction.rollback(); } catch (_) {}
       console.error('registerUser error:', err);

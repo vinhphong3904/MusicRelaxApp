@@ -41,7 +41,7 @@ fun HomeScreen(
     var showEditDialog by remember { mutableStateOf(false) }
     val userInitial = if (userName.isNotEmpty()) userName.take(1).uppercase() else "U"
 
-    // DANH SÁCH BÀI HÁT MỚI (ĐỒNG BỘ VỚI MAIN ACTIVITY)
+    // DANH SÁCH BÀI HÁT
     val playlist = listOf(
         Triple("Đừng Làm Trái Tim Anh Đau", "Sơn Tùng M-TP", R.drawable.icon),
         Triple("Chúng Ta Của Tương Lai", "Sơn Tùng M-TP", R.drawable.tieude),
@@ -70,7 +70,7 @@ fun HomeScreen(
         drawerContent = {
             ModalDrawerSheet(
                 drawerContainerColor = Color(0xFF121212),
-                modifier = Modifier.width(300.dp).fillMaxHeight()
+                modifier = Modifier.width(280.dp).fillMaxHeight() // Thu nhỏ sidebar
             ) {
                 ProfileSidebarContent(userName, userInitial, onEditClick = { showEditDialog = true })
             }
@@ -87,18 +87,18 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(bottom = 16.dp)
             ) {
-                // Mục: Dành cho bạn (LazyRow)
+                // Mục: Dành cho bạn
                 item {
                     Text(
                         text = "Dành cho bạn",
                         color = Color.White,
-                        fontSize = 22.sp,
+                        fontSize = 20.sp, // Thu nhỏ tiêu đề
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
                     )
                     LazyRow(
                         contentPadding = PaddingValues(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        horizontalArrangement = Arrangement.spacedBy(12.dp) // Thu nhỏ khoảng cách
                     ) {
                         items(playlist.take(6)) { song ->
                             SongSquareCard(song.first, song.second, song.third) { onSongSelect(song) }
@@ -106,14 +106,14 @@ fun HomeScreen(
                     }
                 }
 
-                // Mục: Giai điệu thịnh hành (Danh sách dọc)
+                // Mục: Giai điệu thịnh hành
                 item {
                     Text(
                         text = "Giai điệu thịnh hành",
                         color = Color.White,
-                        fontSize = 22.sp,
+                        fontSize = 20.sp, // Thu nhỏ tiêu đề
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(start = 16.dp, top = 24.dp, bottom = 12.dp)
+                        modifier = Modifier.padding(start = 16.dp, top = 20.dp, bottom = 10.dp)
                     )
                 }
 
@@ -168,20 +168,20 @@ fun HomeScreen(
 fun SongSquareCard(title: String, artist: String, imageRes: Int, onClick: () -> Unit) {
     Column(
         modifier = Modifier
-            .width(140.dp)
+            .width(120.dp) // Thu nhỏ Card từ 140dp -> 120dp
             .clickable { onClick() }
     ) {
         Image(
             painter = painterResource(id = imageRes),
             contentDescription = null,
             modifier = Modifier
-                .size(140.dp)
+                .size(120.dp)
                 .clip(RoundedCornerShape(8.dp)),
             contentScale = ContentScale.Crop
         )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(title, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold, maxLines = 1)
-        Text(artist, color = Color.Gray, fontSize = 12.sp, maxLines = 1)
+        Spacer(modifier = Modifier.height(6.dp))
+        Text(title, color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+        Text(artist, color = Color.Gray, fontSize = 11.sp, maxLines = 1)
     }
 }
 
@@ -190,27 +190,27 @@ fun MusicModernCard(artistName: String, songName: String, artistImage: Int, onCl
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 6.dp)
+            .padding(horizontal = 16.dp, vertical = 4.dp) // Thu nhỏ vertical padding
             .clickable { onClick() },
-        color = Color(0xFF1E1E1E), // Chỉnh lại màu cho chuyên nghiệp hơn (tối)
-        shape = RoundedCornerShape(12.dp)
+        color = Color(0xFF1E1E1E),
+        shape = RoundedCornerShape(10.dp)
     ) {
         Row(
-            modifier = Modifier.padding(8.dp).fillMaxWidth(),
+            modifier = Modifier.padding(6.dp).fillMaxWidth(), // Thu nhỏ padding nội bộ
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
                 painter = painterResource(id = artistImage),
                 contentDescription = null,
-                modifier = Modifier.size(56.dp).clip(RoundedCornerShape(8.dp)),
+                modifier = Modifier.size(48.dp).clip(RoundedCornerShape(6.dp)), // Thu nhỏ ảnh 56dp -> 48dp
                 contentScale = ContentScale.Crop
             )
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = songName, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold, maxLines = 1)
-                Text(text = artistName, color = Color.Gray, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                Text(text = songName, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+                Text(text = artistName, color = Color.Gray, fontSize = 12.sp, fontWeight = FontWeight.Medium)
             }
-            Icon(Icons.Default.MoreVert, contentDescription = null, tint = Color.Gray)
+            Icon(Icons.Default.MoreVert, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(20.dp))
         }
     }
 }
@@ -221,21 +221,21 @@ fun HomeHeader(userInitial: String, onProfileClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .statusBarsPadding()
-            .padding(top = 12.dp, start = 16.dp, end = 16.dp, bottom = 8.dp),
+            .padding(top = 8.dp, start = 16.dp, end = 16.dp, bottom = 6.dp), // Thu nhỏ padding top 12dp -> 8dp
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
-                .size(36.dp)
+                .size(30.dp) // Thu nhỏ avatar 36dp -> 30dp
                 .clip(CircleShape)
                 .background(Color(0xFFFF8A80))
                 .clickable { onProfileClick() },
             contentAlignment = Alignment.Center
         ) {
-            Text(userInitial, color = Color.Black, fontWeight = FontWeight.Bold)
+            Text(userInitial, color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 12.sp)
         }
-        Spacer(modifier = Modifier.width(12.dp))
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Spacer(modifier = Modifier.width(10.dp))
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             item { FilterChipSimple("Tất cả", isSelected = true) }
             item { FilterChipSimple("Âm nhạc", isSelected = false) }
             item { FilterChipSimple("Podcasts", isSelected = false) }
@@ -246,26 +246,26 @@ fun HomeHeader(userInitial: String, onProfileClick: () -> Unit) {
 @Composable
 fun ProfileSidebarContent(userName: String, userInitial: String, onEditClick: () -> Unit) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp)
+        modifier = Modifier.fillMaxSize().padding(14.dp)
     ) {
         Row(
-            modifier = Modifier.padding(vertical = 24.dp).clickable { onEditClick() },
+            modifier = Modifier.padding(vertical = 20.dp).clickable { onEditClick() },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
-                modifier = Modifier.size(56.dp).clip(CircleShape).background(Color(0xFFFF8A80)),
+                modifier = Modifier.size(48.dp).clip(CircleShape).background(Color(0xFFFF8A80)),
                 contentAlignment = Alignment.Center
             ) {
-                Text(userInitial, color = Color.Black, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                Text(userInitial, color = Color.Black, fontSize = 20.sp, fontWeight = FontWeight.Bold)
             }
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(12.dp))
             Column {
-                Text(userName, color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                Text("Xem hồ sơ", color = Color.Gray, fontSize = 13.sp)
+                Text(userName, color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Text("Xem hồ sơ", color = Color.Gray, fontSize = 12.sp)
             }
         }
         Box(modifier = Modifier.fillMaxWidth().height(0.5.dp).background(Color.DarkGray))
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(14.dp))
         SidebarMenuItem(Icons.Default.Add, "Thêm tài khoản")
         SidebarMenuItem(Icons.Default.Info, "Có gì mới")
         SidebarMenuItem(Icons.AutoMirrored.Filled.List, "Số liệu hoạt động nghe")
@@ -278,12 +278,12 @@ fun ProfileSidebarContent(userName: String, userInitial: String, onEditClick: ()
 @Composable
 fun SidebarMenuItem(icon: ImageVector, text: String) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
+        modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(24.dp))
-        Spacer(modifier = Modifier.width(16.dp))
-        Text(text, color = Color.White, fontSize = 15.sp)
+        Icon(icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(22.dp))
+        Spacer(modifier = Modifier.width(14.dp))
+        Text(text, color = Color.White, fontSize = 14.sp)
     }
 }
 
@@ -291,14 +291,14 @@ fun SidebarMenuItem(icon: ImageVector, text: String) {
 fun FilterChipSimple(text: String, isSelected: Boolean) {
     Surface(
         color = if (isSelected) Color(0xFF1DB954) else Color(0xFF2A2A2A),
-        shape = RoundedCornerShape(20.dp),
-        modifier = Modifier.height(32.dp)
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier.height(28.dp)
     ) {
         Text(
             text = text,
             color = if (isSelected) Color.Black else Color.White,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
-            fontSize = 12.sp,
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+            fontSize = 11.sp,
             fontWeight = FontWeight.Medium
         )
     }

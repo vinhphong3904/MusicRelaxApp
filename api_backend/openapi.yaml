@@ -71,6 +71,24 @@ components:
           items:
             type: object
 
+    RegisterRequest:
+      type: object
+      required: [username, email, password, confirmPassword]
+      properties:
+        username:
+          type: string
+          minLength: 3
+          maxLength: 100
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+        confirmPassword:
+          type: string
+          minLength: 8
+
     Profile:
       type: object
       properties:
@@ -457,20 +475,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required: [username, email, password, full_name]
-              properties:
-                username:
-                  type: string
-                  minLength: 3
-                email:
-                  type: string
-                  format: email
-                password:
-                  type: string
-                  minLength: 6
-                full_name:
-                  type: string
+              $ref: "#/components/schemas/RegisterRequest"
       responses:
         "201":
           description: Đăng ký thành công
@@ -486,7 +491,7 @@ paths:
                   user:
                     $ref: "#/components/schemas/User"
         "400":
-          description: Dữ liệu không hợp lệ
+          description: Dữ liệu không hợp lệ hoặc mật khẩu xác nhận không khớp
           content:
             application/json:
               schema:

@@ -137,25 +137,45 @@ const requireRole = role => (req, res, next) => {
   next();
 };
 
+app.post("/verify-otp", (req, res) => {
+  const { email, otp } = req.body;
+
+  if (otpStore[email] === otp) {
+    res.json({ message: "Đăng nhập thành công!" });
+  } else {
+    res.status(400).json({ message: "OTP không đúng hoặc đã hết hạn" });
+  }
+});
+
+
 /* -------------------------
    AUTH Routes
    ------------------------- */
 
 app.post('/api/register',
   validate([
-    body('username').isString().trim().isLength({ min: 3, max: 100 }),
+    body('username').isString().trim().isLength({ min: 3, max: 100 }).withMessage('Username phải dài hơn 3 ký tự'),
     body('email').isEmail().normalizeEmail(),
-    body('password').isString().isLength({ min: 6 }),
-    body('full_name').isString().trim().isLength({ min: 1, max: 255 })
+    body('password').isString().isLength({ min: 8 }).withMessage('Mật khẩu phải dài hơn 8 ký tự'),
+    body('confirmPassword').isString().isLength({ min: 8 }).withMessage('Mật khẩu xác nhận phải dài hơn 8 ký tự')
   ]),
   asyncHandler(async (req, res) => {
     console.log('--- /api/register called ---');
-    const { username, email, password, full_name} = req.body;
+    const { username, email, password, confirmPassword } = req.body;
+
+    // kiểm tra confirmPassword
+    if (password !== confirmPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Mật khẩu xác nhận không khớp'
+      });
+    }
+
     const result = await db.registerUser(
       username.trim(),
       email.trim().toLowerCase(),
       password,
-      full_name.trim(),
+      confirmPassword,
       req
     );
 

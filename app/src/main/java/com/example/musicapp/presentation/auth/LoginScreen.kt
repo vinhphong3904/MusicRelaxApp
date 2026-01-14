@@ -11,7 +11,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -55,10 +54,14 @@ fun LoginScreen(navController: NavController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(24.dp),
+                .statusBarsPadding()
+                .padding(horizontal = 24.dp)
+                .padding(top = 8.dp), // Đồng bộ padding top 8dp
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Top // Đẩy lên trên sát mép
         ) {
+            Spacer(modifier = Modifier.height(20.dp)) // Thu nhỏ khoảng trống để đẩy lên cao hơn
+
             Card(
                 modifier = Modifier.size(100.dp),
                 shape = RoundedCornerShape(24.dp),
@@ -89,7 +92,7 @@ fun LoginScreen(navController: NavController) {
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.height(32.dp)) // Thu nhỏ để gọn hơn
 
             AuthTextField(
                 value = email, 
@@ -115,7 +118,7 @@ fun LoginScreen(navController: NavController) {
                 modifier = Modifier.align(Alignment.End).clickable { }
             )
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
             Button(
                 onClick = { 
@@ -151,7 +154,7 @@ fun LoginScreen(navController: NavController) {
                 }
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("Chưa có tài khoản? ", color = Color.White)
@@ -185,7 +188,6 @@ fun AuthTextField(
             if (isPassword) {
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
                     Icon(
-                        // Sử dụng các icon mặc định an toàn
                         imageVector = if (passwordVisible) Icons.Default.Info else Icons.Default.Lock,
                         contentDescription = if (passwordVisible) "Ẩn mật khẩu" else "Hiện mật khẩu",
                         tint = Color.Gray

@@ -57,7 +57,7 @@ fun SearchScreen(
             .background(Color.Black)
             .statusBarsPadding()
             .padding(horizontal = 16.dp)
-            .padding(top = 12.dp)
+            .padding(top = 8.dp) // Cải tiến: Sát trên 8dp
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -67,42 +67,42 @@ fun SearchScreen(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(
                     modifier = Modifier
-                        .size(32.dp)
+                        .size(28.dp) // Thu nhỏ avatar 32 -> 28
                         .clip(CircleShape)
                         .background(Color(0xFFFF8A80)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("K", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    Text("K", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 12.sp)
                 }
-                Spacer(modifier = Modifier.width(12.dp))
-                Text("Tìm kiếm", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.width(10.dp))
+                Text("Tìm kiếm", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
             }
-            Icon(Icons.Default.Settings, contentDescription = null, tint = Color.White)
+            Icon(Icons.Default.Settings, contentDescription = null, tint = Color.White, modifier = Modifier.size(22.dp))
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp)
-                .clip(RoundedCornerShape(4.dp)),
+                .height(42.dp) // Thu nhỏ thanh search 48 -> 42
+                .clip(RoundedCornerShape(6.dp)),
             color = Color.White
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(horizontal = 12.dp)
+                modifier = Modifier.padding(horizontal = 10.dp)
             ) {
-                Icon(Icons.Default.Search, contentDescription = null, tint = Color.Black)
-                Spacer(modifier = Modifier.width(12.dp))
+                Icon(Icons.Default.Search, contentDescription = null, tint = Color.Black, modifier = Modifier.size(20.dp))
+                Spacer(modifier = Modifier.width(10.dp))
                 BasicTextField(
                     value = searchText,
                     onValueChange = { searchText = it },
                     modifier = Modifier.weight(1f),
-                    textStyle = TextStyle(color = Color.Black, fontSize = 16.sp),
+                    textStyle = TextStyle(color = Color.Black, fontSize = 14.sp),
                     decorationBox = { innerTextField ->
                         if (searchText.isEmpty()) {
-                            Text("Bạn muốn nghe gì?", color = Color.DarkGray)
+                            Text("Bạn muốn nghe gì?", color = Color.DarkGray, fontSize = 14.sp)
                         }
                         innerTextField()
                     }
@@ -110,16 +110,16 @@ fun SearchScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         if (searchText.isEmpty()) {
             Text(
                 "Duyệt tìm tất cả", 
                 color = Color.White, 
                 fontWeight = FontWeight.Bold, 
-                fontSize = 18.sp
+                fontSize = 16.sp // Thu nhỏ 18 -> 16
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             
             val categories = listOf(
                 CategoryData("Bản phát hành sắp ra mắt", Color(0xFF0D725B)),
@@ -156,8 +156,8 @@ fun SearchScreen(
 
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(bottom = 16.dp)
             ) {
@@ -184,17 +184,17 @@ fun CategoryCard(title: String, color: Color) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)
-            .clip(RoundedCornerShape(8.dp))
+            .height(65.dp) // Thu nhỏ card category 100 -> 65
+            .clip(RoundedCornerShape(6.dp))
             .background(color)
-            .padding(12.dp)
+            .padding(10.dp)
     ) {
         Text(
             text = title,
             color = Color.White,
             fontWeight = FontWeight.Bold,
-            fontSize = 14.sp,
-            modifier = Modifier.align(Alignment.TopStart).fillMaxWidth(0.7f)
+            fontSize = 12.sp, // Thu nhỏ chữ 14 -> 12
+            modifier = Modifier.align(Alignment.TopStart).fillMaxWidth(0.8f)
         )
     }
 }
@@ -205,22 +205,22 @@ fun SearchSuggestionItem(title: String, artist: String, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }
-            .padding(vertical = 12.dp),
+            .padding(vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
-                .size(48.dp)
+                .size(42.dp) // Thu nhỏ 48 -> 42
                 .clip(RoundedCornerShape(4.dp))
                 .background(Color.DarkGray),
             contentAlignment = Alignment.Center
         ) {
-            Icon(Icons.Default.PlayArrow, contentDescription = null, tint = Color.Gray)
+            Icon(Icons.Default.PlayArrow, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(24.dp))
         }
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(12.dp))
         Column {
-            Text(title, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Medium)
-            Text(artist, color = Color.Gray, fontSize = 14.sp)
+            Text(title, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+            Text(artist, color = Color.Gray, fontSize = 12.sp)
         }
     }
 }
