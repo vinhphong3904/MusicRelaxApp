@@ -1,22 +1,24 @@
 # ===== Gradle =====
 .gradle/
 build/
-
-# ===== Android =====
 **/build/
+
+# ===== Android outputs =====
 *.apk
 *.aab
 *.ap_
+*.dex
+*.class
 
 # ===== Local config =====
 local.properties
+gradle.properties
 
 # ===== IDE =====
 .idea/
 *.iml
-
-# ===== Kotlin / Java =====
-*.class
+*.ipr
+*.iws
 
 # ===== Logs =====
 *.log
@@ -24,3 +26,7 @@ local.properties
 # ===== OS =====
 .DS_Store
 Thumbs.db
+
+# ===== Cache =====
+.cache/
+.cxx/

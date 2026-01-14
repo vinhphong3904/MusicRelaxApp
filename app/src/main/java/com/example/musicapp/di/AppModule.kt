@@ -214,11 +214,23 @@ object AppModule {
 
 
     // ================= SETTINGS =================
-    @Provides @Singleton
+    @Provides
+    @Singleton
+    fun provideSettingsRemoteDataSource(api: ApiService): SettingsRemoteDataSource =
+        SettingsRemoteDataSource(api)
+
+    @Provides
+    @Singleton
+    fun provideSettingsRepository(remote: SettingsRemoteDataSource): SettingsRepositoryInterface =
+        SettingsRepository(remote)
+
+    @Provides
+    @Singleton
     fun provideGetSettingsUseCase(repo: SettingsRepositoryInterface) =
         GetSettingsUseCase(repo)
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     fun provideUpdateSettingsUseCase(repo: SettingsRepositoryInterface) =
         UpdateSettingsUseCase(repo)
 }
