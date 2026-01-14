@@ -1,12 +1,12 @@
 package com.example.musicapp.presentation.components
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,17 +34,17 @@ fun MiniPlayer(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .padding(horizontal = 8.dp, vertical = 2.dp)
             .height(64.dp)
             .clip(RoundedCornerShape(12.dp))
             .clickable { onExpand() },
-        color = Color(0xFF212121),
+        color = Color(0xFF282828),
         tonalElevation = 8.dp
     ) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 12.dp),
+                .padding(horizontal = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
@@ -56,7 +56,7 @@ fun MiniPlayer(
                 contentScale = ContentScale.Crop
             )
 
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(10.dp))
 
             Column(
                 modifier = Modifier.weight(1f)
@@ -78,33 +78,33 @@ fun MiniPlayer(
                 )
             }
 
-            // Nút Lùi bài
-            IconButton(onClick = onPreviousClick) {
+            // Nút điều khiển Lùi bài
+            IconButton(onClick = onPreviousClick, modifier = Modifier.size(36.dp)) {
                 Icon(
                     painter = painterResource(id = android.R.drawable.ic_media_previous),
-                    contentDescription = "Lùi bài",
+                    contentDescription = null,
                     tint = Color.White,
                     modifier = Modifier.size(24.dp)
                 )
             }
 
-            // Nút Play/Pause
-            IconButton(onClick = onPlayPauseClick) {
+            // Nút Play/Pause - Đã cập nhật cho đồng nhất với Player (sử dụng icon hệ thống chuẩn)
+            IconButton(onClick = onPlayPauseClick, modifier = Modifier.size(44.dp)) {
                 Icon(
                     painter = painterResource(
                         id = if (isPlaying) android.R.drawable.ic_media_pause else android.R.drawable.ic_media_play
                     ),
-                    contentDescription = "Phát/Tạm dừng",
+                    contentDescription = null,
                     tint = Color.White,
-                    modifier = Modifier.size(30.dp)
+                    modifier = Modifier.size(32.dp)
                 )
             }
 
-            // Nút Tiến bài
-            IconButton(onClick = onNextClick) {
+            // Nút điều khiển Tiến bài
+            IconButton(onClick = onNextClick, modifier = Modifier.size(36.dp)) {
                 Icon(
                     painter = painterResource(id = android.R.drawable.ic_media_next),
-                    contentDescription = "Tiếp theo",
+                    contentDescription = null,
                     tint = Color.White,
                     modifier = Modifier.size(24.dp)
                 )
