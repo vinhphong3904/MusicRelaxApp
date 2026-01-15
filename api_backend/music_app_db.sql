@@ -314,65 +314,65 @@ VALUES
 INSERT INTO songs 
 (title, artist_id, album_id, genre_id, duration_seconds, audio_url, cover_image_url, lyrics_content, view_count, slug, status, created_at)
 VALUES
-(N'Chúng Ta Của Hiện Tại',1,1,1,250,'mtp_ctcht.mp3','mtp_ctcht.jpg',NULL, 523456,'chung-ta-cua-hien-tai',1,SYSDATETIME()),
-(N'Lạc Trôi',1,1,1,240,'mtp_lactroi.mp3','mtp_lactroi.jpg',NULL, 812345,'lac-troi',1,SYSDATETIME()),
+(N'Chúng Ta Của Hiện Tại',1,1,1,250,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3','mtp_ctcht.jpg',NULL, 523456,'chung-ta-cua-hien-tai',1,SYSDATETIME()),
+(N'Lạc Trôi',1,1,1,240,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3','mtp_lactroi.jpg',NULL, 812345,'lac-troi',1,SYSDATETIME()),
 
-(N'Ước Gì',2,2,2,260,'mytam_uocgi.mp3','mytam_uocgi.jpg',NULL, 234567,'uoc-gi',1,SYSDATETIME()),
-(N'Họa Mi Tóc Nâu',2,2,2,270,'mytam_hoami.mp3','mytam_hoami.jpg',NULL, 345678,'hoa-mi-toc-nau',1,SYSDATETIME()),
+(N'Ước Gì',2,2,2,260,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3','mytam_uocgi.jpg',NULL, 234567,'uoc-gi',1,SYSDATETIME()),
+(N'Họa Mi Tóc Nâu',2,2,2,270,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3','mytam_hoami.jpg',NULL, 345678,'hoa-mi-toc-nau',1,SYSDATETIME()),
 
-(N'Hai Triệu Năm',3,3,3,230,'den_haitrieu.mp3','den_haitrieu.jpg',NULL, 456789,'hai-trieu-nam',1,SYSDATETIME()),
-(N'Bài Này Chill Phết',3,3,6,220,'den_chill.mp3','den_chill.jpg',NULL, 567890,'bai-nay-chill-phet',1,SYSDATETIME()),
+(N'Hai Triệu Năm',3,3,3,230,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3','den_haitrieu.jpg',NULL, 456789,'hai-trieu-nam',1,SYSDATETIME()),
+(N'Bài Này Chill Phết',3,3,6,220,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3','den_chill.jpg',NULL, 567890,'bai-nay-chill-phet',1,SYSDATETIME()),
 
-(N'Bigcityboi',4,4,3,210,'binz_bigcityboi.mp3','binz_bigcityboi.jpg',NULL, 678901,'bigcityboi',1,SYSDATETIME()),
-(N'OK',4,4,3,200,'binz_ok.mp3','binz_ok.jpg',NULL, 789012,'ok',1,SYSDATETIME()),
+(N'Bigcityboi',4,4,3,210,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3','binz_bigcityboi.jpg',NULL, 678901,'bigcityboi',1,SYSDATETIME()),
+(N'OK',4,4,3,200,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3','binz_ok.jpg',NULL, 789012,'ok',1,SYSDATETIME()),
 
-(N'Hoa Hải Đường',5,5,2,240,'jack_hoahaiduong.mp3','jack_hoahaiduong.jpg',NULL, 890123,'hoa-hai-duong',1,SYSDATETIME()),
-(N'Đom Đóm',5,5,1,250,'jack_domdom.mp3','jack_domdom.jpg',NULL, 901234,'dom-dom',1,SYSDATETIME()),
+(N'Hoa Hải Đường',5,5,2,240,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3','jack_hoahaiduong.jpg',NULL, 890123,'hoa-hai-duong',1,SYSDATETIME()),
+(N'Đom Đóm',5,5,1,250,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3','jack_domdom.jpg',NULL, 901234,'dom-dom',1,SYSDATETIME()),
 
-(N'Cả Một Trời Thương Nhớ',6,6,2,260,'hoha_camot.mp3','hoha_camot.jpg',NULL, 345123,'ca-mot-troi-thuong-nho',1,SYSDATETIME()),
-(N'Em Muốn Anh Đưa Em Về',6,6,1,240,'hoha_emmuon.mp3','hoha_emmuon.jpg',NULL, 456234,'em-muon-anh-dua-em-ve',1,SYSDATETIME()),
+(N'Cả Một Trời Thương Nhớ',6,6,2,260,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3','hoha_camot.jpg',NULL, 345123,'ca-mot-troi-thuong-nho',1,SYSDATETIME()),
+(N'Em Muốn Anh Đưa Em Về',6,6,1,240,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3','hoha_emmuon.jpg',NULL, 456234,'em-muon-anh-dua-em-ve',1,SYSDATETIME()),
 
-(N'Cause I Love You',7,7,1,230,'noo_causeiloveu.mp3','noo_causeiloveu.jpg',NULL, 567345,'cause-i-love-you',1,SYSDATETIME()),
-(N'Thương Em Là Điều Anh Không Thể Ngờ',7,7,1,250,'noo_thuongem.mp3','noo_thuongem.jpg',NULL, 678456,'thuong-em-la-dieu-anh-khong-the-ngo',1,SYSDATETIME()),
+(N'Cause I Love You',7,7,1,230,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3','noo_causeiloveu.jpg',NULL, 567345,'cause-i-love-you',1,SYSDATETIME()),
+(N'Thương Em Là Điều Anh Không Thể Ngờ',7,7,1,250,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3','noo_thuongem.jpg',NULL, 678456,'thuong-em-la-dieu-anh-khong-the-ngo',1,SYSDATETIME()),
 
-(N'Sau Tất Cả',8,8,2,240,'erik_sautatca.mp3','erik_sautatca.jpg',NULL, 789567,'sau-tat-ca',1,SYSDATETIME()),
-(N'Em Không Sai Chúng Ta Sai',8,8,2,250,'erik_emkhongsai.mp3','erik_emkhongsai.jpg',NULL, 890678,'em-khong-sai-chung-ta-sai',1,SYSDATETIME()),
+(N'Sau Tất Cả',8,8,2,240,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3','erik_sautatca.jpg',NULL, 789567,'sau-tat-ca',1,SYSDATETIME()),
+(N'Em Không Sai Chúng Ta Sai',8,8,2,250,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3','erik_emkhongsai.jpg',NULL, 890678,'em-khong-sai-chung-ta-sai',1,SYSDATETIME()),
 
-(N'Có Em Chờ',9,9,1,230,'min_coemcho.mp3','min_coemcho.jpg',NULL, 901789,'co-em-cho',1,SYSDATETIME()),
-(N'Gọi Tên Em',9,9,1,220,'min_goitenem.mp3','min_goitenem.jpg',NULL, 123890,'goi-ten-em',1,SYSDATETIME()),
+(N'Có Em Chờ',9,9,1,230,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3','min_coemcho.jpg',NULL, 901789,'co-em-cho',1,SYSDATETIME()),
+(N'Gọi Tên Em',9,9,1,220,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3','min_goitenem.jpg',NULL, 123890,'goi-ten-em',1,SYSDATETIME()),
 
-(N'Forever Alone',10,10,3,210,'justatee_forever.mp3','justatee_forever.jpg',NULL, 234901,'forever-alone',1,SYSDATETIME()),
-(N'Thằng Điên',10,10,3,240,'justatee_thangdien.mp3','justatee_thangdien.jpg',NULL, 345012,'thang-dien',1,SYSDATETIME()),
+(N'Forever Alone',10,10,3,210,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3','justatee_forever.jpg',NULL, 234901,'forever-alone',1,SYSDATETIME()),
+(N'Thằng Điên',10,10,3,240,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3','justatee_thangdien.jpg',NULL, 345012,'thang-dien',1,SYSDATETIME()),
 
-(N'Người Lạ Ơi',11,11,3,230,'karik_nguoilao.mp3','karik_nguoilao.jpg',NULL, 456123,'nguoi-la-oi',1,SYSDATETIME()),
-(N'Anh Không Đòi Quà',11,11,3,220,'karik_anhkhongdoi.mp3','karik_anhkhongdoi.jpg',NULL, 567234,'anh-khong-doi-qua',1,SYSDATETIME()),
+(N'Người Lạ Ơi',11,11,3,230,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3','karik_nguoilao.jpg',NULL, 456123,'nguoi-la-oi',1,SYSDATETIME()),
+(N'Anh Không Đòi Quà',11,11,3,220,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3','karik_anhkhongdoi.jpg',NULL, 567234,'anh-khong-doi-qua',1,SYSDATETIME()),
 
-(N'Diễm Xưa',12,12,9,300,'tcs_diemxua.mp3','tcs_diemxua.jpg',NULL, 678345,'diem-xua',1,SYSDATETIME()),
-(N'Cát Bụi',12,12,9,280,'tcs_catbui.mp3','tcs_catbui.jpg',NULL, 789456,'cat-bui',1,SYSDATETIME()),
+(N'Diễm Xưa',12,12,9,300,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3','tcs_diemxua.jpg',NULL, 678345,'diem-xua',1,SYSDATETIME()),
+(N'Cát Bụi',12,12,9,280,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3','tcs_catbui.jpg',NULL, 789456,'cat-bui',1,SYSDATETIME()),
 
-(N'Nửa Vầng Trăng',13,13,2,260,'dvh_nuavangtrang.mp3','dvh_nuavangtrang.jpg',NULL, 890567,'nua-vang-trang',1,SYSDATETIME()),
-(N'Say Tình',13,13,2,250,'dvh_saytinh.mp3','dvh_saytinh.jpg',NULL, 901678,'say-tinh',1,SYSDATETIME()),
+(N'Nửa Vầng Trăng',13,13,2,260,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3','dvh_nuavangtrang.jpg',NULL, 890567,'nua-vang-trang',1,SYSDATETIME()),
+(N'Say Tình',13,13,2,250,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3','dvh_saytinh.jpg',NULL, 901678,'say-tinh',1,SYSDATETIME()),
 
-(N'Bao Giờ Lấy Chồng',14,14,1,240,'bichphuong_baogio.mp3','bichphuong_baogio.jpg',NULL, 123789,'bao-gio-lay-chong',1,SYSDATETIME()),
-(N'Bùa Yêu',14,14,1,250,'bichphuong_buayeu.mp3','bichphuong_buayeu.jpg',NULL, 234890,'bua-yeu',1,SYSDATETIME()),
+(N'Bao Giờ Lấy Chồng',14,14,1,240,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3','bichphuong_baogio.jpg',NULL, 123789,'bao-gio-lay-chong',1,SYSDATETIME()),
+(N'Bùa Yêu',14,14,1,250,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3','bichphuong_buayeu.jpg',NULL, 234890,'bua-yeu',1,SYSDATETIME()),
 
-(N'Lạ Lùng',15,15,6,230,'vu_lalung.mp3','vu_lalung.jpg',NULL, 345901,'la-lung',1,SYSDATETIME()),
-(N'Mùa Mưa Ngâu',15,15,6,240,'vu_muamua.mp3','vu_muamua.jpg',NULL, 456012,'mua-mua-ngau',1,SYSDATETIME()),
+(N'Lạ Lùng',15,15,6,230,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3','vu_lalung.jpg',NULL, 345901,'la-lung',1,SYSDATETIME()),
+(N'Mùa Mưa Ngâu',15,15,6,240,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3','vu_muamua.jpg',NULL, 456012,'mua-mua-ngau',1,SYSDATETIME()),
 
-(N'Anh Nhà Ở Đâu Thế',16,16,1,220,'amee_anhnhao.mp3','amee_anhnhao.jpg',NULL, 567123,'anh-nha-o-dau-the',1,SYSDATETIME()),
-(N'Sao Anh Chưa Về Nhà',16,16,1,230,'amee_saoanh.mp3','amee_saoanh.jpg',NULL, 678234,'sao-anh-chua-ve-nha',1,SYSDATETIME()),
+(N'Anh Nhà Ở Đâu Thế',16,16,1,220,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3','amee_anhnhao.jpg',NULL, 567123,'anh-nha-o-dau-the',1,SYSDATETIME()),
+(N'Sao Anh Chưa Về Nhà',16,16,1,230,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3','amee_saoanh.jpg',NULL, 678234,'sao-anh-chua-ve-nha',1,SYSDATETIME()),
 
 (N'Phía Sau Một Cô Gái',17,17,1,240,'soobin_phiasau.mp3','soobin_phiasau.jpg',NULL, 789345,'phia-sau-mot-co-gai',1,SYSDATETIME()),
 (N'Đi Để Trở Về',17,17,1,250,'soobin_didetrove.mp3','soobin_didetrove.jpg',NULL, 890456,'di-de-tro-ve',1,SYSDATETIME()),
 
-(N'Nàng Thơ',18,18,2,260,'hoangdung_nangtho.mp3','hoangdung_nangtho.jpg',NULL, 901567,'nang-tho',1,SYSDATETIME()),
-(N'Yên Bình',18,18,2,270,'hoangdung_yenbinh.mp3','hoangdung_yenbinh.jpg',NULL, 123678,'yen-binh',1,SYSDATETIME()),
+(N'Nàng Thơ',18,18,2,260,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3','hoangdung_nangtho.jpg',NULL, 901567,'nang-tho',1,SYSDATETIME()),
+(N'Yên Bình',18,18,2,270,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3','hoangdung_yenbinh.jpg',NULL, 123678,'yen-binh',1,SYSDATETIME()),
 
-(N'Tình Nhân Ơi',19,19,1,240,'orange_tinhnhan.mp3','orange_tinhnhan.jpg',NULL, 234789,'tinh-nhan-oi',1,SYSDATETIME()),
-(N'Khi Em Lớn',19,19,1,250,'orange_khiemlon.mp3','orange_khiemlon.jpg',NULL,135678,'khi-em-lon',1,SYSDATETIME()),
+(N'Tình Nhân Ơi',19,19,1,240,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3','orange_tinhnhan.jpg',NULL, 234789,'tinh-nhan-oi',1,SYSDATETIME()),
+(N'Khi Em Lớn',19,19,1,250,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3','orange_khiemlon.jpg',NULL,135678,'khi-em-lon',1,SYSDATETIME()),
 
-(N'Chuyện Tình Tôi',20,20,1,230,'kaytran_chuyentinh.mp3','kaytran_chuyentinh.jpg',NULL, 43434, 'chuyen-tinh-toi',1,SYSDATETIME()),
-(N'Nắm Đôi Bàn Tay',20,20,1,240,'kaytran_namdoi.mp3','kaytran_namdoi.jpg',NULL, 23245, 'nam-doi-ban-tay',1,SYSDATETIME());
+(N'Chuyện Tình Tôi',20,20,1,230,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3','kaytran_chuyentinh.jpg',NULL, 43434, 'chuyen-tinh-toi',1,SYSDATETIME()),
+(N'Nắm Đôi Bàn Tay',20,20,1,240,'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3','kaytran_namdoi.jpg',NULL, 23245, 'nam-doi-ban-tay',1,SYSDATETIME());
 
 -- Sơn Tùng M-TP
 UPDATE songs

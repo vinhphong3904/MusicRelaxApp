@@ -4,9 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,12 +16,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.musicapp.R
 
 @Composable
 fun MiniPlayer(
     songTitle: String,
     artistName: String,
     imageRes: Int,
+    coverImageUrl: String? = null,
     isPlaying: Boolean,
     onPlayPauseClick: () -> Unit,
     onNextClick: () -> Unit,
@@ -47,17 +46,30 @@ fun MiniPlayer(
                 .padding(horizontal = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(id = imageRes),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(44.dp)
-                    .clip(RoundedCornerShape(8.dp)),
-                contentScale = ContentScale.Crop
-            )
+            // Album art
+            if (coverImageUrl != null) {
+                Image(
+                    painter = painterResource(id = imageRes),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(44.dp)
+                        .clip(RoundedCornerShape(8.dp)),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = imageRes),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(44.dp)
+                        .clip(RoundedCornerShape(8.dp)),
+                    contentScale = ContentScale.Crop
+                )
+            }
 
             Spacer(modifier = Modifier.width(10.dp))
 
+            // Song info
             Column(
                 modifier = Modifier.weight(1f)
             ) {
@@ -82,19 +94,20 @@ fun MiniPlayer(
             IconButton(onClick = onPreviousClick, modifier = Modifier.size(36.dp)) {
                 Icon(
                     painter = painterResource(id = android.R.drawable.ic_media_previous),
-                    contentDescription = null,
+                    contentDescription = "Previous",
                     tint = Color.White,
                     modifier = Modifier.size(24.dp)
                 )
             }
 
-            // Nút Play/Pause - Đã cập nhật cho đồng nhất với Player (sử dụng icon hệ thống chuẩn)
+            // Nút Play/Pause
             IconButton(onClick = onPlayPauseClick, modifier = Modifier.size(44.dp)) {
                 Icon(
                     painter = painterResource(
-                        id = if (isPlaying) android.R.drawable.ic_media_pause else android.R.drawable.ic_media_play
+                        id = if (isPlaying) android.R.drawable.ic_media_pause
+                        else android.R.drawable.ic_media_play
                     ),
-                    contentDescription = null,
+                    contentDescription = "Play/Pause",
                     tint = Color.White,
                     modifier = Modifier.size(32.dp)
                 )
@@ -104,7 +117,7 @@ fun MiniPlayer(
             IconButton(onClick = onNextClick, modifier = Modifier.size(36.dp)) {
                 Icon(
                     painter = painterResource(id = android.R.drawable.ic_media_next),
-                    contentDescription = null,
+                    contentDescription = "Next",
                     tint = Color.White,
                     modifier = Modifier.size(24.dp)
                 )

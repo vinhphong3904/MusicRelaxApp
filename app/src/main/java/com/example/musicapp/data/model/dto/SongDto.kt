@@ -1,5 +1,8 @@
 package com.example.musicapp.data.model.dto
 
+import com.example.musicapp.domain.model.Song
+import com.example.musicapp.domain.model.SongDetail
+
 data class SongDto(
     val id: Int,
     val title: String,
@@ -69,3 +72,46 @@ data class SongsSimpleResponse(
     val success: Boolean,
     val data: List<SongTopDto>
 )
+
+
+
+fun SongDetailDto.toDomain(): Song {
+    return Song(
+        id = id,
+        title = title,
+        artistName = artist_name,
+        duration = duration,
+        audioUrl = src,
+        coverImageUrl = cover_image_url,
+        viewCount = view_count,
+        slug = slug,
+        artistId = artist_id,
+        genreId = genre_id,
+        genreName = genre_name,
+        lyricsContent = lyrics_content,
+        albumId = album_id,
+        albumTitle = album_title,
+        albumCover = album_cover
+    )
+}
+
+fun SongDetailDto.toDomain(): Song {
+    return Song(
+        id = id,
+        title = title,
+        artistName = artist_name,
+        duration = duration,
+        audioUrl = src,
+        coverImageUrl = cover_image_url,
+        viewCount = view_count,
+        slug = slug,
+        artistId = artist_id,
+        genreId = genre_id,
+        genreName = genre_name,
+        lyricsContent = lyrics_content,
+        albumId = album_id,
+        albumTitle = album_title,
+        albumCover = album_cover
+    )
+}
+

@@ -18,6 +18,7 @@ import com.example.musicapp.presentation.settings.SettingsScreen
 import com.example.musicapp.presentation.auth.LoginScreen
 import com.example.musicapp.presentation.auth.RegisterScreen
 import com.example.musicapp.presentation.player.PlayerScreen
+import com.example.musicapp.presentation.player.PlayerViewModel
 import com.example.musicapp.presentation.viewmodel.AuthViewModel
 
 @Composable
@@ -25,13 +26,7 @@ fun NavGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier,
     startDestination: String = Screen.Home.route,
-    currentPlayingSong: Triple<String, String, Int>?,
-    isPlaying: Boolean,
-    progress: Float,
-    onSongSelect: (Triple<String, String, Int>) -> Unit,
-    onPlayPauseChange: (Boolean) -> Unit,
-    onProgressChange: (Float) -> Unit,
-    onNextPrev: (Int) -> Unit
+    playerViewModel: PlayerViewModel // THÊM PARAMETER NÀY
 ) {
     NavHost(
         navController = navController,
@@ -41,16 +36,11 @@ fun NavGraph(
         composable(route = Screen.Home.route) {
             HomeScreen(
                 navController = navController,
-                onSongSelect = { song: Triple<String, String, Int> ->
-                    onSongSelect(song)
-                    navController.navigate(
-                        Screen.Player.createRoute(song.first, song.second, song.third)
-                    )
-                }
+                playerViewModel = playerViewModel // Truyền ViewModel
             )
         }
+
         composable(route = Screen.Search.route) {
-            // Lấy AuthViewModel để có token
             val authViewModel: AuthViewModel = hiltViewModel()
             val token by authViewModel.tokenFlow.collectAsState(initial = "")
 
@@ -65,36 +55,37 @@ fun NavGraph(
             )
         }
 
-
         composable(route = Screen.Library.route) {
             LibraryScreen(navController = navController)
         }
+
         composable(route = Screen.Playlist.route) {
             PlaylistScreen(navController = navController)
         }
+
         composable(route = Screen.Profile.route) {
             ProfileScreen(navController = navController)
         }
+
         composable(route = Screen.Login.route) {
             LoginScreen(navController = navController)
         }
+
         composable(route = Screen.Register.route) {
             RegisterScreen(navController = navController)
         }
+
         composable(route = Screen.Player.route) {
             PlayerScreen(
                 navController = navController,
-                currentPlayingSong = currentPlayingSong,
-                isPlaying = isPlaying,
-                progress = progress,
-                onPlayPauseChange = onPlayPauseChange,
-                onProgressChange = onProgressChange,
-                onNextPrev = onNextPrev
+                viewModel = playerViewModel // Sử dụng PlayerViewModel
             )
         }
+
         composable(route = "history") {
             HistoryScreen(navController = navController)
         }
+
         composable(route = "settings") {
             SettingsScreen(navController = navController)
         }

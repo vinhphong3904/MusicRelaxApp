@@ -25,25 +25,29 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import java.util.Locale
+import com.example.musicapp.R
+import com.example.musicapp.presentation.viewmodel.PlayerViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlayerScreen(
     navController: NavController,
-    currentPlayingSong: Triple<String, String, Int>?,
-    isPlaying: Boolean,
-    progress: Float,
-    onPlayPauseChange: (Boolean) -> Unit,
-    onProgressChange: (Float) -> Unit,
-    onNextPrev: (Int) -> Unit
+    viewModel: PlayerViewModel = hiltViewModel()
 ) {
-    if (currentPlayingSong == null) {
+    val currentSong by viewModel.currentSong.collectAsState()
+    val isPlaying by viewModel.isPlaying.collectAsState()
+    val progress by viewModel.progress.collectAsState()
+    val currentPosition by viewModel.currentPosition.collectAsState()
+    val duration by viewModel.duration.collectAsState()
+
+    if (currentSong == null) {
         navController.popBackStack()
         return
     }
 
+    val song = currentSong!!
     val pagerState = rememberPagerState(pageCount = { 2 })
     val backgroundBrush = Brush.verticalGradient(
         colors = listOf(Color(0xFF5D2525), Color(0xFF121212))
@@ -56,40 +60,72 @@ fun PlayerScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(text = if (pagerState.currentPage == 0) "ĐANG PHÁT" else "LỜI BÀI HÁT", color = Color.Gray, fontSize = 10.sp, fontWeight = FontWeight.Bold)
-                        Text(currentPlayingSong.first, color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                        Text(
+                            text = if (pagerState.currentPage == 0) "ĐANG PHÁT" else "LỜI BÀI HÁT",
+                            color = Color.Gray,
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            song.title,
+                            color = Color.White,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.KeyboardArrowDown, contentDescription = null, tint = Color.White, modifier = Modifier.size(30.dp))
+                        Icon(
+                            Icons.Default.KeyboardArrowDown,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(30.dp)
+                        )
                     }
                 },
                 actions = {
-                    IconButton(onClick = { }) { Icon(Icons.Default.MoreVert, contentDescription = null, tint = Color.White, modifier = Modifier.size(20.dp)) }
+                    IconButton(onClick = { }) {
+                        Icon(
+                            Icons.Default.MoreVert,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
                 },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent)
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = Color.Transparent
+                )
             )
         }
     ) { padding ->
         HorizontalPager(
             state = pagerState,
-            modifier = Modifier.fillMaxSize().padding(padding)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
         ) { page ->
             if (page == 0) {
                 MainPlayerPage(
-                    songTitle = currentPlayingSong.first,
-                    artistName = currentPlayingSong.second,
-                    imageRes = currentPlayingSong.third,
+                    songTitle = song.title,
+                    artistName = song.artistName,
+                    coverImageUrl = song.coverImageUrl,
                     isPlaying = isPlaying,
                     progress = progress,
-                    onPlayPauseClick = { onPlayPauseChange(!isPlaying) },
-                    onPrevClick = { onNextPrev(-1) },
-                    onNextClick = { onNextPrev(1) },
-                    onProgressChange = onProgressChange
+                    currentPosition = currentPosition,
+                    duration = duration,
+                    onPlayPauseClick = { viewModel.togglePlayPause() },
+                    onPrevClick = { viewModel.skipToPrevious() },
+                    onNextClick = { viewModel.skipToNext() },
+                    onProgressChange = { viewModel.seekTo(it) },
+                    formatTime = { viewModel.formatTime(it) }
                 )
             } else {
-                LyricsPage(currentPlayingSong.first)
+                LyricsPage(
+                    title = song.title,
+                    lyrics = song.lyricsContent
+                )
             }
         }
     }
@@ -99,13 +135,16 @@ fun PlayerScreen(
 fun MainPlayerPage(
     songTitle: String,
     artistName: String,
-    imageRes: Int,
+    coverImageUrl: String?,
     isPlaying: Boolean,
     progress: Float,
+    currentPosition: Long,
+    duration: Long,
     onPlayPauseClick: () -> Unit,
     onPrevClick: () -> Unit,
     onNextClick: () -> Unit,
-    onProgressChange: (Float) -> Unit
+    onProgressChange: (Float) -> Unit,
+    formatTime: (Long) -> String
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "Disk Rotation")
     val rotation by infiniteTransition.animateFloat(
@@ -119,7 +158,10 @@ fun MainPlayerPage(
     )
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp).padding(bottom = 16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 20.dp)
+            .padding(bottom = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
@@ -131,20 +173,32 @@ fun MainPlayerPage(
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxHeight(0.85f) // Thu nhỏ đĩa nhạc
+                    .fillMaxHeight(0.85f)
                     .aspectRatio(1f)
                     .clip(CircleShape)
                     .background(Color.Black),
                 contentAlignment = Alignment.Center
             ) {
-                Image(
-                    painter = painterResource(id = imageRes),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .rotate(if (isPlaying) rotation else 0f),
-                    contentScale = ContentScale.Crop
-                )
+                if (coverImageUrl != null) {
+                    Image(
+                        painter = painterResource(id = R.drawable.icon),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .rotate(if (isPlaying) rotation else 0f),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(id = R.drawable.icon),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .rotate(if (isPlaying) rotation else 0f),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+
                 Box(
                     modifier = Modifier
                         .fillMaxSize(0.2f)
@@ -154,12 +208,27 @@ fun MainPlayerPage(
             }
         }
 
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(songTitle, color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.ExtraBold, maxLines = 1)
+                Text(
+                    songTitle,
+                    color = Color.White,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    maxLines = 1
+                )
                 Text(artistName, color = Color.Gray, fontSize = 14.sp)
             }
-            Icon(Icons.Default.AddCircle, contentDescription = null, tint = Color.White, modifier = Modifier.size(24.dp))
+            Icon(
+                Icons.Default.AddCircle,
+                contentDescription = null,
+                tint = Color.White,
+                modifier = Modifier.size(24.dp)
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -169,35 +238,50 @@ fun MainPlayerPage(
             onValueChange = onProgressChange,
             modifier = Modifier.height(32.dp),
             colors = SliderDefaults.colors(
-                thumbColor = Color.White, 
-                activeTrackColor = Color.White, 
+                thumbColor = Color.White,
+                activeTrackColor = Color.White,
                 inactiveTrackColor = Color.White.copy(alpha = 0.2f)
             )
         )
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            val totalSeconds = 248
-            val currentSeconds = (progress * totalSeconds).toInt()
-            Text(formatTime(currentSeconds), color = Color.Gray, fontSize = 11.sp)
-            Text("-${formatTime(totalSeconds - currentSeconds)}", color = Color.Gray, fontSize = 11.sp)
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(formatTime(currentPosition), color = Color.Gray, fontSize = 11.sp)
+            Text(
+                "-${formatTime(duration - currentPosition)}",
+                color = Color.Gray,
+                fontSize = 11.sp
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.Default.Refresh, contentDescription = null, tint = Color(0xFF1DB954), modifier = Modifier.size(22.dp))
-            
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                Icons.Default.Refresh,
+                contentDescription = null,
+                tint = Color(0xFF1DB954),
+                modifier = Modifier.size(22.dp)
+            )
+
             IconButton(onClick = onPrevClick) {
                 Icon(
                     painter = painterResource(id = android.R.drawable.ic_media_previous),
-                    contentDescription = null, 
-                    tint = Color.White, 
+                    contentDescription = null,
+                    tint = Color.White,
                     modifier = Modifier.size(36.dp)
                 )
             }
-            
+
             Surface(
                 modifier = Modifier
-                    .size(64.dp) // Thu nhỏ nút play 72 -> 64
+                    .size(64.dp)
                     .clip(CircleShape)
                     .clickable { onPlayPauseClick() },
                 color = Color.White,
@@ -205,7 +289,8 @@ fun MainPlayerPage(
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         painter = painterResource(
-                            id = if (isPlaying) android.R.drawable.ic_media_pause else android.R.drawable.ic_media_play
+                            id = if (isPlaying) android.R.drawable.ic_media_pause
+                            else android.R.drawable.ic_media_play
                         ),
                         contentDescription = null,
                         tint = Color.Black,
@@ -217,33 +302,57 @@ fun MainPlayerPage(
             IconButton(onClick = onNextClick) {
                 Icon(
                     painter = painterResource(id = android.R.drawable.ic_media_next),
-                    contentDescription = null, 
-                    tint = Color.White, 
+                    contentDescription = null,
+                    tint = Color.White,
                     modifier = Modifier.size(36.dp)
                 )
             }
-            
-            Icon(Icons.Default.Star, contentDescription = null, tint = Color.White, modifier = Modifier.size(22.dp))
+
+            Icon(
+                Icons.Default.Star,
+                contentDescription = null,
+                tint = Color.White,
+                modifier = Modifier.size(22.dp)
+            )
         }
     }
 }
 
-fun formatTime(seconds: Int): String {
-    val m = seconds / 60
-    val s = seconds % 60
-    return String.format(Locale.getDefault(), "%d:%02d", m, s)
-}
-
 @Composable
-fun LyricsPage(title: String) {
-    Column(modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp).verticalScroll(rememberScrollState())) {
+fun LyricsPage(title: String, lyrics: String?) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 20.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
         Spacer(modifier = Modifier.height(16.dp))
-        Text("LỜI BÀI HÁT: $title", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.ExtraBold, lineHeight = 28.sp)
+        Text(
+            "LỜI BÀI HÁT: $title",
+            color = Color.White,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.ExtraBold,
+            lineHeight = 28.sp
+        )
         Spacer(modifier = Modifier.height(16.dp))
-        val lyrics = listOf("Em là ai từ đâu bước đến nơi đây", "Dịu dàng chân phương", "(Dịu dàng chân phương)", "Em là ai tựa như ánh nắng ban mai", "Ngọt ngào trong sương", "Ngắm em thật lâu con tim anh yếu mềm")
-        lyrics.forEach { line ->
-            Text(text = line, color = if (line.contains("(")) Color.Gray else Color.White, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold, modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp), lineHeight = 26.sp)
+
+        if (lyrics != null) {
+            Text(
+                text = lyrics,
+                color = Color.White,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Normal,
+                modifier = Modifier.fillMaxWidth(),
+                lineHeight = 26.sp
+            )
+        } else {
+            Text(
+                text = "Lời bài hát không khả dụng",
+                color = Color.Gray,
+                fontSize = 16.sp
+            )
         }
+
         Spacer(modifier = Modifier.height(80.dp))
     }
 }

@@ -156,12 +156,48 @@ app.get('/api/songs/top', asyncHandler(async (req, res) => {
   const songs = await db.getTopSongs();
   res.json({ success: true, data: songs });
 }));
+app.get('/api/songs/recommend', asyncHandler(async (req, res) => {
+  let userId = null;
 
-// API gợi ý cho bạn
-app.get('/api/songs/recommend', authenticateToken, asyncHandler(async (req, res) => {
-  const songs = await db.getRecommendSongs(req.user.id);
-  res.json({ success: true, data: songs });
+  // 1. lấy token nếu có
+  const authHeader = req.headers['authorization'];
+  if (authHeader) {
+    const token = authHeader.split(' ')[1];
+    try {
+      const payload = jwt.verify(token, JWT_SECRET);
+      userId = payload.id;
+    } catch (e) {
+      // token sai → coi như guest
+    }
+  }
+
+  let songs;
+  let type;
+
+  // 2. guest hoặc user mới
+  if (!userId) {
+    songs = await db.getRecommendSongsForNewUser(10);
+    type = 'GUEST';
+  } else {
+    const histories = await db.getHistories(userId, 1);
+
+    if (!histories || histories.length === 0) {
+      songs = await db.getRecommendSongsForNewUser(10);
+      type = 'NEW_USER';
+    } else {
+      songs = await db.getRecommendSongs(userId);
+      type = 'PERSONALIZED';
+    }
+  }
+
+  res.json({
+    success: true,
+    type,
+    data: songs
+  });
 }));
+
+
 
 
 /* -------------------------

@@ -293,6 +293,39 @@ async function getTopSongs() {
   return result.recordset;
 }
 
+async function getRecommendSongsForNewUser(limit = 10) {
+  const pool = await getPool();
+
+  const result = await pool.request()
+    .input('limit', sql.Int, limit)
+    .query(`
+      -- 1. Lấy danh sách ca sĩ nổi
+      WITH TopArtists AS (
+        SELECT TOP 10 artist_id
+        FROM songs
+        WHERE status = 1
+        GROUP BY artist_id
+        ORDER BY SUM(view_count) DESC
+      ),
+      -- 2. Random bài hát của các ca sĩ đó
+      RandomSongs AS (
+        SELECT
+          id, title, artist_id, album_id, genre_id,
+          duration_seconds, audio_url, cover_image_url,
+          view_count, slug, created_at,
+          ABS(CHECKSUM(NEWID())) AS rnd
+        FROM songs
+        WHERE status = 1
+          AND artist_id IN (SELECT artist_id FROM TopArtists)
+      )
+      SELECT TOP (@limit) *
+      FROM RandomSongs
+      ORDER BY rnd;
+    `);
+
+  return result.recordset;
+}
+
 // Hàm gợi ý bài hát cho user
 async function getRecommendSongs(userId) {
   const pool = await getPool();
@@ -332,7 +365,7 @@ async function getRecommendSongs(userId) {
    ========================= */
 module.exports = {
   // ---------- RECOMMENDING----------
-  getTopSongs, getRecommendSongs,
+  getTopSongs, getRecommendSongs,getRecommendSongsForNewUser,
 
   // ---------- ALBUMS ----------
   getAllAlbums,
