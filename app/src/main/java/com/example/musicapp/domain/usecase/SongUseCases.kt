@@ -1,8 +1,9 @@
 package com.example.musicapp.domain.usecase
 
 import com.example.musicapp.data.repository.SongRepositoryInterface
-import com.example.musicapp.domain.model.Song
-import com.example.musicapp.domain.model.SongDetail
+import com.example.musicapp.data.model.dto.SongDto
+import com.example.musicapp.data.model.dto.SongDetailDto
+import com.example.musicapp.data.model.dto.SongTopDto
 
 class GetSongsUseCase(
     private val repository: SongRepositoryInterface
@@ -13,7 +14,7 @@ class GetSongsUseCase(
         artistId: Int? = null,
         page: Int = 1,
         limit: Int = 20
-    ): List<Song> {
+    ): List<SongDto> {
         return repository.getSongs(keyword, genreId, artistId, page, limit)
     }
 }
@@ -21,7 +22,23 @@ class GetSongsUseCase(
 class GetSongDetailUseCase(
     private val repository: SongRepositoryInterface
 ) {
-    suspend operator fun invoke(id: Int): SongDetail {
+    suspend operator fun invoke(id: Int): SongDetailDto {
         return repository.getSongDetail(id)
+    }
+}
+
+class GetTopSongsUseCase(
+    private val repository: SongRepositoryInterface
+) {
+    suspend operator fun invoke(): List<SongTopDto> {
+        return repository.getTopSongs()
+    }
+}
+
+class GetRecommendSongsUseCase(
+    private val repository: SongRepositoryInterface
+) {
+    suspend operator fun invoke(token: String): List<SongTopDto> {
+        return repository.getRecommendSongs(token)
     }
 }

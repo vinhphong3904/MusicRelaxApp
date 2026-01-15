@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
@@ -19,17 +20,29 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.musicapp.R
+import com.example.musicapp.presentation.viewmodel.AuthViewModel
 
 @Composable
 fun RegisterScreen(navController: NavController) {
+    val authViewModel: AuthViewModel = hiltViewModel()
+    val registerState by authViewModel.registerState.collectAsState()
+    LaunchedEffect(registerState) {
+        if (registerState != null) {
+            navController.navigate("login")
+        }
+    }
+
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
 
     Box(modifier = Modifier.fillMaxSize()) {
         // Ảnh nền với lớp phủ tối mờ dần
@@ -112,12 +125,26 @@ fun RegisterScreen(navController: NavController) {
                 isPassword = true,
                 leadingIcon = Icons.Default.Lock
             )
+            RegisterAuthTextField(
+                value = confirmPassword,
+                onValueChange = { confirmPassword = it },
+                placeholder = "Xác nhận mật khẩu",
+                isPassword = true,
+                leadingIcon = Icons.Default.Lock
+            )
+
 
             Spacer(modifier = Modifier.height(40.dp))
 
             // Nút đăng ký nổi bật
             Button(
-                onClick = { navController.popBackStack() },
+                onClick = {
+                    if (password == confirmPassword) {
+                        authViewModel.register(username, email, password, confirmPassword)
+                    } else {
+                        // TODO: show Snackbar/Toast báo lỗi mật khẩu không khớp
+                    }
+                },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF38BDF8)),
                 shape = RoundedCornerShape(16.dp),
@@ -149,21 +176,39 @@ fun RegisterAuthTextField(
     leadingIcon: androidx.compose.ui.graphics.vector.ImageVector,
     isPassword: Boolean = false
 ) {
+
+    var passwordVisible by remember { mutableStateOf(false) }
+
     TextField(
         value = value,
         onValueChange = onValueChange,
         placeholder = { Text(placeholder, color = Color.Gray) },
         leadingIcon = { Icon(leadingIcon, contentDescription = null, tint = Color.Gray) },
+        trailingIcon = {
+            if (isPassword) {
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(
+                        imageVector = if (passwordVisible) Icons.Default.Info else Icons.Default.Lock,
+                        contentDescription = if (passwordVisible) "Ẩn mật khẩu" else "Hiện mật khẩu",
+                        tint = Color.Gray
+                    )
+                }
+            }
+        },
         modifier = Modifier.fillMaxWidth(),
-        visualTransformation = if (isPassword) PasswordVisualTransformation() else androidx.compose.ui.text.input.VisualTransformation.None,
+        visualTransformation = if (isPassword && !passwordVisible) {
+            PasswordVisualTransformation()
+        } else {
+            VisualTransformation.None
+        },
         colors = TextFieldDefaults.colors(
-            focusedTextColor = Color.White,
-            unfocusedTextColor = Color.White,
-            focusedContainerColor = Color.White.copy(alpha = 0.1f),
-            unfocusedContainerColor = Color.White.copy(alpha = 0.05f),
-            focusedIndicatorColor = Color(0xFF38BDF8),
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent
+        focusedTextColor = Color.White,
+        unfocusedTextColor = Color.White,
+        focusedContainerColor = Color.White.copy(alpha = 0.1f),
+        unfocusedContainerColor = Color.White.copy(alpha = 0.05f),
+        focusedIndicatorColor = Color(0xFF38BDF8),
+        unfocusedIndicatorColor = Color.Transparent,
+        disabledIndicatorColor = Color.Transparent
         ),
         shape = RoundedCornerShape(16.dp)
     )

@@ -1,5 +1,7 @@
 package com.example.musicapp.di
 
+import android.service.autofill.UserData
+import com.example.musicapp.core.datastore.UserDataStore
 import com.example.musicapp.core.network.ApiService
 import com.example.musicapp.data.remote.*
 import com.example.musicapp.data.repository.*
@@ -28,29 +30,43 @@ object AppModule {
         RegisterUseCase(repository)
 
     @Provides @Singleton
-    fun provideLoginUseCase(repository: AuthRepositoryInterface) =
-        LoginUseCase(repository)
+    fun provideLoginUseCase(repository: AuthRepositoryInterface, userDataStore: UserDataStore) =
+        LoginUseCase(repository, userDataStore)
 
     @Provides @Singleton
     fun provideGetCurrentUserUseCase(repository: AuthRepositoryInterface) =
         GetCurrentUserUseCase(repository)
 
     // ================= SONGS =================
-    @Provides @Singleton
+    @Provides
+    @Singleton
     fun provideSongRemoteDataSource(api: ApiService): SongRemoteDataSource =
         SongRemoteDataSource(api)
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     fun provideSongRepository(remote: SongRemoteDataSource): SongRepositoryInterface =
         SongRepository(remote)
 
-    @Provides @Singleton
-    fun provideGetSongsUseCase(repository: SongRepositoryInterface) =
+    @Provides
+    @Singleton
+    fun provideGetSongsUseCase(repository: SongRepositoryInterface): GetSongsUseCase =
         GetSongsUseCase(repository)
 
-    @Provides @Singleton
-    fun provideGetSongDetailUseCase(repository: SongRepositoryInterface) =
+    @Provides
+    @Singleton
+    fun provideGetSongDetailUseCase(repository: SongRepositoryInterface): GetSongDetailUseCase =
         GetSongDetailUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideGetTopSongsUseCase(repository: SongRepositoryInterface): GetTopSongsUseCase =
+        GetTopSongsUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideGetRecommendSongsUseCase(repository: SongRepositoryInterface): GetRecommendSongsUseCase =
+        GetRecommendSongsUseCase(repository)
 
     // ================= PROFILE =================
     @Provides @Singleton

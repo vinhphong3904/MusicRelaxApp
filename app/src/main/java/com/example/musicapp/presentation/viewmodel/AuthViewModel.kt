@@ -2,6 +2,7 @@ package com.example.musicapp.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.musicapp.core.datastore.UserDataStore
 import com.example.musicapp.data.model.dto.LoginRequest
 import com.example.musicapp.data.model.dto.LoginResponse
 import com.example.musicapp.data.model.dto.MeResponse
@@ -11,8 +12,10 @@ import com.example.musicapp.domain.usecase.GetCurrentUserUseCase
 import com.example.musicapp.domain.usecase.LoginUseCase
 import com.example.musicapp.domain.usecase.RegisterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,9 +35,15 @@ class AuthViewModel @Inject constructor(
     private val _meState = MutableStateFlow<MeResponse?>(null)
     val meState: StateFlow<MeResponse?> = _meState
 
-    fun register(username: String, email: String, password: String, fullName: String) {
+    private val _isLoggedIn = MutableStateFlow(false)
+    val isLoggedIn: StateFlow<Boolean> = _isLoggedIn
+
+    // quan sát token từ UseCase
+    val tokenFlow: Flow<String?> = loginUseCase.getTokenFlow()
+
+    fun register(username: String, email: String, password: String, confirmPassword: String) {
         viewModelScope.launch {
-            val response = registerUseCase(RegisterRequest(username, email, password, fullName))
+            val response = registerUseCase(RegisterRequest(username, email, password, confirmPassword))
             _registerState.value = response
         }
     }
@@ -46,10 +55,14 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun getCurrentUser(token: String) {
+    fun getCurrentUser() {
         viewModelScope.launch {
-            val response = getCurrentUserUseCase(token)
-            _meState.value = response
+            // lấy token từ flow
+            val token = tokenFlow.first()
+            if (token != null) {
+                val response = getCurrentUserUseCase(token)
+                _meState.value = response
+            }
         }
     }
 }

@@ -61,6 +61,15 @@ interface ApiService {
         @Path("id") id: Int
     ): SongDetailResponse
 
+    @GET("api/songs/top")
+    suspend fun getTopSongs(): SongsSimpleResponse
+
+    @GET("api/songs/recommend")
+    suspend fun getRecommendSongs(
+        @Header("Authorization") token: String
+    ): SongsSimpleResponse
+
+
     // ========== ALBUMS ==========
     @GET("api/albums")
     suspend fun getAlbums(

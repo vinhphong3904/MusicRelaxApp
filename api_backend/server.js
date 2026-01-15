@@ -17,7 +17,7 @@ require('dotenv').config();
 const fs = require('fs');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
 if (!process.env.JWT_SECRET) {
   throw new Error('JWT_SECRET is not defined');
 }
@@ -146,6 +146,22 @@ app.post("/verify-otp", (req, res) => {
     res.status(400).json({ message: "OTP không đúng hoặc đã hết hạn" });
   }
 });
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+const { getTopSongs, getRecommendSongs } = require('./dbOperations');
+
+// API Top 10 bài hát nhiều view
+app.get('/api/songs/top', asyncHandler(async (req, res) => {
+  const songs = await db.getTopSongs();
+  res.json({ success: true, data: songs });
+}));
+
+// API gợi ý cho bạn
+app.get('/api/songs/recommend', authenticateToken, asyncHandler(async (req, res) => {
+  const songs = await db.getRecommendSongs(req.user.id);
+  res.json({ success: true, data: songs });
+}));
 
 
 /* -------------------------

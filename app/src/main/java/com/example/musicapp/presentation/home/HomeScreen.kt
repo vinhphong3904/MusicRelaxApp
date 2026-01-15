@@ -24,53 +24,42 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.musicapp.R
 import com.example.musicapp.presentation.navigation.Screen
+import com.example.musicapp.presentation.viewmodel.SongsViewModel
 import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(
     navController: NavHostController,
-    onSongSelect: (Triple<String, String, Int>) -> Unit
+    onSongSelect: (Triple<String, String, Int>) -> Unit,
+    viewModel: SongsViewModel = hiltViewModel()
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    
+
     var userName by remember { mutableStateOf("Kha") }
     var showEditDialog by remember { mutableStateOf(false) }
     val userInitial = if (userName.isNotEmpty()) userName.take(1).uppercase() else "U"
 
-    // DANH SÁCH BÀI HÁT
-    val playlist = listOf(
-        Triple("Đừng Làm Trái Tim Anh Đau", "Sơn Tùng M-TP", R.drawable.icon),
-        Triple("Chúng Ta Của Tương Lai", "Sơn Tùng M-TP", R.drawable.tieude),
-        Triple("Thiên Lý Ơi", "Jack - J97", R.drawable.nen),
-        Triple("Giá Như", "SOOBIN", R.drawable.tieude),
-        Triple("Exit Sign", "HIEUTHUHAI", R.drawable.icon),
-        Triple("Em Xinh", "MONO", R.drawable.nen),
-        Triple("Lệ Lưu Ly", "Vũ Phụng Tiên", R.drawable.tieude),
-        Triple("Cắt Đôi Nỗi Sầu", "Tăng Duy Tân", R.drawable.icon),
-        Triple("Ngày Mai Người Ta Lấy Chồng", "Anh Tú", R.drawable.nen),
-        Triple("Mưa Tháng Sáu", "Văn Mai Hương", R.drawable.tieude),
-        Triple("Nơi Này Có Anh", "Sơn Tùng M-TP", R.drawable.icon),
-        Triple("Lạc Trôi", "Sơn Tùng M-TP", R.drawable.nen),
-        Triple("Sau Lời Từ Khước", "Phan Mạnh Quỳnh", R.drawable.tieude),
-        Triple("Thanh Xuân", "Da LAB", R.drawable.icon),
-        Triple("Thằng Điên", "JustaTee", R.drawable.nen),
-        Triple("Anh Nhà Ở Đâu Thế", "AMEE", R.drawable.tieude),
-        Triple("Tòng Phu", "Keyo", R.drawable.icon),
-        Triple("See Tình", "Hoàng Thùy Linh", R.drawable.nen),
-        Triple("Waiting For You", "MONO", R.drawable.tieude),
-        Triple("Khuất Lối", "H-Kray", R.drawable.icon)
-    )
+    // Observe state từ ViewModel
+    val recommendSongs by viewModel.recommendSongs.collectAsState()
+    val topSongs by viewModel.topSongs.collectAsState()
+
+    // Gọi API khi vào màn hình
+    LaunchedEffect(Unit) {
+        viewModel.loadRecommendSongs("JWT_TOKEN_HERE") // token thật từ Auth
+        viewModel.loadTopSongs()
+    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet(
                 drawerContainerColor = Color(0xFF121212),
-                modifier = Modifier.width(280.dp).fillMaxHeight() // Thu nhỏ sidebar
+                modifier = Modifier.width(280.dp).fillMaxHeight()
             ) {
                 ProfileSidebarContent(userName, userInitial, onEditClick = { showEditDialog = true })
             }
@@ -87,42 +76,50 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(bottom = 16.dp)
             ) {
-                // Mục: Dành cho bạn
+                // Mục: Dành cho bạn (Recommend)
                 item {
                     Text(
                         text = "Dành cho bạn",
                         color = Color.White,
-                        fontSize = 20.sp, // Thu nhỏ tiêu đề
+                        fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
                     )
                     LazyRow(
                         contentPadding = PaddingValues(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp) // Thu nhỏ khoảng cách
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        items(playlist.take(6)) { song ->
-                            SongSquareCard(song.first, song.second, song.third) { onSongSelect(song) }
+                        items(recommendSongs) { song ->
+                            SongSquareCard(
+                                title = song.title,
+                                artist = "ID:${song.artist_id}", // hoặc map thêm artistName nếu có
+                                imageRes = R.drawable.icon // tạm icon, sau này load ảnh từ cover_image_url
+                            ) {
+                                onSongSelect(Triple(song.title, "ID:${song.artist_id}", R.drawable.icon))
+                            }
                         }
                     }
                 }
 
-                // Mục: Giai điệu thịnh hành
+                // Mục: Giai điệu thịnh hành (Top 10 view)
                 item {
                     Text(
                         text = "Giai điệu thịnh hành",
                         color = Color.White,
-                        fontSize = 20.sp, // Thu nhỏ tiêu đề
+                        fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(start = 16.dp, top = 20.dp, bottom = 10.dp)
                     )
                 }
 
-                items(playlist.drop(6)) { song ->
+                items(topSongs) { song ->
                     MusicModernCard(
-                        artistName = song.second,
-                        songName = song.first,
-                        artistImage = song.third,
-                        onClick = { onSongSelect(song) }
+                        artistName = "ID:${song.artist_id}", // hoặc map thêm artistName nếu có
+                        songName = song.title,
+                        artistImage = R.drawable.icon, // tạm icon, sau này load ảnh từ cover_image_url
+                        onClick = {
+                            onSongSelect(Triple(song.title, "ID:${song.artist_id}", R.drawable.icon))
+                        }
                     )
                 }
             }
@@ -164,6 +161,7 @@ fun HomeScreen(
     }
 }
 
+
 @Composable
 fun SongSquareCard(title: String, artist: String, imageRes: Int, onClick: () -> Unit) {
     Column(
@@ -184,6 +182,43 @@ fun SongSquareCard(title: String, artist: String, imageRes: Int, onClick: () -> 
         Text(artist, color = Color.Gray, fontSize = 11.sp, maxLines = 1)
     }
 }
+//@Composable
+//fun SongSquareCard(
+//    title: String,
+//    artist: String,
+//    imageUrl: String, // truyền tên file hoặc URL
+//    onClick: () -> Unit
+//) {
+//    Column(
+//        modifier = Modifier
+//            .width(120.dp)
+//            .clickable { onClick() }
+//    ) {
+//        Image(
+//            painter = rememberAsyncImagePainter(model = imageUrl),
+//            contentDescription = null,
+//            modifier = Modifier
+//                .size(120.dp)
+//                .clip(RoundedCornerShape(8.dp)),
+//            contentScale = ContentScale.Crop
+//        )
+//        Spacer(modifier = Modifier.height(6.dp))
+//        Text(
+//            text = title,
+//            color = Color.White,
+//            fontSize = 13.sp,
+//            fontWeight = FontWeight.Bold,
+//            maxLines = 1
+//        )
+//        Text(
+//            text = artist,
+//            color = Color.Gray,
+//            fontSize = 11.sp,
+//            maxLines = 1
+//        )
+//    }
+//}
+
 
 @Composable
 fun MusicModernCard(artistName: String, songName: String, artistImage: Int, onClick: () -> Unit) {

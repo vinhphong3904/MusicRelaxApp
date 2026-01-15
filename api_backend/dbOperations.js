@@ -280,11 +280,59 @@ function generateOTP() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
+// Lấy Top 10 bài hát nhiều view
+async function getTopSongs() {
+  const pool = await getPool();
+  const result = await pool.request().query(`
+    SELECT TOP 10 id, title, artist_id, album_id, genre_id, duration_seconds,
+           audio_url, cover_image_url, view_count, slug, created_at
+    FROM songs
+    WHERE status = 1
+    ORDER BY view_count DESC, created_at DESC
+  `);
+  return result.recordset;
+}
+
+// Hàm gợi ý bài hát cho user
+async function getRecommendSongs(userId) {
+  const pool = await getPool();
+
+  // lấy nghệ sĩ và thể loại gần nhất
+  const recent = await pool.request()
+    .input('userId', sql.Int, userId)
+    .query(`
+      SELECT TOP 1 s.artist_id, s.genre_id
+      FROM histories h
+      JOIN songs s ON h.song_id = s.id
+      WHERE h.user_id = @userId
+      ORDER BY h.played_at DESC
+    `);
+
+  if (recent.recordset.length === 0) return [];
+
+  const { artist_id, genre_id } = recent.recordset[0];
+
+  // lấy 5 bài hát gợi ý
+  const recommend = await pool.request()
+    .input('artistId', sql.Int, artist_id)
+    .input('genreId', sql.Int, genre_id)
+    .query(`
+      SELECT TOP 5 *
+      FROM songs
+      WHERE status = 1
+        AND (artist_id = @artistId OR genre_id = @genreId)
+      ORDER BY NEWID()
+    `);
+
+  return recommend.recordset;
+}
 
 /* =========================
    Exported DB operations
    ========================= */
 module.exports = {
+  // ---------- RECOMMENDING----------
+  getTopSongs, getRecommendSongs,
 
   // ---------- ALBUMS ----------
   getAllAlbums,

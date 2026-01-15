@@ -7,7 +7,7 @@ info:
     name: API Support
     email: support@musicapp.com
 servers:
-  - url: http://localhost:5000
+  - url: http://localhost:8080
     description: Development server
 security:
   - bearerAuth: []
@@ -158,6 +158,28 @@ components:
           type: string
           nullable: true
       required: [id, title, duration, src]
+
+    TopSongsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Song"
+
+    RecommendSongsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Song"
 
     Artist:
       type: object
@@ -747,6 +769,67 @@ paths:
                     $ref: "#/components/schemas/Song"
         "404":
           description: Không tìm thấy bài hát
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/songs/top:
+    get:
+      tags: [Top 10 Songs]
+      summary: Lấy Top 10 bài hát nhiều view nhất
+      description: Trả về danh sách 10 bài hát có lượt view cao nhất.
+      responses:
+        "200":
+          description: Danh sách Top 10 bài hát
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Song"
+        "500":
+          description: Lỗi server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/songs/recommend:
+    get:
+      tags: [Top Recommendations]
+      summary: Gợi ý bài hát cho người dùng
+      description: Dựa trên lịch sử nghe gần đây của user, trả về khoảng 5 bài hát cùng nghệ sĩ hoặc cùng thể loại.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Danh sách bài hát gợi ý
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Song"
+        "401":
+          description: Unauthorized — thiếu hoặc sai token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Lỗi server
           content:
             application/json:
               schema:

@@ -50,3 +50,22 @@ data class PaginationDto(
     val total: Int,
     val totalPages: Int
 )
+
+data class SongTopDto(
+    val id: Int,
+    val title: String,
+    val artist_id: Int,
+    val album_id: Int?,
+    val genre_id: Int?,
+    val duration_seconds: Int,
+    val audio_url: String,
+    val cover_image_url: String?,
+    val view_count: Long,
+    val slug: String?,
+    val created_at: String?
+)
+
+data class SongsSimpleResponse(
+    val success: Boolean,
+    val data: List<SongTopDto>
+)

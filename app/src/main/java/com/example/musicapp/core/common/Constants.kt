@@ -5,9 +5,9 @@ package com.example.musicapp.core.common
  */
 object Constants {
     // ============ API CONFIG ============
-    const val BASE_URL = "https://api.musicapp.com/"
+    const val BASE_URL = "http://192.168.1.5:8080/"
     const val NETWORK_TIMEOUT = 30L
-    
+
     // ============ SHARED PREFERENCES ============
     const val PREF_AUTH_TOKEN = "auth_token"
     const val PREF_USER_ID = "user_id"

@@ -9,8 +9,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,14 +26,39 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.musicapp.R
 import com.example.musicapp.presentation.navigation.Screen
+import com.example.musicapp.presentation.viewmodel.AuthViewModel
 
 @Composable
 fun LoginScreen(navController: NavController) {
-    var email by remember { mutableStateOf("") }
+    val authViewModel: AuthViewModel = hiltViewModel()
+    val loginState by authViewModel.loginState.collectAsState()
+    val isLoggedIn by authViewModel.isLoggedIn.collectAsState()
+    var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    LaunchedEffect(loginState) {
+        loginState?.let { response ->
+            if (response.success) {
+                navController.navigate(Screen.Home.route) {
+                    popUpTo(Screen.Login.route) { inclusive = true }
+                }
+            }
+        }
+    }
+
+    LaunchedEffect(isLoggedIn) {
+        if (isLoggedIn) {
+            navController.navigate(Screen.Home.route) {
+                popUpTo(Screen.Login.route) { inclusive = true }
+            }
+        }
+    }
+
+
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -95,22 +121,22 @@ fun LoginScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(32.dp)) // Thu nhỏ để gọn hơn
 
             AuthTextField(
-                value = email, 
-                onValueChange = { email = it }, 
-                placeholder = "Email hoặc Tên tài khoản",
-                leadingIcon = Icons.Default.Email
+                value = username,
+                onValueChange = { username = it },
+                placeholder = "Tên tài khoản",//email chua lam
+                leadingIcon = Icons.Default.Person
             )
             Spacer(modifier = Modifier.height(16.dp))
             AuthTextField(
-                value = password, 
-                onValueChange = { password = it }, 
-                placeholder = "Mật khẩu", 
+                value = password,
+                onValueChange = { password = it },
+                placeholder = "Mật khẩu",
                 isPassword = true,
                 leadingIcon = Icons.Default.Lock
             )
 
             Spacer(modifier = Modifier.height(12.dp))
-            
+
             Text(
                 "Quên mật khẩu?",
                 color = Color(0xFF38BDF8),
@@ -121,10 +147,8 @@ fun LoginScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(32.dp))
 
             Button(
-                onClick = { 
-                    navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.Login.route) { inclusive = true }
-                    }
+                onClick = {
+                    authViewModel.login(username, password)
                 },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF38BDF8)),
@@ -137,7 +161,7 @@ fun LoginScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(12.dp))
 
             OutlinedButton(
-                onClick = { 
+                onClick = {
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Login.route) { inclusive = true }
                     }
@@ -159,8 +183,8 @@ fun LoginScreen(navController: NavController) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("Chưa có tài khoản? ", color = Color.White)
                 Text(
-                    "Đăng ký ngay", 
-                    color = Color(0xFF38BDF8), 
+                    "Đăng ký ngay",
+                    color = Color(0xFF38BDF8),
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.clickable { navController.navigate(Screen.Register.route) }
                 )
@@ -196,7 +220,8 @@ fun AuthTextField(
             }
         },
         modifier = Modifier.fillMaxWidth(),
-        visualTransformation = if (isPassword && !passwordVisible) PasswordVisualTransformation() else VisualTransformation.None,
+        visualTransformation = if (isPassword && !passwordVisible) PasswordVisualTransformation()
+        else VisualTransformation.None,
         colors = TextFieldDefaults.colors(
             focusedTextColor = Color.White,
             unfocusedTextColor = Color.White,
