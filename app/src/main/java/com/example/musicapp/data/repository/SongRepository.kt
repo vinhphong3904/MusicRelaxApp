@@ -1,54 +1,51 @@
 package com.example.musicapp.data.repository
 
-import com.example.musicapp.data.model.dto.SongDetailDto
-import com.example.musicapp.data.model.dto.SongDto
-import com.example.musicapp.data.model.dto.SongTopDto
+import com.example.musicapp.data.mapper.toDomain
 import com.example.musicapp.data.remote.SongRemoteDataSource
 import com.example.musicapp.domain.model.Song
 import com.example.musicapp.domain.model.SongDetail
+import com.example.musicapp.domain.repository.MusicRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-interface SongRepositoryInterface {
-    suspend fun getSongs(
-        keyword: String? = null,
-        genreId: Int? = null,
-        artistId: Int? = null,
-        page: Int = 1,
-        limit: Int = 20
-    ): List<SongDto>
-
-    suspend fun getSongDetail(id: Int): SongDetailDto
-
-    suspend fun getTopSongs(): List<SongTopDto>
-
-    suspend fun getRecommendSongs(): List<SongTopDto>
-}
-
-
-class SongRepository @Inject constructor(
+class SongRepositoryImpl @Inject constructor(
     private val remote: SongRemoteDataSource
-) : SongRepositoryInterface {
+) : MusicRepository {
 
-    override suspend fun getSongs(
-        keyword: String?,
-        genreId: Int?,
-        artistId: Int?,
-        page: Int,
-        limit: Int
-    ): List<SongDto> {
-        return remote.fetchSongs(keyword, genreId, artistId, page, limit).data
+    override suspend fun getSongs(page: Int, limit: Int): Flow<Result<List<Song>>> = flow {
+        try {
+            val dtoList = remote.fetchSongs(null, null, null, page, limit).data
+            emit(Result.success(dtoList.map { it.toDomain() }))
+        } catch (e: Exception) {
+            emit(Result.failure(e))
+        }
     }
 
-    override suspend fun getSongDetail(id: Int): SongDetailDto {
-        return remote.fetchSongDetail(id).data
+    override suspend fun getSongDetail(id: Int): Flow<Result<SongDetail>> = flow {
+        try {
+            val dto = remote.fetchSongDetail(id).data
+            emit(Result.success(dto.toDomain()))
+        } catch (e: Exception) {
+            emit(Result.failure(e))
+        }
     }
 
-    override suspend fun getTopSongs(): List<SongTopDto> {
-        return remote.fetchTopSongs().data
+    override suspend fun getTopSongs(): Flow<Result<List<Song>>> = flow {
+        try {
+            val dtoList = remote.fetchTopSongs().data
+            emit(Result.success(dtoList.map { it.toDomain() }))
+        } catch (e: Exception) {
+            emit(Result.failure(e))
+        }
     }
 
-    override suspend fun getRecommendSongs(): List<SongTopDto> {
-        return remote.fetchRecommendSongs().data
+    override suspend fun getRecommendSongs(): Flow<Result<List<Song>>> = flow {
+        try {
+            val dtoList = remote.fetchRecommendSongs().data
+            emit(Result.success(dtoList.map { it.toDomain() }))
+        } catch (e: Exception) {
+            emit(Result.failure(e))
+        }
     }
 }
-

@@ -21,7 +21,7 @@ data class Song(
 data class SongDetail(
     val id: Int,
     val title: String,
-    val src: String,
+    val audioUrl: String,
     val duration: Int,
     val coverImageUrl: String?,
     val lyricsContent: String?,

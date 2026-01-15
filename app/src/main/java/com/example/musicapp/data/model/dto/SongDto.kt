@@ -7,7 +7,7 @@ data class SongDto(
     val id: Int,
     val title: String,
     val duration: Int,
-    val src: String,
+    val audio_url: String,
     val cover_image_url: String?,
     val view_count: Int,
     val slug: String?,
@@ -26,7 +26,7 @@ data class SongsResponse(
 data class SongDetailDto(
     val id: Int,
     val title: String,
-    val src: String,
+    val audio_url: String,
     val duration: Int,
     val cover_image_url: String?,
     val lyrics_content: String?,

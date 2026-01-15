@@ -1,22 +1,31 @@
 package com.example.musicapp.domain.usecase
 
-import com.example.musicapp.domain.model.Song
 import com.example.musicapp.domain.repository.MusicRepository
-import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
-class GetSongsUseCase @Inject constructor(
-    private val repository: MusicRepository
-) {
-    suspend operator fun invoke(page: Int = 1, limit: Int = 20): Flow<Result<List<Song>>> {
-        return repository.getSongs(page, limit)
-    }
+
+data class SongUseCases(
+    val getSongs: GetSongsUseCase,
+    val getSongDetail: GetSongDetailUseCase,
+    val getTopSongs: GetTopSongsUseCase,
+    val getRecommendSongs: GetRecommendSongsUseCase
+)
+
+class GetSongsUseCase(private val repository: MusicRepository) {
+    suspend operator fun invoke(page: Int=1, limit: Int=10) =
+        repository.getSongs(page, limit)
 }
 
-class GetSongDetailUseCase @Inject constructor(
-    private val repository: MusicRepository
-) {
-    suspend operator fun invoke(songId: Int): Flow<Result<Song>> {
-        return repository.getSongDetail(songId)
-    }
+class GetSongDetailUseCase(private val repository: MusicRepository) {
+    suspend operator fun invoke(songId: Int) =
+        repository.getSongDetail(songId)
+}
+
+class GetTopSongsUseCase(private val repository: MusicRepository) {
+    suspend operator fun invoke() =
+        repository.getTopSongs()
+}
+
+class GetRecommendSongsUseCase(private val repository: MusicRepository) {
+    suspend operator fun invoke() =
+        repository.getRecommendSongs()
 }

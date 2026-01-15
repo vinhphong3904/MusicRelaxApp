@@ -2,6 +2,8 @@ package com.example.musicapp.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.musicapp.data.mapper.toDto
+import com.example.musicapp.data.mapper.toTopDto
 import com.example.musicapp.data.model.dto.*
 import com.example.musicapp.data.repository.AuthRepositoryInterface
 import com.example.musicapp.domain.usecase.*
@@ -12,15 +14,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SongsViewModel @Inject constructor(
-    private val getSongsUseCase: GetSongsUseCase,
-    private val getSongDetailUseCase: GetSongDetailUseCase,
-    private val getTopSongsUseCase: GetTopSongsUseCase,
-    private val getRecommendSongsUseCase: GetRecommendSongsUseCase,
+    private val songUseCases: SongUseCases,
     private val authRepository: AuthRepositoryInterface
 ) : ViewModel() {
 
     // ===== TOKEN =====
-    private val tokenState: StateFlow<String?> =
+    val tokenState: StateFlow<String?> =
         authRepository.tokenFlow.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
@@ -48,21 +47,16 @@ class SongsViewModel @Inject constructor(
     val message: StateFlow<String?> = _message
 
     // ===== LOAD SONGS =====
-    fun loadSongs(
-        keyword: String? = null,
-        genreId: Int? = null,
-        artistId: Int? = null,
-        page: Int = 1,
-        limit: Int = 20
-    ) {
+    fun loadSongs(page: Int = 1, limit: Int = 20) {
         viewModelScope.launch {
-            runCatching {
-                getSongsUseCase(keyword, genreId, artistId, page, limit)
-            }.onSuccess {
-                _songs.value = it
-                _message.value = null
-            }.onFailure {
-                _message.value = it.message
+            songUseCases.getSongs(page, limit).collect { result ->
+                result.onSuccess { list ->
+                    _songs.value = list.map { it.toDto() } // map domain → DTO
+                    _message.value = null
+                }
+                result.onFailure {
+                    _message.value = it.message
+                }
             }
         }
     }
@@ -70,13 +64,14 @@ class SongsViewModel @Inject constructor(
     // ===== LOAD SONG DETAIL =====
     fun loadSongDetail(id: Int) {
         viewModelScope.launch {
-            runCatching {
-                getSongDetailUseCase(id)
-            }.onSuccess {
-                _songDetail.value = it
-                _message.value = null
-            }.onFailure {
-                _message.value = it.message
+            songUseCases.getSongDetail(id).collect { result ->
+                result.onSuccess { song ->
+                    _songDetail.value = song.toDto() // map domain → DTO
+                    _message.value = null
+                }
+                result.onFailure {
+                    _message.value = it.message
+                }
             }
         }
     }
@@ -84,27 +79,29 @@ class SongsViewModel @Inject constructor(
     // ===== LOAD TOP SONGS =====
     fun loadTopSongs() {
         viewModelScope.launch {
-            runCatching {
-                getTopSongsUseCase()
-            }.onSuccess {
-                _topSongs.value = it
-                _message.value = null
-            }.onFailure {
-                _message.value = it.message
+            songUseCases.getTopSongs().collect { result ->
+                result.onSuccess { list ->
+                    _topSongs.value = list.map { it.toTopDto() } // map domain → TopDto
+                    _message.value = null
+                }
+                result.onFailure {
+                    _message.value = it.message
+                }
             }
         }
     }
 
-    // ===== LOAD RECOMMEND SONGS (AUTH REQUIRED) =====
+    // ===== LOAD RECOMMEND SONGS =====
     fun loadRecommendSongs() {
         viewModelScope.launch {
-            runCatching {
-                getRecommendSongsUseCase()
-            }.onSuccess {
-                _recommendSongs.value = it
-                _message.value = null
-            }.onFailure {
-                _message.value = it.message
+            songUseCases.getRecommendSongs().collect { result ->
+                result.onSuccess { list ->
+                    _recommendSongs.value = list.map { it.toTopDto() }
+                    _message.value = null
+                }
+                result.onFailure {
+                    _message.value = it.message
+                }
             }
         }
     }
