@@ -3,6 +3,7 @@ package com.example.musicapp.data.repository
 import com.example.musicapp.data.remote.ProfileRemoteDataSource
 import com.example.musicapp.data.model.dto.*
 import okhttp3.MultipartBody
+import javax.inject.Inject
 
 interface ProfileRepositoryInterface {
     suspend fun getProfile(token: String): ProfileResponse
@@ -11,7 +12,7 @@ interface ProfileRepositoryInterface {
     suspend fun resetAvatar(token: String): AvatarResponse
 }
 
-class ProfileRepository(
+class ProfileRepository @Inject constructor(
     private val remoteDataSource: ProfileRemoteDataSource
 ) : ProfileRepositoryInterface {
     override suspend fun getProfile(token: String): ProfileResponse {

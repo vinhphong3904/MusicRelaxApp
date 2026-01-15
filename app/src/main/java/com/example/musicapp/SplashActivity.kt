@@ -7,49 +7,66 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
 import com.example.musicapp.presentation.MainActivity
+import com.example.musicapp.presentation.viewmodel.AuthViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
-@SuppressLint("CustomSplashScreen")
+@AndroidEntryPoint
 class SplashActivity : AppCompatActivity() {
+
+    private val authViewModel: AuthViewModel by viewModels()
+    private var isLoggedIn: Boolean? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        // 1. Khởi tạo SplashScreen của hệ thống (phải gọi trước super.onCreate)
-        val splashScreen = installSplashScreen()
-        
+        installSplashScreen()
         super.onCreate(savedInstanceState)
-        
-        // 2. Thiết lập layout chứa thanh loading và 3 ảnh của bạn
         setContentView(R.layout.activity_splash)
 
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
         val tvPercentage = findViewById<TextView>(R.id.tvPercentage)
 
-        val handler = Handler(Looper.getMainLooper())
-        var progressStatus = 0
+        // 1️⃣ check login
+        authViewModel.checkLogin()
 
-        // 3. Chạy thanh loading trong 3 giây để chuyển màn hình
+        lifecycleScope.launch {
+            authViewModel.isLoggedIn.collect {
+                isLoggedIn = it
+            }
+        }
+
+        val handler = Handler(Looper.getMainLooper())
+        var progress = 0
+
         Thread {
-            while (progressStatus < 100) {
-                progressStatus += 1
-                try {
-                    Thread.sleep(30) // 30ms * 100 = 3 giây
-                } catch (e: InterruptedException) {
-                    e.printStackTrace()
-                }
+            while (progress < 100) {
+                progress++
+                Thread.sleep(25)
 
                 handler.post {
-                    progressBar.progress = progressStatus
-                    tvPercentage.text = "$progressStatus%"
+                    progressBar.progress = progress
+                    tvPercentage.text = "$progress%"
                 }
             }
 
-            handler.post {
-                // Chuyển sang MainActivity (nơi chứa HomeScreen của Compose)
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-                finish()
-            }
+            handler.post { navigate() }
         }.start()
+    }
+
+    private fun navigate() {
+        val intent = Intent(
+            this,
+            MainActivity::class.java
+        ).apply {
+            putExtra("isLoggedIn", isLoggedIn == true)
+        }
+
+        startActivity(intent)
+        finish()
     }
 }

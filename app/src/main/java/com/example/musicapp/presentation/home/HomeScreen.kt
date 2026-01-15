@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.musicapp.R
-import com.example.musicapp.presentation.navigation.Screen
 import com.example.musicapp.presentation.viewmodel.SongsViewModel
 import kotlinx.coroutines.launch
 
@@ -37,6 +36,7 @@ fun HomeScreen(
     onSongSelect: (Triple<String, String, Int>) -> Unit,
     viewModel: SongsViewModel = hiltViewModel()
 ) {
+
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
@@ -48,9 +48,10 @@ fun HomeScreen(
     val recommendSongs by viewModel.recommendSongs.collectAsState()
     val topSongs by viewModel.topSongs.collectAsState()
 
+
     // Gọi API khi vào màn hình
     LaunchedEffect(Unit) {
-        viewModel.loadRecommendSongs("JWT_TOKEN_HERE") // token thật từ Auth
+        viewModel.loadRecommendSongs() // token thật từ Auth
         viewModel.loadTopSongs()
     }
 

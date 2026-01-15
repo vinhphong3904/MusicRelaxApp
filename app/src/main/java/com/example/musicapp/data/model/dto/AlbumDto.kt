@@ -1,5 +1,7 @@
 package com.example.musicapp.data.model.dto
 
+import com.example.musicapp.domain.model.Album
+
 data class AlbumDto(
     val id: Int,
     val title: String,
@@ -10,6 +12,21 @@ data class AlbumDto(
     val artist_id: Int,
     val artist_name: String
 )
+
+
+fun AlbumDto.toDomain(): Album {
+    return Album(
+        id = id,
+        title = title,
+        releaseDate = release_date,
+        description = description,
+        coverImageUrl = cover_image_url,
+        createdAt = created_at,
+        artistId = artist_id,
+        artistName = artist_name
+    )
+}
+
 
 data class AlbumsResponse(
     val success: Boolean,

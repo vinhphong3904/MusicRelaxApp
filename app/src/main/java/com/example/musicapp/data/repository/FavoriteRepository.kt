@@ -2,6 +2,7 @@ package com.example.musicapp.data.repository
 
 import com.example.musicapp.data.remote.FavoriteRemoteDataSource
 import com.example.musicapp.data.model.dto.FavoriteDto
+import javax.inject.Inject
 
 interface FavoriteRepositoryInterface {
     suspend fun getFavorites(token: String): List<FavoriteDto>
@@ -9,7 +10,7 @@ interface FavoriteRepositoryInterface {
     suspend fun removeFavorite(token: String, songId: Int): String?
 }
 
-class FavoriteRepository(
+class FavoriteRepository @Inject constructor(
     private val remote: FavoriteRemoteDataSource
 ) : FavoriteRepositoryInterface {
     override suspend fun getFavorites(token: String): List<FavoriteDto> {

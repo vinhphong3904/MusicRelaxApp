@@ -38,7 +38,7 @@ class GetTopSongsUseCase(
 class GetRecommendSongsUseCase(
     private val repository: SongRepositoryInterface
 ) {
-    suspend operator fun invoke(token: String): List<SongTopDto> {
-        return repository.getRecommendSongs(token)
+    suspend operator fun invoke(): List<SongTopDto> {
+        return repository.getRecommendSongs()
     }
 }

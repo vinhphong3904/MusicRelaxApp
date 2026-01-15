@@ -2,6 +2,7 @@ package com.example.musicapp.data.repository
 
 import com.example.musicapp.data.remote.PlaylistRemoteDataSource
 import com.example.musicapp.data.model.dto.*
+import javax.inject.Inject
 
 interface PlaylistRepositoryInterface {
     suspend fun getPlaylists(token: String): List<PlaylistDto>
@@ -12,7 +13,7 @@ interface PlaylistRepositoryInterface {
     suspend fun removeSong(token: String, id: Int, songId: Int): String?
 }
 
-class PlaylistRepository(private val remoteDataSource: PlaylistRemoteDataSource) : PlaylistRepositoryInterface {
+class PlaylistRepository @Inject constructor(private val remoteDataSource: PlaylistRemoteDataSource) : PlaylistRepositoryInterface {
     override suspend fun getPlaylists(token: String) = remoteDataSource.fetchPlaylists(token).data
     override suspend fun createPlaylist(token: String, request: CreatePlaylistRequest) = remoteDataSource.createPlaylist(token, request).data
     override suspend fun getPlaylistDetail(token: String, id: Int) = remoteDataSource.fetchPlaylistDetail(token, id).data

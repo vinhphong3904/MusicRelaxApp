@@ -17,21 +17,22 @@ class AlbumsViewModel @Inject constructor(
     private val getAlbumDetailUseCase: GetAlbumDetailUseCase
 ) : ViewModel() {
 
-    private val _albums = MutableStateFlow<List<Album>>(emptyList())
+    // StateFlow cho danh sách album
+    private val _albums = MutableStateFlow(emptyList<Album>())
     val albums: StateFlow<List<Album>> = _albums
 
+    // StateFlow cho chi tiết album
     private val _albumDetail = MutableStateFlow<Album?>(null)
     val albumDetail: StateFlow<Album?> = _albumDetail
 
-    fun loadAlbums(token: String, keyword: String? = null, artistId: Int? = null, page: Int = 1, limit: Int = 20) {
+    fun loadAlbums(token: String, keyword: String? = null, artistId: Int? = null, page: Int = 1, limit: Int = 20) =
         viewModelScope.launch {
             _albums.value = getAlbumsUseCase(token, keyword, artistId, page, limit)
         }
-    }
 
-    fun loadAlbumDetail(token: String, id: Int) {
+    fun loadAlbumDetail(token: String, id: Int) =
         viewModelScope.launch {
             _albumDetail.value = getAlbumDetailUseCase(token, id)
         }
-    }
 }
+

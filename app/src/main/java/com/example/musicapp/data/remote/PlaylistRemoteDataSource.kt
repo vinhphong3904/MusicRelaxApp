@@ -2,8 +2,9 @@ package com.example.musicapp.data.remote
 
 import com.example.musicapp.core.network.ApiService
 import com.example.musicapp.data.model.dto.*
+import javax.inject.Inject
 
-class PlaylistRemoteDataSource(private val api: ApiService) {
+class PlaylistRemoteDataSource @Inject constructor(private val api: ApiService) {
     suspend fun fetchPlaylists(token: String) = api.getPlaylists("Bearer $token")
     suspend fun createPlaylist(token: String, request: CreatePlaylistRequest) = api.createPlaylist("Bearer $token", request)
     suspend fun fetchPlaylistDetail(token: String, id: Int) = api.getPlaylistDetail("Bearer $token", id)

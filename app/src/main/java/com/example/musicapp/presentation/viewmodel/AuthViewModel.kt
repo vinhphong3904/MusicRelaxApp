@@ -8,14 +8,17 @@ import com.example.musicapp.data.model.dto.LoginResponse
 import com.example.musicapp.data.model.dto.MeResponse
 import com.example.musicapp.data.model.dto.RegisterRequest
 import com.example.musicapp.data.model.dto.RegisterResponse
+import com.example.musicapp.domain.usecase.CheckLoginStateUseCase
 import com.example.musicapp.domain.usecase.GetCurrentUserUseCase
 import com.example.musicapp.domain.usecase.LoginUseCase
 import com.example.musicapp.domain.usecase.RegisterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,7 +26,9 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     private val registerUseCase: RegisterUseCase,
     private val loginUseCase: LoginUseCase,
-    private val getCurrentUserUseCase: GetCurrentUserUseCase
+    private val getCurrentUserUseCase: GetCurrentUserUseCase,
+    private val checkLoginStateUseCase: CheckLoginStateUseCase,
+    private val userDataStore: UserDataStore
 ) : ViewModel() {
 
     private val _registerState = MutableStateFlow<RegisterResponse?>(null)
@@ -35,34 +40,54 @@ class AuthViewModel @Inject constructor(
     private val _meState = MutableStateFlow<MeResponse?>(null)
     val meState: StateFlow<MeResponse?> = _meState
 
-    private val _isLoggedIn = MutableStateFlow(false)
-    val isLoggedIn: StateFlow<Boolean> = _isLoggedIn
+    /** NULL = đang check, true/false = kết quả */
+    private val _isLoggedIn = MutableStateFlow<Boolean?>(null)
+    val isLoggedIn: StateFlow<Boolean?> = _isLoggedIn
 
-    // quan sát token từ UseCase
-    val tokenFlow: Flow<String?> = loginUseCase.getTokenFlow()
+    /** expose token nếu UI / interceptor cần */
+    val tokenFlow: Flow<String?> = userDataStore.tokenFlow
 
-    fun register(username: String, email: String, password: String, confirmPassword: String) {
+    /** Splash gọi */
+    fun checkLogin() {
         viewModelScope.launch {
-            val response = registerUseCase(RegisterRequest(username, email, password, confirmPassword))
-            _registerState.value = response
+            _isLoggedIn.value = checkLoginStateUseCase()
+        }
+    }
+
+    fun register(
+        username: String,
+        email: String,
+        password: String,
+        confirmPassword: String
+    ) {
+        viewModelScope.launch {
+            _registerState.value =
+                registerUseCase(RegisterRequest(username, email, password, confirmPassword))
         }
     }
 
     fun login(username: String, password: String) {
         viewModelScope.launch {
             val response = loginUseCase(LoginRequest(username, password))
+
+            if (response.success && !response.token.isNullOrEmpty()) {
+                userDataStore.saveToken(response.token!!)
+                _isLoggedIn.value = true
+            } else {
+                _isLoggedIn.value = false
+            }
+
             _loginState.value = response
         }
     }
 
     fun getCurrentUser() {
         viewModelScope.launch {
-            // lấy token từ flow
-            val token = tokenFlow.first()
-            if (token != null) {
-                val response = getCurrentUserUseCase(token)
-                _meState.value = response
+            val token = userDataStore.tokenFlow.first()
+            if (!token.isNullOrEmpty()) {
+                _meState.value = getCurrentUserUseCase(token)
             }
         }
     }
 }
+

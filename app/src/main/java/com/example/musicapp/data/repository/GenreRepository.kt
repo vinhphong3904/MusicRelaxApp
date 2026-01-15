@@ -2,13 +2,14 @@ package com.example.musicapp.data.repository
 
 import com.example.musicapp.data.remote.GenreRemoteDataSource
 import com.example.musicapp.domain.model.Genre
+import javax.inject.Inject
 
 interface GenreRepositoryInterface {
     suspend fun getGenres(token: String): List<Genre>
     suspend fun getGenreDetail(token: String, id: Int): Genre
 }
 
-class GenreRepository(private val remoteDataSource: GenreRemoteDataSource) : GenreRepositoryInterface {
+class GenreRepository @Inject constructor(private val remoteDataSource: GenreRemoteDataSource) : GenreRepositoryInterface {
     override suspend fun getGenres(token: String): List<Genre> {
         val response = remoteDataSource.fetchGenres(token)
         return response.data.map {

@@ -2,16 +2,11 @@ package com.example.musicapp.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.musicapp.data.model.dto.SongDto
-import com.example.musicapp.data.model.dto.SongDetailDto
-import com.example.musicapp.data.model.dto.SongTopDto
-import com.example.musicapp.domain.usecase.GetSongsUseCase
-import com.example.musicapp.domain.usecase.GetSongDetailUseCase
-import com.example.musicapp.domain.usecase.GetTopSongsUseCase
-import com.example.musicapp.domain.usecase.GetRecommendSongsUseCase
+import com.example.musicapp.data.model.dto.*
+import com.example.musicapp.data.repository.AuthRepositoryInterface
+import com.example.musicapp.domain.usecase.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,30 +15,39 @@ class SongsViewModel @Inject constructor(
     private val getSongsUseCase: GetSongsUseCase,
     private val getSongDetailUseCase: GetSongDetailUseCase,
     private val getTopSongsUseCase: GetTopSongsUseCase,
-    private val getRecommendSongsUseCase: GetRecommendSongsUseCase
+    private val getRecommendSongsUseCase: GetRecommendSongsUseCase,
+    private val authRepository: AuthRepositoryInterface
 ) : ViewModel() {
 
-    // State cho danh sách bài hát (search/list)
+    // ===== TOKEN =====
+    private val tokenState: StateFlow<String?> =
+        authRepository.tokenFlow.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = null
+        )
+
+    // ===== SONG LIST =====
     private val _songs = MutableStateFlow<List<SongDto>>(emptyList())
     val songs: StateFlow<List<SongDto>> = _songs
 
-    // State cho chi tiết bài hát
+    // ===== SONG DETAIL =====
     private val _songDetail = MutableStateFlow<SongDetailDto?>(null)
     val songDetail: StateFlow<SongDetailDto?> = _songDetail
 
-    // State cho Top 10
+    // ===== TOP SONGS =====
     private val _topSongs = MutableStateFlow<List<SongTopDto>>(emptyList())
     val topSongs: StateFlow<List<SongTopDto>> = _topSongs
 
-    // State cho Recommend
+    // ===== RECOMMEND SONGS =====
     private val _recommendSongs = MutableStateFlow<List<SongTopDto>>(emptyList())
     val recommendSongs: StateFlow<List<SongTopDto>> = _recommendSongs
 
-    // State cho thông báo (ví dụ lỗi hoặc message khác)
+    // ===== MESSAGE =====
     private val _message = MutableStateFlow<String?>(null)
     val message: StateFlow<String?> = _message
 
-    // Lấy danh sách bài hát (search/list)
+    // ===== LOAD SONGS =====
     fun loadSongs(
         keyword: String? = null,
         genreId: Int? = null,
@@ -52,47 +56,55 @@ class SongsViewModel @Inject constructor(
         limit: Int = 20
     ) {
         viewModelScope.launch {
-            try {
-                _songs.value = getSongsUseCase(keyword, genreId, artistId, page, limit)
+            runCatching {
+                getSongsUseCase(keyword, genreId, artistId, page, limit)
+            }.onSuccess {
+                _songs.value = it
                 _message.value = null
-            } catch (e: Exception) {
-                _message.value = e.message
+            }.onFailure {
+                _message.value = it.message
             }
         }
     }
 
-    // Lấy chi tiết bài hát
+    // ===== LOAD SONG DETAIL =====
     fun loadSongDetail(id: Int) {
         viewModelScope.launch {
-            try {
-                _songDetail.value = getSongDetailUseCase(id)
+            runCatching {
+                getSongDetailUseCase(id)
+            }.onSuccess {
+                _songDetail.value = it
                 _message.value = null
-            } catch (e: Exception) {
-                _message.value = e.message
+            }.onFailure {
+                _message.value = it.message
             }
         }
     }
 
-    // Lấy Top 10 bài hát
+    // ===== LOAD TOP SONGS =====
     fun loadTopSongs() {
         viewModelScope.launch {
-            try {
-                _topSongs.value = getTopSongsUseCase()
+            runCatching {
+                getTopSongsUseCase()
+            }.onSuccess {
+                _topSongs.value = it
                 _message.value = null
-            } catch (e: Exception) {
-                _message.value = e.message
+            }.onFailure {
+                _message.value = it.message
             }
         }
     }
 
-    // Lấy Recommend bài hát
-    fun loadRecommendSongs(token: String) {
+    // ===== LOAD RECOMMEND SONGS (AUTH REQUIRED) =====
+    fun loadRecommendSongs() {
         viewModelScope.launch {
-            try {
-                _recommendSongs.value = getRecommendSongsUseCase(token)
+            runCatching {
+                getRecommendSongsUseCase()
+            }.onSuccess {
+                _recommendSongs.value = it
                 _message.value = null
-            } catch (e: Exception) {
-                _message.value = e.message
+            }.onFailure {
+                _message.value = it.message
             }
         }
     }

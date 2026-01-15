@@ -65,9 +65,7 @@ interface ApiService {
     suspend fun getTopSongs(): SongsSimpleResponse
 
     @GET("api/songs/recommend")
-    suspend fun getRecommendSongs(
-        @Header("Authorization") token: String
-    ): SongsSimpleResponse
+    suspend fun getRecommendSongs(): SongsSimpleResponse
 
 
     // ========== ALBUMS ==========

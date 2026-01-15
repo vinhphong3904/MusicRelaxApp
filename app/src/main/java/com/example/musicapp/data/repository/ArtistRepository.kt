@@ -2,13 +2,14 @@ package com.example.musicapp.data.repository
 
 import com.example.musicapp.data.remote.ArtistRemoteDataSource
 import com.example.musicapp.domain.model.Artist
+import javax.inject.Inject
 
 interface ArtistRepositoryInterface {
     suspend fun getArtists(token: String, keyword: String? = null): List<Artist>
     suspend fun getArtistDetail(token: String, id: Int): Artist
 }
 
-class ArtistRepository(
+class ArtistRepository @Inject constructor(
     private val remoteDataSource: ArtistRemoteDataSource
 ) : ArtistRepositoryInterface {
     override suspend fun getArtists(token: String, keyword: String?): List<Artist> {

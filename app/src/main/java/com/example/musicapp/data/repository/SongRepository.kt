@@ -6,6 +6,7 @@ import com.example.musicapp.data.model.dto.SongTopDto
 import com.example.musicapp.data.remote.SongRemoteDataSource
 import com.example.musicapp.domain.model.Song
 import com.example.musicapp.domain.model.SongDetail
+import javax.inject.Inject
 
 interface SongRepositoryInterface {
     suspend fun getSongs(
@@ -20,11 +21,11 @@ interface SongRepositoryInterface {
 
     suspend fun getTopSongs(): List<SongTopDto>
 
-    suspend fun getRecommendSongs(token: String): List<SongTopDto>
+    suspend fun getRecommendSongs(): List<SongTopDto>
 }
 
 
-class SongRepository(
+class SongRepository @Inject constructor(
     private val remote: SongRemoteDataSource
 ) : SongRepositoryInterface {
 
@@ -46,8 +47,8 @@ class SongRepository(
         return remote.fetchTopSongs().data
     }
 
-    override suspend fun getRecommendSongs(token: String): List<SongTopDto> {
-        return remote.fetchRecommendSongs(token).data
+    override suspend fun getRecommendSongs(): List<SongTopDto> {
+        return remote.fetchRecommendSongs().data
     }
 }
 

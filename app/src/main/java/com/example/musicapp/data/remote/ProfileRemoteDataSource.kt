@@ -3,8 +3,9 @@ package com.example.musicapp.data.remote
 import com.example.musicapp.core.network.ApiService
 import com.example.musicapp.data.model.dto.*
 import okhttp3.MultipartBody
+import javax.inject.Inject
 
-class ProfileRemoteDataSource(private val api: ApiService) {
+class ProfileRemoteDataSource @Inject constructor(private val api: ApiService) {
 
     suspend fun fetchProfile(token: String): ProfileResponse {
         return api.getProfile("Bearer $token")
