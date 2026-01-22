@@ -24,46 +24,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.musicapp.R
+import com.example.musicapp.data.model.UserDto
 import com.example.musicapp.presentation.navigation.Screen
 import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(
     navController: NavHostController,
-    onSongSelect: (Triple<String, String, Int>) -> Unit
+    viewModel: HomeViewModel = viewModel()
 ) {
+    val state by viewModel.uiState.collectAsState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    
-    var userName by remember { mutableStateOf("Kha") }
-    var showEditDialog by remember { mutableStateOf(false) }
-    val userInitial = if (userName.isNotEmpty()) userName.take(1).uppercase() else "U"
-
-    // DANH SÁCH BÀI HÁT
-    val playlist = listOf(
-        Triple("Đừng Làm Trái Tim Anh Đau", "Sơn Tùng M-TP", R.drawable.icon),
-        Triple("Chúng Ta Của Tương Lai", "Sơn Tùng M-TP", R.drawable.tieude),
-        Triple("Thiên Lý Ơi", "Jack - J97", R.drawable.nen),
-        Triple("Giá Như", "SOOBIN", R.drawable.tieude),
-        Triple("Exit Sign", "HIEUTHUHAI", R.drawable.icon),
-        Triple("Em Xinh", "MONO", R.drawable.nen),
-        Triple("Lệ Lưu Ly", "Vũ Phụng Tiên", R.drawable.tieude),
-        Triple("Cắt Đôi Nỗi Sầu", "Tăng Duy Tân", R.drawable.icon),
-        Triple("Ngày Mai Người Ta Lấy Chồng", "Anh Tú", R.drawable.nen),
-        Triple("Mưa Tháng Sáu", "Văn Mai Hương", R.drawable.tieude),
-        Triple("Nơi Này Có Anh", "Sơn Tùng M-TP", R.drawable.icon),
-        Triple("Lạc Trôi", "Sơn Tùng M-TP", R.drawable.nen),
-        Triple("Sau Lời Từ Khước", "Phan Mạnh Quỳnh", R.drawable.tieude),
-        Triple("Thanh Xuân", "Da LAB", R.drawable.icon),
-        Triple("Thằng Điên", "JustaTee", R.drawable.nen),
-        Triple("Anh Nhà Ở Đâu Thế", "AMEE", R.drawable.tieude),
-        Triple("Tòng Phu", "Keyo", R.drawable.icon),
-        Triple("See Tình", "Hoàng Thùy Linh", R.drawable.nen),
-        Triple("Waiting For You", "MONO", R.drawable.tieude),
-        Triple("Khuất Lối", "H-Kray", R.drawable.icon)
-    )
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -72,7 +47,14 @@ fun HomeScreen(
                 drawerContainerColor = Color(0xFF121212),
                 modifier = Modifier.width(280.dp).fillMaxHeight() // Thu nhỏ sidebar
             ) {
-                ProfileSidebarContent(userName, userInitial, onEditClick = { showEditDialog = true })
+                ProfileSidebarContent(
+                    user = state.user,
+                    userInitial = state.userInitial,
+                    onProfileClick = {
+                        scope.launch { drawerState.close() }
+                        navController.navigate(Screen.Profile.route)
+                    }
+                )
             }
         }
     ) {
@@ -81,7 +63,11 @@ fun HomeScreen(
                 .fillMaxSize()
                 .background(Color(0xFF121212))
         ) {
-            HomeHeader(userInitial, onProfileClick = { scope.launch { drawerState.open() } })
+            HomeHeader(
+                userInitial = state.userInitial
+            ) {
+                scope.launch { drawerState.open() }
+            }
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -89,19 +75,27 @@ fun HomeScreen(
             ) {
                 // Mục: Dành cho bạn
                 item {
-                    Text(
-                        text = "Dành cho bạn",
-                        color = Color.White,
-                        fontSize = 20.sp, // Thu nhỏ tiêu đề
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
-                    )
-                    LazyRow(
-                        contentPadding = PaddingValues(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp) // Thu nhỏ khoảng cách
-                    ) {
-                        items(playlist.take(6)) { song ->
-                            SongSquareCard(song.first, song.second, song.third) { onSongSelect(song) }
+                    if (state.recommendSongs.isNotEmpty()) {
+                        Text(
+                            text = "Dành cho bạn",
+                            color = Color.White,
+                            fontSize = 20.sp, // Thu nhỏ tiêu đề
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                        )
+                        LazyRow(
+                            contentPadding = PaddingValues(horizontal = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            items(state.recommendSongs) { song ->
+                                SongSquareCard(
+                                    title = song.title,
+                                    artist = song.artist.name,
+                                    imageRes = R.drawable.icon
+                                ) {
+                                    navController.navigate(Screen.Player.route)
+                                }
+                            }
                         }
                     }
                 }
@@ -116,53 +110,19 @@ fun HomeScreen(
                         modifier = Modifier.padding(start = 16.dp, top = 20.dp, bottom = 10.dp)
                     )
                 }
-
-                items(playlist.drop(6)) { song ->
-                    MusicModernCard(
-                        artistName = song.second,
-                        songName = song.first,
-                        artistImage = song.third,
-                        onClick = { onSongSelect(song) }
-                    )
+                    items(state.topSongs) { song ->
+                        MusicModernCard(
+                            artistName = song.artist.name,
+                            songName = song.title,
+                            artistImage = R.drawable.nen
+                        ) {
+                            navController.navigate(Screen.Player.route)
+                        }
+                    }
                 }
             }
         }
     }
-
-    if (showEditDialog) {
-        var tempName by remember { mutableStateOf(userName) }
-        AlertDialog(
-            onDismissRequest = { showEditDialog = false },
-            containerColor = Color(0xFF2A2A2A),
-            title = { Text("Đổi tên hiển thị", color = Color.White) },
-            text = {
-                TextField(
-                    value = tempName,
-                    onValueChange = { tempName = it },
-                    colors = TextFieldDefaults.colors(
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent
-                    )
-                )
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    userName = tempName
-                    showEditDialog = false
-                }) {
-                    Text("Lưu", color = Color(0xFF1DB954), fontWeight = FontWeight.Bold)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showEditDialog = false }) {
-                    Text("Hủy", color = Color.Gray)
-                }
-            }
-        )
-    }
-}
 
 @Composable
 fun SongSquareCard(title: String, artist: String, imageRes: Int, onClick: () -> Unit) {
@@ -216,7 +176,7 @@ fun MusicModernCard(artistName: String, songName: String, artistImage: Int, onCl
 }
 
 @Composable
-fun HomeHeader(userInitial: String, onProfileClick: () -> Unit) {
+fun HomeHeader(userInitial: String, onOpenSidebar: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -229,7 +189,7 @@ fun HomeHeader(userInitial: String, onProfileClick: () -> Unit) {
                 .size(30.dp) // Thu nhỏ avatar 36dp -> 30dp
                 .clip(CircleShape)
                 .background(Color(0xFFFF8A80))
-                .clickable { onProfileClick() },
+                .clickable { onOpenSidebar() },
             contentAlignment = Alignment.Center
         ) {
             Text(userInitial, color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 12.sp)
@@ -244,34 +204,62 @@ fun HomeHeader(userInitial: String, onProfileClick: () -> Unit) {
 }
 
 @Composable
-fun ProfileSidebarContent(userName: String, userInitial: String, onEditClick: () -> Unit) {
+fun ProfileSidebarContent(
+    user: UserDto?,
+    userInitial: String,
+    onProfileClick: () -> Unit
+) {
     Column(
         modifier = Modifier.fillMaxSize().padding(14.dp)
     ) {
+
+        // AVATAR + NAME
         Row(
-            modifier = Modifier.padding(vertical = 20.dp).clickable { onEditClick() },
+            modifier = Modifier
+                .padding(vertical = 20.dp)
+                .clickable(enabled = user != null) {
+                    onProfileClick()
+                },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
-                modifier = Modifier.size(48.dp).clip(CircleShape).background(Color(0xFFFF8A80)),
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFFFF8A80)),
                 contentAlignment = Alignment.Center
             ) {
                 Text(userInitial, color = Color.Black, fontSize = 20.sp, fontWeight = FontWeight.Bold)
             }
+
             Spacer(modifier = Modifier.width(12.dp))
+
             Column {
-                Text(userName, color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                Text("Xem hồ sơ", color = Color.Gray, fontSize = 12.sp)
+                Text(
+                    text = user?.fullName ?: "Khách",
+                    color = Color.White,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = if (user != null) "Xem hồ sơ" else "Đăng nhập để xem hồ sơ",
+                    color = Color.Gray,
+                    fontSize = 12.sp
+                )
             }
         }
-        Box(modifier = Modifier.fillMaxWidth().height(0.5.dp).background(Color.DarkGray))
+
+        Box(
+            modifier = Modifier.fillMaxWidth().height(0.5.dp).background(Color.DarkGray)
+        )
+
         Spacer(modifier = Modifier.height(14.dp))
-        SidebarMenuItem(Icons.Default.Add, "Thêm tài khoản")
-        SidebarMenuItem(Icons.Default.Info, "Có gì mới")
-        SidebarMenuItem(Icons.AutoMirrored.Filled.List, "Số liệu hoạt động nghe")
-        SidebarMenuItem(Icons.Default.Refresh, "Gần đây")
-        SidebarMenuItem(Icons.Default.Notifications, "Tin cập nhật")
-        SidebarMenuItem(Icons.Default.Settings, "Cài đặt và quyền riêng tư")
+
+        // CHỈ USER MỚI CÓ
+        if (user != null) {
+            SidebarMenuItem(Icons.Default.Refresh, "Gần đây")
+            SidebarMenuItem(Icons.Default.Settings, "Cài đặt")
+        }
     }
 }
 

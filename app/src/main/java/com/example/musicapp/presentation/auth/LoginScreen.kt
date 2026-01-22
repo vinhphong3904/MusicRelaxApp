@@ -11,6 +11,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -31,7 +32,7 @@ import com.example.musicapp.presentation.navigation.Screen
 
 @Composable
 fun LoginScreen(navController: NavController) {
-    var email by remember { mutableStateOf("") }
+    var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -95,10 +96,10 @@ fun LoginScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(32.dp)) // Thu nhỏ để gọn hơn
 
             AuthTextField(
-                value = email, 
-                onValueChange = { email = it }, 
-                placeholder = "Email hoặc Tên tài khoản",
-                leadingIcon = Icons.Default.Email
+                value = username,
+                onValueChange = { username = it },
+                placeholder = "Tên tài khoản",//email chua lam
+                leadingIcon = Icons.Default.Person
             )
             Spacer(modifier = Modifier.height(16.dp))
             AuthTextField(
@@ -196,7 +197,8 @@ fun AuthTextField(
             }
         },
         modifier = Modifier.fillMaxWidth(),
-        visualTransformation = if (isPassword && !passwordVisible) PasswordVisualTransformation() else VisualTransformation.None,
+        visualTransformation = if (isPassword && !passwordVisible) PasswordVisualTransformation()
+        else VisualTransformation.None,
         colors = TextFieldDefaults.colors(
             focusedTextColor = Color.White,
             unfocusedTextColor = Color.White,

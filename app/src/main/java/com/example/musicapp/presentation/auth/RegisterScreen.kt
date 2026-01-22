@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
@@ -19,6 +20,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,6 +32,7 @@ fun RegisterScreen(navController: NavController) {
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
 
     Box(modifier = Modifier.fillMaxSize()) {
         // Ảnh nền với lớp phủ tối mờ dần
@@ -97,18 +100,32 @@ fun RegisterScreen(navController: NavController) {
                 placeholder = "Tên người dùng",
                 leadingIcon = Icons.Default.Person
             )
+
             Spacer(modifier = Modifier.height(16.dp))
+
             RegisterAuthTextField(
                 value = email, 
                 onValueChange = { email = it }, 
                 placeholder = "Email",
                 leadingIcon = Icons.Default.Email
             )
+
             Spacer(modifier = Modifier.height(16.dp))
+
             RegisterAuthTextField(
                 value = password, 
                 onValueChange = { password = it }, 
                 placeholder = "Mật khẩu", 
+                isPassword = true,
+                leadingIcon = Icons.Default.Lock
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            RegisterAuthTextField(
+                value = confirmPassword,
+                onValueChange = { confirmPassword = it },
+                placeholder = "Xác nhận mật khẩu",
                 isPassword = true,
                 leadingIcon = Icons.Default.Lock
             )
@@ -149,13 +166,31 @@ fun RegisterAuthTextField(
     leadingIcon: androidx.compose.ui.graphics.vector.ImageVector,
     isPassword: Boolean = false
 ) {
+
+    var passwordVisible by remember { mutableStateOf(false) }
+
     TextField(
         value = value,
         onValueChange = onValueChange,
         placeholder = { Text(placeholder, color = Color.Gray) },
         leadingIcon = { Icon(leadingIcon, contentDescription = null, tint = Color.Gray) },
+        trailingIcon = {
+            if (isPassword) {
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(
+                        imageVector = if (passwordVisible) Icons.Default.Info else Icons.Default.Lock,
+                        contentDescription = if (passwordVisible) "Ẩn mật khẩu" else "Hiện mật khẩu",
+                        tint = Color.Gray
+                    )
+                }
+            }
+        },
         modifier = Modifier.fillMaxWidth(),
-        visualTransformation = if (isPassword) PasswordVisualTransformation() else androidx.compose.ui.text.input.VisualTransformation.None,
+        visualTransformation = if (isPassword && !passwordVisible) {
+            PasswordVisualTransformation()
+        } else {
+            VisualTransformation.None
+        },
         colors = TextFieldDefaults.colors(
             focusedTextColor = Color.White,
             unfocusedTextColor = Color.White,

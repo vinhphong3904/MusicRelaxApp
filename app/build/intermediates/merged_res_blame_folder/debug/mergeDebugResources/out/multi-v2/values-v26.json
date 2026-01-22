@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.musicapp-mergeDebugResources-2:/values-v26/values-v26.xml",
+            "outputFile": "com.example.musicapp-mergeDebugResources-68:/values-v26/values-v26.xml",
             "map": [
                 {
-                    "source": "E:\\Download\\gradle-8.5\\caches\\8.13\\transforms\\fd1059556096f932c9182ed09bef752e\\transformed\\appcompat-1.7.1\\res\\values-v26\\values-v26.xml",
+                    "source": "C:\\Users\\Chau Quynh\\.gradle\\caches\\8.13\\transforms\\fd1059556096f932c9182ed09bef752e\\transformed\\appcompat-1.7.1\\res\\values-v26\\values-v26.xml",
                     "from": {
                         "startLines": "2,3,4,8,12,16",
                         "startColumns": "4,4,4,4,4,4",
