@@ -1,6 +1,5 @@
 package com.example.musicapp.presentation.auth
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.musicapp.data.api.ApiClient
@@ -11,14 +10,22 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class AuthViewModel(
-    private val context: Context
-) : ViewModel() {
-
-    private val tokenManager = TokenManager(context)
+class AuthViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Idle)
     val uiState: StateFlow<AuthUiState> = _uiState
+
+    init {
+        checkLogin()
+    }
+
+    fun checkLogin() {
+        if (TokenManager.getToken() != null) {
+            _uiState.value = AuthUiState.LoggedIn
+        } else {
+            _uiState.value = AuthUiState.Idle
+        }
+    }
 
     fun login(username: String, password: String) {
         authLogin(username, password)
@@ -42,7 +49,9 @@ class AuthViewModel(
                 )
 
                 if (res.success) {
-                    tokenManager.saveToken(res.token)
+                    // LƯU TOKEN ĐÚNG CHỖ
+                    TokenManager.saveToken(res.token)
+
                     _uiState.value = AuthUiState.Success(
                         res.user,
                         AuthAction.LOGIN
@@ -89,4 +98,5 @@ class AuthViewModel(
         }
     }
 }
+
 

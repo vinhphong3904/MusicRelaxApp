@@ -9,8 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val api: MusicApi,
-    private val tokenManager: TokenManager
+    private val api: MusicApi
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -25,11 +24,9 @@ class HomeViewModel(
             _uiState.value = _uiState.value.copy(isLoading = true)
 
             try {
-                val token = tokenManager.getToken()
-                val me = if (token != null) api.getMe().user else null
+                val me = runCatching { api.getMe().user }.getOrNull()
 
                 val top = api.getTopSongs()
-
                 val recommend = api.getRecommendSongs()
 
                 _uiState.value = HomeUiState(
@@ -48,5 +45,6 @@ class HomeViewModel(
         }
     }
 }
+
 
 

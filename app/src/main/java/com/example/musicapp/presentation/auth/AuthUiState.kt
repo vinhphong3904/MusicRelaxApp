@@ -5,10 +5,10 @@ import com.example.musicapp.data.model.UserDto
 sealed class AuthUiState {
     object Idle : AuthUiState()
     object Loading : AuthUiState()
-
+    object LoggedIn : AuthUiState()
     data class Success(
         val user: UserDto,
-        val from: AuthAction   // login hay register
+        val action: AuthAction   // login hay register
     ) : AuthUiState()
 
     data class Error(
