@@ -1,6 +1,7 @@
 package com.example.musicapp.presentation.home
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.musicapp.data.api.MusicApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +18,19 @@ class HomeViewModel(
     init {
         loadHome()
     }
+
+    class HomeViewModelFactory(
+        private val api: MusicApi
+    ) : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
+                return HomeViewModel(api) as T
+            }
+            throw IllegalArgumentException("Unknown ViewModel class")
+        }
+    }
+
 
     fun loadHome() {
         viewModelScope.launch {
