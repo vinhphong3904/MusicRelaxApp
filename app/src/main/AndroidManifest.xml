@@ -33,6 +33,18 @@
             android:name=".presentation.MainActivity"
             android:exported="true"/>
 
+<<<<<<< HEAD
+=======
+        <service
+            android:name=".core.player.MusicService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaSessionService" />
+            </intent-filter>
+        </service>
+
+>>>>>>> 5b12fbbad63d19eaf668b9f3c69b092852db4981
     </application>
 
 </manifest>
