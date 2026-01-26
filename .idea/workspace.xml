@@ -31,10 +31,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="65c8af5c-b3bf-46f1-b414-df7765ab3f0f" name="Changes" comment="move">
+    <list default="true" id="65c8af5c-b3bf-46f1-b414-df7765ab3f0f" name="Changes" comment="Update new checkLogin">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/musicapp/presentation/auth/AuthUiState.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/musicapp/presentation/auth/AuthUiState.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/musicapp/presentation/auth/AuthViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/musicapp/presentation/auth/AuthViewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/musicapp/presentation/auth/LoginScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/musicapp/presentation/auth/LoginScreen.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/musicapp/presentation/home/HomeViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/musicapp/presentation/home/HomeViewModel.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -200,7 +199,15 @@
       <option name="project" value="LOCAL" />
       <updated>1768976011490</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Update new checkLogin">
+      <option name="closed" value="true" />
+      <created>1769395436702</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1769395436717</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -238,7 +245,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="move" />
-    <option name="LAST_COMMIT_MESSAGE" value="move" />
+    <MESSAGE value="Update new checkLogin" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update new checkLogin" />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">
