@@ -28,10 +28,13 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.musicapp.R
+import com.example.musicapp.data.api.ApiClient
+import com.example.musicapp.presentation.home.HomeViewModel
 import com.example.musicapp.presentation.navigation.Screen
 
 @Composable
-fun LoginScreen(navController: NavController, authViewModel: AuthViewModel = viewModel()) {
+fun LoginScreen(navController: NavController) {
+    val authViewModel: AuthViewModel = viewModel()
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 

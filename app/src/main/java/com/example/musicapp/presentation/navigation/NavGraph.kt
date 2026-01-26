@@ -20,7 +20,6 @@ import com.example.musicapp.presentation.player.PlayerScreen
 @Composable
 fun NavGraph(
     navController: NavHostController,
-    homeViewModel: HomeViewModel,
     modifier: Modifier = Modifier,
     startDestination: String = Screen.Home.route,
     currentPlayingSong: Triple<String, String, Int>?,
@@ -38,8 +37,7 @@ fun NavGraph(
     ) {
         composable(route = Screen.Home.route) {
             HomeScreen(
-                navController = navController,
-                viewModel = homeViewModel
+                navController = navController
             )
         }
         composable(route = Screen.Search.route) {

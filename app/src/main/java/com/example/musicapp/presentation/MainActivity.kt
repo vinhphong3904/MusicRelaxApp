@@ -135,8 +135,7 @@ class MainActivity : ComponentActivity() {
                         LoginScreen(navController)
                     }
                     composable("home") {
-                        val homeViewModel: HomeViewModel = viewModel()
-                        HomeScreen(navController, homeViewModel)
+                        HomeScreen(navController)
                     }
                     composable("player") {
                         PlayerScreen(

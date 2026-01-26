@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.musicapp.R
+import com.example.musicapp.data.api.ApiClient
 import com.example.musicapp.data.model.UserDto
 import com.example.musicapp.presentation.navigation.Screen
 import kotlinx.coroutines.launch
@@ -34,8 +35,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen(
     navController: NavHostController,
-    viewModel: HomeViewModel = viewModel()
 ) {
+    val viewModel: HomeViewModel = viewModel(
+        factory = HomeViewModel.HomeViewModelFactory(ApiClient.musicApi)
+    )
     val state by viewModel.uiState.collectAsState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
