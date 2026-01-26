@@ -3,14 +3,12 @@ package com.example.musicapp.presentation.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.musicapp.data.api.MusicApi
-import com.example.musicapp.data.service.TokenManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val api: MusicApi,
-    private val tokenManager: TokenManager
+    private val api: MusicApi
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -25,11 +23,9 @@ class HomeViewModel(
             _uiState.value = _uiState.value.copy(isLoading = true)
 
             try {
-                val token = tokenManager.getToken()
-                val me = if (token != null) api.getMe().user else null
+                val me = runCatching { api.getMe().user }.getOrNull()
 
                 val top = api.getTopSongs()
-
                 val recommend = api.getRecommendSongs()
 
                 _uiState.value = HomeUiState(
@@ -42,11 +38,13 @@ class HomeViewModel(
             } catch (e: Exception) {
                 _uiState.value = HomeUiState(
                     isLoading = false,
-                    error = e.message ?: "Load home failed"
+                    isApiError = true,
+                    error = e.message ?: "Lỗi không thể tải dữ liệu!"
                 )
             }
         }
     }
 }
+
 
 

@@ -14,11 +14,13 @@ import com.example.musicapp.presentation.history.HistoryScreen
 import com.example.musicapp.presentation.settings.SettingsScreen
 import com.example.musicapp.presentation.auth.LoginScreen
 import com.example.musicapp.presentation.auth.RegisterScreen
+import com.example.musicapp.presentation.home.HomeViewModel
 import com.example.musicapp.presentation.player.PlayerScreen
 
 @Composable
 fun NavGraph(
     navController: NavHostController,
+    homeViewModel: HomeViewModel,
     modifier: Modifier = Modifier,
     startDestination: String = Screen.Home.route,
     currentPlayingSong: Triple<String, String, Int>?,
@@ -37,10 +39,7 @@ fun NavGraph(
         composable(route = Screen.Home.route) {
             HomeScreen(
                 navController = navController,
-                onSongSelect = { song: Triple<String, String, Int> ->
-                    onSongSelect(song)
-                    navController.navigate(Screen.Player.route)
-                }
+                viewModel = homeViewModel
             )
         }
         composable(route = Screen.Search.route) {

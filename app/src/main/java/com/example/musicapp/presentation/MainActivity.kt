@@ -3,7 +3,6 @@ package com.example.musicapp.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
@@ -12,28 +11,38 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.musicapp.R
-import com.example.musicapp.presentation.navigation.NavGraph
 import com.example.musicapp.presentation.navigation.Screen
 import kotlinx.coroutines.delay
-import dagger.hilt.android.AndroidEntryPoint
-
-import com.example.musicapp.presentation.components.MusicBottomNavigation
+import androidx.navigation.compose.composable
 import com.example.musicapp.presentation.components.MiniPlayer
+import com.example.musicapp.presentation.components.MusicBottomNavigation
+import com.example.musicapp.presentation.auth.AuthUiState
+import com.example.musicapp.presentation.auth.AuthViewModel
+import com.example.musicapp.presentation.auth.LoginScreen
+import com.example.musicapp.presentation.home.HomeScreen
+import com.example.musicapp.presentation.home.HomeViewModel
+import com.example.musicapp.presentation.player.PlayerScreen
 
-@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
         setContent {
             val navController = rememberNavController()
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentRoute = navBackStackEntry?.destination?.route
+            val authViewModel: AuthViewModel = viewModel()
+            val uiState by authViewModel.uiState.collectAsState()
 
-            // DANH SÁCH BÀI HÁT MỞ RỘNG (20 BÀI)
+            // check login 1 lần duy nhất
+            LaunchedEffect(Unit) {
+                authViewModel.checkLogin()
+            }
+
+            // Playlist giữ nguyên
             val playlist = listOf(
                 Triple("Đừng Làm Trái Tim Anh Đau", "Sơn Tùng M-TP", R.drawable.icon),
                 Triple("Chúng Ta Của Tương Lai", "Sơn Tùng M-TP", R.drawable.tieude),
@@ -72,69 +81,83 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            Scaffold(
-                containerColor = Color.Black,
-                bottomBar = {
-                    val hideBottomBar = currentRoute == Screen.Login.route || 
-                                      currentRoute == Screen.Register.route || 
-                                      currentRoute == Screen.Player.route
-                    
-                    if (!hideBottomBar) {
-                        Column {
-                            AnimatedVisibility(
-                                visible = currentPlayingSong != null,
-                                enter = slideInVertically(initialOffsetY = { it }, animationSpec = tween(400)) + fadeIn(),
-                                exit = slideOutVertically(targetOffsetY = { it }, animationSpec = tween(400)) + fadeOut()
-                            ) {
-                                currentPlayingSong?.let { song ->
-                                    MiniPlayer(
-                                        songTitle = song.first,
-                                        artistName = song.second,
-                                        imageRes = song.third,
-                                        isPlaying = isPlaying,
-                                        onPlayPauseClick = { isPlaying = !isPlaying },
-                                        onPreviousClick = {
-                                            currentSongIndex = (currentSongIndex - 1 + playlist.size) % playlist.size
-                                            progress = 0f
-                                            isPlaying = true
-                                        },
-                                        onNextClick = {
-                                            currentSongIndex = (currentSongIndex + 1) % playlist.size
-                                            progress = 0f
-                                            isPlaying = true
-                                        },
-                                        onExpand = { navController.navigate(Screen.Player.route) }
-                                    )
+            val startDestination = when (uiState) {
+                AuthUiState.LoggedIn -> "home"
+                AuthUiState.Idle,
+                AuthUiState.Loading -> null // chờ
+                else -> "login"
+            }
+
+            if (startDestination != null) {
+                Scaffold(
+                    containerColor = Color.Black,
+                    bottomBar = {
+                        val navBackStackEntry by navController.currentBackStackEntryAsState()
+                        val currentRoute = navBackStackEntry?.destination?.route
+                        val hideBottomBar = currentRoute == "login" || currentRoute == "register" || currentRoute == "player"
+
+                        if (!hideBottomBar) {
+                            Column {
+                                AnimatedVisibility(
+                                    visible = currentPlayingSong != null,
+                                    enter = slideInVertically(initialOffsetY = { it }, animationSpec = tween(400)) + fadeIn(),
+                                    exit = slideOutVertically(targetOffsetY = { it }, animationSpec = tween(400)) + fadeOut()
+                                ) {
+                                    currentPlayingSong?.let { song ->
+                                        MiniPlayer(
+                                            songTitle = song.first,
+                                            artistName = song.second,
+                                            imageRes = song.third,
+                                            isPlaying = isPlaying,
+                                            onPlayPauseClick = { isPlaying = !isPlaying },
+                                            onPreviousClick = {
+                                                currentSongIndex = (currentSongIndex - 1 + playlist.size) % playlist.size
+                                                progress = 0f
+                                                isPlaying = true
+                                            },
+                                            onNextClick = {
+                                                currentSongIndex = (currentSongIndex + 1) % playlist.size
+                                                progress = 0f
+                                                isPlaying = true
+                                            },
+                                            onExpand = { navController.navigate(Screen.Player.route) }
+                                        )
+                                    }
                                 }
+                                MusicBottomNavigation(navController)
                             }
-                            MusicBottomNavigation(navController)
+                        }
+                    }
+                ) { innerPadding ->
+                    NavHost(
+                        navController = navController,
+                        startDestination = startDestination,
+                        modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())
+                    ) {
+                        composable("login") {
+                            LoginScreen(navController)
+                        }
+                        composable("home") {
+                            val homeViewModel: HomeViewModel = viewModel()
+                            HomeScreen(navController, homeViewModel)
+                        }
+                        composable("player") {
+                            PlayerScreen(
+                                navController = navController,
+                                currentPlayingSong = currentPlayingSong,
+                                isPlaying = isPlaying,
+                                progress = progress,
+                                onPlayPauseChange = { isPlaying = it },
+                                onProgressChange = { progress = it },
+                                onNextPrev = { offset ->
+                                    currentSongIndex = (currentSongIndex + offset + playlist.size) % playlist.size
+                                    progress = 0f
+                                    isPlaying = true
+                                }
+                            )
                         }
                     }
                 }
-            ) { innerPadding ->
-                NavGraph(
-                    navController = navController,
-                    modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()),
-                    startDestination = Screen.Login.route,
-                    currentPlayingSong = currentPlayingSong,
-                    isPlaying = isPlaying,
-                    progress = progress,
-                    onSongSelect = { song ->
-                        val index = playlist.indexOf(song)
-                        if (index != -1) {
-                            currentSongIndex = index
-                            progress = 0f
-                            isPlaying = true
-                        }
-                    },
-                    onPlayPauseChange = { isPlaying = it },
-                    onProgressChange = { progress = it },
-                    onNextPrev = { offset ->
-                        currentSongIndex = (currentSongIndex + offset + playlist.size) % playlist.size
-                        progress = 0f
-                        isPlaying = true
-                    }
-                )
             }
         }
     }

@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -22,6 +21,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -45,7 +45,9 @@ fun HomeScreen(
         drawerContent = {
             ModalDrawerSheet(
                 drawerContainerColor = Color(0xFF121212),
-                modifier = Modifier.width(280.dp).fillMaxHeight() // Thu nhỏ sidebar
+                modifier = Modifier
+                    .width(280.dp)
+                    .fillMaxHeight()
             ) {
                 ProfileSidebarContent(
                     user = state.user,
@@ -58,71 +60,114 @@ fun HomeScreen(
             }
         }
     ) {
-        Column(
+
+        // Loading content và kết nối api
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color(0xFF121212))
         ) {
-            HomeHeader(
-                userInitial = state.userInitial
-            ) {
-                scope.launch { drawerState.open() }
+
+            //Nếu api lỗi
+            if (state.isApiError) {
+                Column(
+                    modifier = Modifier.align(Alignment.Center),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        Icons.Default.Clear,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(48.dp)
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = state.error?:"Lỗi không thể tải dữ liệu",
+                        color = Color.White,
+                        textAlign = TextAlign.Center,
+                        fontSize = 16.sp
+                    )
+                }
             }
 
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(bottom = 16.dp)
-            ) {
-                // Mục: Dành cho bạn
-                item {
-                    if (state.recommendSongs.isNotEmpty()) {
-                        Text(
-                            text = "Dành cho bạn",
-                            color = Color.White,
-                            fontSize = 20.sp, // Thu nhỏ tiêu đề
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
-                        )
-                        LazyRow(
-                            contentPadding = PaddingValues(horizontal = 16.dp),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            items(state.recommendSongs) { song ->
-                                SongSquareCard(
-                                    title = song.title,
-                                    artist = song.artist.name,
-                                    imageRes = R.drawable.icon
+            //Home Ui
+            else {
+
+                Column(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+
+                    HomeHeader(
+                        userInitial = state.userInitial
+                    ) {
+                        scope.launch { drawerState.open() }
+                    }
+
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(bottom = 16.dp)
+                    ) {
+
+                        // Dành cho bạn
+                        item {
+                            if (state.recommendSongs.isNotEmpty()) {
+                                Text(
+                                    text = "Dành cho bạn",
+                                    color = Color.White,
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(
+                                        horizontal = 16.dp,
+                                        vertical = 12.dp
+                                    )
+                                )
+                                LazyRow(
+                                    contentPadding = PaddingValues(horizontal = 16.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                                 ) {
-                                    navController.navigate(Screen.Player.route)
+                                    items(state.recommendSongs) { song ->
+                                        SongSquareCard(
+                                            title = song.title,
+                                            artist = song.artist.name,
+                                            imageRes = R.drawable.icon
+                                        ) {
+                                            navController.navigate(Screen.Player.route)
+                                        }
+                                    }
                                 }
                             }
                         }
-                    }
-                }
 
-                // Mục: Giai điệu thịnh hành
-                item {
-                    Text(
-                        text = "Giai điệu thịnh hành",
-                        color = Color.White,
-                        fontSize = 20.sp, // Thu nhỏ tiêu đề
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(start = 16.dp, top = 20.dp, bottom = 10.dp)
-                    )
-                }
-                    items(state.topSongs) { song ->
-                        MusicModernCard(
-                            artistName = song.artist.name,
-                            songName = song.title,
-                            artistImage = R.drawable.nen
-                        ) {
-                            navController.navigate(Screen.Player.route)
+                        // Giai điệu thịnh hành
+                        item {
+                            Text(
+                                text = "Giai điệu thịnh hành",
+                                color = Color.White,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(
+                                    start = 16.dp,
+                                    top = 20.dp,
+                                    bottom = 10.dp
+                                )
+                            )
+                        }
+
+                        items(state.topSongs) { song ->
+                            MusicModernCard(
+                                artistName = song.artist.name,
+                                songName = song.title,
+                                artistImage = R.drawable.nen
+                            ) {
+                                navController.navigate(Screen.Player.route)
+                            }
                         }
                     }
                 }
             }
         }
     }
+}
 
 @Composable
 fun SongSquareCard(title: String, artist: String, imageRes: Int, onClick: () -> Unit) {
