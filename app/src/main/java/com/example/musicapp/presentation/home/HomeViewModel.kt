@@ -38,7 +38,8 @@ class HomeViewModel(
             } catch (e: Exception) {
                 _uiState.value = HomeUiState(
                     isLoading = false,
-                    error = e.message ?: "Load home failed"
+                    isApiError = true,
+                    error = e.message ?: "Lỗi không thể tải dữ liệu!"
                 )
             }
         }

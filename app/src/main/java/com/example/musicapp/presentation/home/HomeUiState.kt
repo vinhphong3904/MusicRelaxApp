@@ -5,6 +5,7 @@ import com.example.musicapp.data.model.home.HomeSongDto
 
 data class HomeUiState(
     val isLoading: Boolean = false,
+    val isApiError: Boolean = false,
     val topSongs: List<HomeSongDto> = emptyList(),
     val recommendSongs: List<HomeSongDto> = emptyList(),
     val user: UserDto? = null,
