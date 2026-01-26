@@ -1,0 +1,1441 @@
+openapi: 3.0.0
+info:
+  title: Music App API
+  version: "1.0.0"
+  description: API cho ứng dụng nghe nhạc — Auth, Songs, Artists, Genres, Playlists, Favorites, Histories, Admin
+  contact:
+    name: API Support
+    email: support@musicapp.com
+servers:
+  - url: http://localhost:8080
+    description: Development server
+security:
+  - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        full_name:
+          type: string
+          nullable: true
+        avatar_url:
+          type: string
+          nullable: true
+        role:
+          type: string
+          enum: [user, artist, admin]
+        status:
+          type: integer
+          description: 1 active, 0 locked
+        created_at:
+          type: string
+          format: date-time
+      required: [id, username, email, role]
+
+    AuthResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        user:
+          $ref: "#/components/schemas/User"
+        token:
+          type: string
+
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            type: object
+
+    RegisterRequest:
+      type: object
+      required: [username, email, password, confirmPassword]
+      properties:
+        username:
+          type: string
+          minLength: 3
+          maxLength: 100
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+        confirmPassword:
+          type: string
+          minLength: 8
+
+    Profile:
+      type: object
+      properties:
+        user_id:
+          type: integer
+        full_name:
+          type: string
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        gender:
+          type: string
+          nullable: true
+        phone:
+          type: string
+          nullable: true
+        address:
+          type: string
+          nullable: true
+        bio:
+          type: string
+          nullable: true
+        songs_played_count:
+          type: integer
+        songs_downloaded_count:
+          type: integer
+        artists_followed_count:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+      required: [user_id, full_name]
+
+    Song:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        duration:
+          type: integer
+          description: seconds
+        src:
+          type: string
+        cover_image_url:
+          type: string
+          nullable: true
+        view_count:
+          type: integer
+        slug:
+          type: string
+          nullable: true
+        artist_id:
+          type: integer
+        artist_name:
+          type: string
+        genre_id:
+          type: integer
+          nullable: true
+        genre_name:
+          type: string
+          nullable: true
+      required: [id, title, duration, src]
+
+    SongResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 17
+        title:
+          type: string
+          example: Có Em Chờ
+        duration_seconds:
+          type: integer
+          example: 230
+        audio_url:
+          type: string
+        cover_image_url:
+          type: string
+        view_count:
+          type: integer
+          example: 901789
+        slug:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+        artist:
+          $ref: "#/components/schemas/Artist"
+
+        album:
+          $ref: "#/components/schemas/Album"
+
+        genre:
+          $ref: "#/components/schemas/Genre"
+
+    TopSongsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/SongResponse"
+
+    RecommendSongsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/SongResponse"
+
+    Artist:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        bio:
+          type: string
+          nullable: true
+        image_url:
+          type: string
+          nullable: true
+        is_verified:
+          type: boolean
+        slug:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    Album:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        artist_id:
+          type: integer
+        artist_name:
+          type: string
+        release_date:
+          type: string
+          format: date
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        cover_image_url:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    AlbumsListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Album"
+        pagination:
+          $ref: "#/components/schemas/Pagination"
+
+    SearchResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            artists:
+              type: array
+              items:
+                $ref: "#/components/schemas/Artist"
+            albums:
+              type: array
+              items:
+                $ref: "#/components/schemas/Album"
+            songs:
+              type: array
+              items:
+                $ref: "#/components/schemas/Song"
+
+    Genre:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Pop
+        slug:
+          type: string
+          example: pop
+        description:
+          type: string
+          example: Nhạc Pop phổ biến
+        created_at:
+          type: string
+          format: date-time
+          example: "2026-01-01T10:00:00.000Z"
+
+    GenreListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Genre"
+
+    GenreDetailResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: "#/components/schemas/Genre"
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Not found
+
+    Playlist:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        is_public:
+          type: boolean
+        thumbnail_url:
+          type: string
+          nullable: true
+        song_count:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    PlaylistDetail:
+      allOf:
+        - $ref: "#/components/schemas/Playlist"
+        - type: object
+          properties:
+            username:
+              type: string
+            full_name:
+              type: string
+              nullable: true
+            songs:
+              type: array
+              items:
+                $ref: "#/components/schemas/Song"
+
+    Favorite:
+      type: object
+      properties:
+        song_id:
+          type: integer
+        title:
+          type: string
+        artist_name:
+          type: string
+        favorited_at:
+          type: string
+          format: date-time
+
+    History:
+      type: object
+      properties:
+        id:
+          type: integer
+        played_at:
+          type: string
+          format: date-time
+        duration_played:
+          type: integer
+        song_id:
+          type: integer
+        title:
+          type: string
+        artist_name:
+          type: string
+
+    Settings:
+      type: object
+      properties:
+        user_id:
+          type: integer
+        theme:
+          type: string
+          enum: [light, dark]
+        language:
+          type: string
+          example: vi
+        notification_enabled:
+          type: boolean
+        download_quality:
+          type: string
+          example: 320kbps
+        autoplay_next:
+          type: boolean
+        explicit_filter:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+      required: [user_id]
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        totalPages:
+          type: integer
+
+    SongsListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Song"
+        pagination:
+          $ref: "#/components/schemas/Pagination"
+
+    AvatarUploadResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Avatar updated
+        avatar_url:
+          type: string
+          example: http://localhost:5000/uploads/avatars/avatar_default.jpg
+
+paths:
+  /api/test-mail:
+    post:
+      summary: Test gửi email
+      description: Gửi email test bằng Gmail App Password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                to:
+                  type: string
+                  format: email
+                  example: phong@example.com
+                subject:
+                  type: string
+                  example: "Test Nodemailer"
+                message:
+                  type: string
+                  example: "Đây là mail test từ Swagger"
+      responses:
+        "200":
+          description: Mail gửi thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  messageId:
+                    type: string
+        "400":
+          description: Validation error
+        "500":
+          description: Lỗi gửi mail
+
+  /api/register:
+    post:
+      tags: [Auth]
+      summary: Đăng ký tài khoản mới
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "201":
+          description: Đăng ký thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  user:
+                    $ref: "#/components/schemas/User"
+        "400":
+          description: Dữ liệu không hợp lệ hoặc mật khẩu xác nhận không khớp
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Username hoặc email đã tồn tại
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/login:
+    post:
+      tags: [Auth]
+      summary: Đăng nhập người dùng
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username:
+                  type: string
+                  example: phong
+                password:
+                  type: string
+                  example: 12345678
+      responses:
+        "200":
+          description: Đăng nhập thành công
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Thiếu thông tin
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Sai username hoặc password
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/me:
+    get:
+      tags: [Auth]
+      summary: Lấy thông tin user hiện tại
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Thông tin user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  user:
+                    $ref: "#/components/schemas/User"
+        "401":
+          description: Không có token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/profile:
+    get:
+      tags: [Profile]
+      summary: Lấy thông tin hồ sơ cá nhân
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Thông tin profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: "#/components/schemas/Profile"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    put:
+      tags: [Profile]
+      summary: Cập nhật hồ sơ cá nhân
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                full_name:
+                  type: string
+                date_of_birth:
+                  type: string
+                  format: date
+                gender:
+                  type: string
+                phone:
+                  type: string
+                address:
+                  type: string
+                bio:
+                  type: string
+      responses:
+        "200":
+          description: Cập nhật thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: "#/components/schemas/Profile"
+        "400":
+          description: Dữ liệu không hợp lệ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/profile/avatar:
+    put:
+      tags: [Profile]
+      summary: Upload avatar cho profile
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [avatar]
+              properties:
+                avatar:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Upload avatar thành công
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvatarUploadResponse"
+        "400":
+          description: Không có file hoặc file không hợp lệ
+        "401":
+          description: Unauthorized
+
+    delete:
+      tags: [Profile]
+      summary: Reset avatar về mặc định
+      description: Xóa avatar hiện tại và quay về avatar mặc định
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Reset avatar thành công
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvatarUploadResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/songs:
+    get:
+      tags: [Songs]
+      summary: Lấy danh sách bài hát với phân trang và filter
+      responses:
+        "200":
+          description: Danh sách bài hát
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SongsListResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/songs/{id}:
+    get:
+      tags: [Songs]
+      summary: Lấy chi tiết bài hát và tăng view count
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Chi tiết bài hát
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: "#/components/schemas/Song"
+        "404":
+          description: Không tìm thấy bài hát
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/songs/top:
+    get:
+      tags: [Songs]
+      summary: Lấy Top 10 bài hát nhiều view nhất
+      description: Trả về danh sách 10 bài hát có lượt view cao nhất.
+      responses:
+        "200":
+          description: Top 10 bài hát nhiều view
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SongResponse"
+        "500":
+          description: Lỗi server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/songs/recommend:
+    get:
+      tags: [Songs]
+      summary: Gợi ý bài hát cho người dùng
+      description: Dựa trên lịch sử nghe gần đây của user, trả về khoảng 5 bài hát cùng nghệ sĩ hoặc cùng thể loại.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Gợi ý bài hát
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  type:
+                    type: string
+                    example: PERSONALIZED
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SongResponse"
+        "401":
+          description: Unauthorized — thiếu hoặc sai token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Lỗi server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/albums:
+    get:
+      tags: [Albums]
+      summary: Lấy danh sách album
+      responses:
+        "200":
+          description: Danh sách album
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbumsListResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/albums/{id}:
+    get:
+      tags: [Albums]
+      summary: Lấy chi tiết album
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Chi tiết album
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: "#/components/schemas/Album"
+        "404":
+          description: Không tìm thấy album
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/search:
+    get:
+      tags: [Search]
+      summary: Tìm kiếm tổng hợp (nghệ sĩ, album, bài hát)
+      parameters:
+        - in: query
+          name: keyword
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: Kết quả tìm kiếm
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/artists:
+    get:
+      tags: [Artists]
+      summary: Lấy danh sách nghệ sĩ
+      parameters:
+        - in: query
+          name: keyword
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Danh sách nghệ sĩ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Artist"
+
+  /api/artists/{id}:
+    get:
+      tags: [Artists]
+      summary: Lấy chi tiết nghệ sĩ
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Chi tiết nghệ sĩ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: "#/components/schemas/Artist"
+        "404":
+          description: Không tìm thấy nghệ sĩ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/genres:
+    get:
+      tags:
+        - Genres
+      summary: Lấy danh sách thể loại nhạc
+      description: Lấy tất cả genre đang hoạt động
+      responses:
+        "200":
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenreListResponse"
+
+  /api/genres/{id}:
+    get:
+      tags:
+        - Genres
+      summary: Lấy chi tiết thể loại
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "200":
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenreDetailResponse"
+        "404":
+          description: Không tìm thấy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/playlists:
+    get:
+      tags: [Playlists]
+      summary: Lấy playlists của user
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Danh sách playlists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Playlist"
+    post:
+      tags: [Playlists]
+      summary: Tạo playlist mới
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                isPublic:
+                  type: boolean
+      responses:
+        "201":
+          description: Playlist được tạo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: "#/components/schemas/Playlist"
+        "400":
+          description: Dữ liệu không hợp lệ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/playlists/{id}:
+    get:
+      tags: [Playlists]
+      summary: Lấy chi tiết playlist và danh sách bài hát
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Chi tiết playlist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: "#/components/schemas/PlaylistDetail"
+        "404":
+          description: Không tìm thấy playlist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags: [Playlists]
+      summary: Xóa playlist (soft delete)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Kết quả xóa
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+
+  /api/playlists/{id}/songs:
+    post:
+      tags: [Playlists]
+      summary: Thêm bài hát vào playlist
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [songId]
+              properties:
+                songId:
+                  type: integer
+      responses:
+        "200":
+          description: Kết quả thêm bài hát
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+
+  /api/playlists/{id}/songs/{songId}:
+    delete:
+      tags: [Playlists]
+      summary: Xóa bài hát khỏi playlist
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: songId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Kết quả xóa
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+
+  /api/favorites:
+    get:
+      tags: [Favorites]
+      summary: Lấy danh sách yêu thích của user
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Danh sách yêu thích
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Favorite"
+    post:
+      tags: [Favorites]
+      summary: Thêm bài hát vào yêu thích
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [songId]
+              properties:
+                songId:
+                  type: integer
+      responses:
+        "200":
+          description: Kết quả thêm
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+
+  /api/favorites/{songId}:
+    delete:
+      tags: [Favorites]
+      summary: Xóa bài hát khỏi yêu thích (soft delete)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: songId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Kết quả xóa
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+
+  /api/histories:
+    get:
+      tags: [Histories]
+      summary: Lấy lịch sử nghe nhạc
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 50
+      responses:
+        "200":
+          description: Lịch sử nghe
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/History"
+    post:
+      tags: [Histories]
+      summary: Thêm lịch sử nghe nhạc
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [songId]
+              properties:
+                songId:
+                  type: integer
+                duration_played:
+                  type: integer
+      responses:
+        "200":
+          description: Kết quả thêm
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /api/settings:
+    get:
+      tags: [Settings]
+      summary: Lấy cài đặt người dùng
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Thông tin settings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: "#/components/schemas/Settings"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    put:
+      tags: [Settings]
+      summary: Cập nhật cài đặt người dùng
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                theme:
+                  type: string
+                  enum: [light, dark]
+                language:
+                  type: string
+                notification_enabled:
+                  type: boolean
+                download_quality:
+                  type: string
+                autoplay_next:
+                  type: boolean
+                explicit_filter:
+                  type: boolean
+      responses:
+        "200":
+          description: Cập nhật settings thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: "#/components/schemas/Settings"
+        "400":
+          description: Dữ liệu không hợp lệ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/admin/users:
+    get:
+      tags: [Admin]
+      summary: Lấy danh sách user (admin only)
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Danh sách user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/User"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /health:
+    get:
+      tags: [Health]
+      summary: Health check
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  uptime:
+                    type: number
