@@ -83,79 +83,75 @@ class MainActivity : ComponentActivity() {
 
             val startDestination = when (uiState) {
                 AuthUiState.LoggedIn -> "home"
-                AuthUiState.Idle,
-                AuthUiState.Loading -> null // chờ
-                else -> "login"
+                else -> "login"   // luôn vào login nếu chưa đăng nhập
             }
 
-            if (startDestination != null) {
-                Scaffold(
-                    containerColor = Color.Black,
-                    bottomBar = {
-                        val navBackStackEntry by navController.currentBackStackEntryAsState()
-                        val currentRoute = navBackStackEntry?.destination?.route
-                        val hideBottomBar = currentRoute == "login" || currentRoute == "register" || currentRoute == "player"
+            Scaffold(
+                containerColor = Color.Black,
+                bottomBar = {
+                    val navBackStackEntry by navController.currentBackStackEntryAsState()
+                    val currentRoute = navBackStackEntry?.destination?.route
+                    val hideBottomBar = currentRoute == "login" || currentRoute == "register" || currentRoute == "player"
 
-                        if (!hideBottomBar) {
-                            Column {
-                                AnimatedVisibility(
-                                    visible = currentPlayingSong != null,
-                                    enter = slideInVertically(initialOffsetY = { it }, animationSpec = tween(400)) + fadeIn(),
-                                    exit = slideOutVertically(targetOffsetY = { it }, animationSpec = tween(400)) + fadeOut()
-                                ) {
-                                    currentPlayingSong?.let { song ->
-                                        MiniPlayer(
-                                            songTitle = song.first,
-                                            artistName = song.second,
-                                            imageRes = song.third,
-                                            isPlaying = isPlaying,
-                                            onPlayPauseClick = { isPlaying = !isPlaying },
-                                            onPreviousClick = {
-                                                currentSongIndex = (currentSongIndex - 1 + playlist.size) % playlist.size
-                                                progress = 0f
-                                                isPlaying = true
-                                            },
-                                            onNextClick = {
-                                                currentSongIndex = (currentSongIndex + 1) % playlist.size
-                                                progress = 0f
-                                                isPlaying = true
-                                            },
-                                            onExpand = { navController.navigate(Screen.Player.route) }
-                                        )
-                                    }
+                    if (!hideBottomBar) {
+                        Column {
+                            AnimatedVisibility(
+                                visible = currentPlayingSong != null,
+                                enter = slideInVertically(initialOffsetY = { it }, animationSpec = tween(400)) + fadeIn(),
+                                exit = slideOutVertically(targetOffsetY = { it }, animationSpec = tween(400)) + fadeOut()
+                            ) {
+                                currentPlayingSong?.let { song ->
+                                    MiniPlayer(
+                                        songTitle = song.first,
+                                        artistName = song.second,
+                                        imageRes = song.third,
+                                        isPlaying = isPlaying,
+                                        onPlayPauseClick = { isPlaying = !isPlaying },
+                                        onPreviousClick = {
+                                            currentSongIndex = (currentSongIndex - 1 + playlist.size) % playlist.size
+                                            progress = 0f
+                                            isPlaying = true
+                                        },
+                                        onNextClick = {
+                                            currentSongIndex = (currentSongIndex + 1) % playlist.size
+                                            progress = 0f
+                                            isPlaying = true
+                                        },
+                                        onExpand = { navController.navigate(Screen.Player.route) }
+                                    )
                                 }
-                                MusicBottomNavigation(navController)
                             }
+                            MusicBottomNavigation(navController)
                         }
                     }
-                ) { innerPadding ->
-                    NavHost(
-                        navController = navController,
-                        startDestination = startDestination,
-                        modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())
-                    ) {
-                        composable("login") {
-                            LoginScreen(navController)
-                        }
-                        composable("home") {
-                            val homeViewModel: HomeViewModel = viewModel()
-                            HomeScreen(navController, homeViewModel)
-                        }
-                        composable("player") {
-                            PlayerScreen(
-                                navController = navController,
-                                currentPlayingSong = currentPlayingSong,
-                                isPlaying = isPlaying,
-                                progress = progress,
-                                onPlayPauseChange = { isPlaying = it },
-                                onProgressChange = { progress = it },
-                                onNextPrev = { offset ->
-                                    currentSongIndex = (currentSongIndex + offset + playlist.size) % playlist.size
-                                    progress = 0f
-                                    isPlaying = true
-                                }
-                            )
-                        }
+                }
+            ) { innerPadding ->
+                NavHost(
+                    navController = navController,
+                    startDestination = startDestination,
+                    modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())
+                ) {
+                    composable("login") {
+                        LoginScreen(navController)
+                    }
+                    composable("home") {
+                        val homeViewModel: HomeViewModel = viewModel()
+                        HomeScreen(navController, homeViewModel)
+                    }
+                    composable("player") {
+                        PlayerScreen(
+                            navController = navController,
+                            currentPlayingSong = currentPlayingSong,
+                            isPlaying = isPlaying,
+                            progress = progress,
+                            onPlayPauseChange = { isPlaying = it },
+                            onProgressChange = { progress = it },
+                            onNextPrev = { offset ->
+                                currentSongIndex = (currentSongIndex + offset + playlist.size) % playlist.size
+                                progress = 0f
+                                isPlaying = true
+                            }
+                        )
                     }
                 }
             }
