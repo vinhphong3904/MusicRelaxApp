@@ -4,32 +4,52 @@ import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 private val Context.dataStore by preferencesDataStore("auth_prefs")
+object TokenManager {
 
-class TokenManager(private val context: Context) {
+    private lateinit var appContext: Context
 
-    companion object {
-        private val TOKEN_KEY = stringPreferencesKey("jwt_token")
-    }
+    private val TOKEN_KEY = stringPreferencesKey("jwt_token")
 
-    suspend fun saveToken(token: String) {
-        context.dataStore.edit { prefs ->
-            prefs[TOKEN_KEY] = token
+    // cache token cho interceptor
+    @Volatile
+    private var cachedToken: String? = null
+
+    /** GỌI 1 LẦN DUY NHẤT */
+    fun init(context: Context) {
+        appContext = context.applicationContext
+
+        CoroutineScope(Dispatchers.IO).launch {
+            appContext.dataStore.data.collect { prefs ->
+                cachedToken = prefs[TOKEN_KEY]
+            }
         }
     }
 
-    fun getToken(): Flow<String?> {
-        return context.dataStore.data.map { prefs ->
-            prefs[TOKEN_KEY]
+    /** Dùng cho AuthInterceptor (SYNC) */
+    fun getToken(): String? = cachedToken
+
+    /** Gọi sau khi login */
+    fun saveToken(token: String) {
+        cachedToken = token
+        CoroutineScope(Dispatchers.IO).launch {
+            appContext.dataStore.edit { prefs ->
+                prefs[TOKEN_KEY] = token
+            }
         }
     }
 
-    suspend fun clearToken() {
-        context.dataStore.edit { prefs ->
-            prefs.remove(TOKEN_KEY)
+    fun clearToken() {
+        cachedToken = null
+        CoroutineScope(Dispatchers.IO).launch {
+            appContext.dataStore.edit { prefs ->
+                prefs.remove(TOKEN_KEY)
+            }
         }
     }
 }
+

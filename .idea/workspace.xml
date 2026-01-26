@@ -32,8 +32,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="65c8af5c-b3bf-46f1-b414-df7765ab3f0f" name="Changes" comment="move">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/musicapp/data/network/OkHttpProvider.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/musicapp/presentation/auth/AuthViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/musicapp/presentation/auth/AuthViewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/musicapp/MyApplication.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/musicapp/MyApplication.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/musicapp/data/api/ApiClient.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/musicapp/data/api/ApiClient.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/musicapp/data/api/AuthInterceptor.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/musicapp/data/api/AuthInterceptor.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/musicapp/data/service/TokenManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/musicapp/data/service/TokenManager.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -101,11 +105,11 @@
       <recent name="D:\DoAnDiDongKha\MusicRelaxApp\app\src\main\res\drawable" />
     </key>
     <key name="K2MoveDeclarationsDialog.RECENT_PACKAGE_KEY">
+      <recent name="com.example.musicapp.data.api" />
       <recent name="com.example.musicapp.data.model.home" />
       <recent name="com.example.musicapp.presentation.home" />
       <recent name="com.example.musicapp.data.model.register" />
       <recent name="com.example.musicapp.data.model" />
-      <recent name="com.example.musicapp.api" />
     </key>
   </component>
   <component name="RunManager">
