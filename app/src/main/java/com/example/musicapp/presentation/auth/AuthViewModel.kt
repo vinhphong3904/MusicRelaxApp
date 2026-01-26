@@ -43,7 +43,7 @@ class AuthViewModel(
 
                 if (res.success) {
                     tokenManager.saveToken(res.token)
-                    _uiState.value = AuthUiState.Success(t -m
+                    _uiState.value = AuthUiState.Success(
                         res.user,
                         AuthAction.LOGIN
                     )
