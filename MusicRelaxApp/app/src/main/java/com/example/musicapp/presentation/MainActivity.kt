@@ -12,21 +12,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.musicapp.R
 import com.example.musicapp.presentation.navigation.Screen
+import com.example.musicapp.presentation.navigation.NavGraph
 import kotlinx.coroutines.delay
-import androidx.navigation.compose.composable
 import com.example.musicapp.presentation.components.MiniPlayer
 import com.example.musicapp.presentation.components.MusicBottomNavigation
 import com.example.musicapp.presentation.auth.AuthUiState
 import com.example.musicapp.presentation.auth.AuthViewModel
-import com.example.musicapp.presentation.auth.LoginScreen
-import com.example.musicapp.presentation.home.HomeScreen
-import com.example.musicapp.presentation.home.HomeViewModel
-import com.example.musicapp.presentation.player.PlayerScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,8 +77,8 @@ class MainActivity : ComponentActivity() {
             }
 
             val startDestination = when (uiState) {
-                AuthUiState.LoggedIn -> "home"
-                else -> "login"   // luôn vào login nếu chưa đăng nhập
+                AuthUiState.LoggedIn -> Screen.Home.route
+                else -> Screen.Login.route
             }
 
             Scaffold(
@@ -91,7 +86,7 @@ class MainActivity : ComponentActivity() {
                 bottomBar = {
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     val currentRoute = navBackStackEntry?.destination?.route
-                    val hideBottomBar = currentRoute == "login" || currentRoute == "register" || currentRoute == "player"
+                    val hideBottomBar = currentRoute == Screen.Login.route || currentRoute == Screen.Register.route || currentRoute == Screen.Player.route
 
                     if (!hideBottomBar) {
                         Column {
@@ -126,33 +121,29 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             ) { innerPadding ->
-                NavHost(
+                NavGraph(
                     navController = navController,
+                    modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()),
                     startDestination = startDestination,
-                    modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())
-                ) {
-                    composable("login") {
-                        LoginScreen(navController)
+                    currentPlayingSong = currentPlayingSong,
+                    isPlaying = isPlaying,
+                    progress = progress,
+                    onSongSelect = { selectedSong ->
+                        val index = playlist.indexOf(selectedSong)
+                        if (index != -1) {
+                            currentSongIndex = index
+                            progress = 0f
+                            isPlaying = true
+                        }
+                    },
+                    onPlayPauseChange = { isPlaying = it },
+                    onProgressChange = { progress = it },
+                    onNextPrev = { offset ->
+                        currentSongIndex = (currentSongIndex + offset + playlist.size) % playlist.size
+                        progress = 0f
+                        isPlaying = true
                     }
-                    composable("home") {
-                        HomeScreen(navController)
-                    }
-                    composable("player") {
-                        PlayerScreen(
-                            navController = navController,
-                            currentPlayingSong = currentPlayingSong,
-                            isPlaying = isPlaying,
-                            progress = progress,
-                            onPlayPauseChange = { isPlaying = it },
-                            onProgressChange = { progress = it },
-                            onNextPrev = { offset ->
-                                currentSongIndex = (currentSongIndex + offset + playlist.size) % playlist.size
-                                progress = 0f
-                                isPlaying = true
-                            }
-                        )
-                    }
-                }
+                )
             }
         }
     }

@@ -14,22 +14,22 @@ import retrofit2.http.POST
 
 interface MusicApi {
 
-    @POST("auth/register")
+    @POST("register")
     suspend fun register(
         @Body request: RegisterRequest
     ): RegisterResponse
 
-    @POST("auth/login")
+    @POST("login")
     suspend fun login(
         @Body request: LoginRequest
     ): LoginResponse
 
-    @GET("/api/songs/top")
+    @GET("songs/top")
     suspend fun getTopSongs(): TopSongsResponse
 
-    @GET("/api/songs/recommend")
+    @GET("songs/recommend")
     suspend fun getRecommendSongs(): RecommendSongsResponse
 
-    @GET("/api/me")
+    @GET("me")
     suspend fun getMe(): MeResponse
 }
