@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.musicapp.R
+import com.example.musicapp.data.api.ApiClient
 
 @Composable
 fun SearchScreen(
@@ -32,8 +33,23 @@ fun SearchScreen(
     onSongSelect: (Triple<String, String, Int>) -> Unit
 ) {
     var searchText by remember { mutableStateOf("") }
+    var userInitial by remember { mutableStateOf("U") }
+
+    // Lấy thông tin user từ server
+    LaunchedEffect(Unit) {
+        try {
+            val response = ApiClient.musicApi.getMe()
+            if (response.success) {
+                userInitial = response.user.username.take(1).uppercase()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
     
+    // Dữ liệu mẫu (Có thể thay thế bằng API tìm kiếm sau này)
     val playlist = listOf(
+        Triple("Nơi Này Có Anh", "Sơn Tùng M-TP", R.drawable.icon),
         Triple("Đừng Làm Trái Tim Anh Đau", "Sơn Tùng M-TP", R.drawable.icon),
         Triple("Chúng Ta Của Tương Lai", "Sơn Tùng M-TP", R.drawable.tieude),
         Triple("Thiên Lý Ơi", "Jack - J97", R.drawable.nen),
@@ -57,7 +73,7 @@ fun SearchScreen(
             .background(Color.Black)
             .statusBarsPadding()
             .padding(horizontal = 16.dp)
-            .padding(top = 8.dp) // Cải tiến: Sát trên 8dp
+            .padding(top = 8.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -67,12 +83,12 @@ fun SearchScreen(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(
                     modifier = Modifier
-                        .size(28.dp) // Thu nhỏ avatar 32 -> 28
+                        .size(28.dp)
                         .clip(CircleShape)
                         .background(Color(0xFFFF8A80)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("K", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                    Text(userInitial, color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 12.sp)
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Text("Tìm kiếm", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
@@ -85,7 +101,7 @@ fun SearchScreen(
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(42.dp) // Thu nhỏ thanh search 48 -> 42
+                .height(42.dp)
                 .clip(RoundedCornerShape(6.dp)),
             color = Color.White
         ) {
@@ -113,12 +129,7 @@ fun SearchScreen(
         Spacer(modifier = Modifier.height(20.dp))
 
         if (searchText.isEmpty()) {
-            Text(
-                "Duyệt tìm tất cả", 
-                color = Color.White, 
-                fontWeight = FontWeight.Bold, 
-                fontSize = 16.sp // Thu nhỏ 18 -> 16
-            )
+            Text("Duyệt tìm tất cả", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
             Spacer(modifier = Modifier.height(12.dp))
             
             val categories = listOf(
@@ -129,29 +140,7 @@ fun SearchScreen(
                 CategoryData("K-Pop", Color(0xFFE91E63)),
                 CategoryData("Hip-Hop", Color(0xFFE8115B)),
                 CategoryData("Bảng xếp hạng", Color(0xFF8D67AB)),
-                CategoryData("Bảng xếp hạng Podcast", Color(0xFF006450)),
-                CategoryData("Sự phạm", Color(0xFFAF2896)),
-                CategoryData("Tài liệu", Color(0xFF503750)),
-                CategoryData("Hài kịch", Color(0xFFAF2896)),
-                CategoryData("Khám phá", Color(0xFF8D67AB)),
-                CategoryData("Radio", Color(0xFFEB1E32)),
-                CategoryData("Fresh Finds", Color(0xFFFF00FF)),
-                CategoryData("EQUAL", Color(0xFF05691B)),
-                CategoryData("GLOW", Color(0xFF1E3264)),
-                CategoryData("RADAR", Color(0xFF7D4B32)),
-                CategoryData("Karaoke", Color(0xFF1E3264)),
-                CategoryData("Tâm trạng", Color(0xFFE1118C)),
-                CategoryData("Rock", Color(0xFFE91E63)),
-                CategoryData("La-tinh", Color(0xFFE1118C)),
-                CategoryData("Dance/Điện tử", Color(0xFF477D95)),
-                CategoryData("Indie", Color(0xFFE91E63)),
-                CategoryData("Tập luyện", Color(0xFF777777)),
-                CategoryData("Đồng quê", Color(0xFFD84000)),
-                CategoryData("R&B", Color(0xFFD84000)),
-                CategoryData("Thư giãn", Color(0xFF7D4B32)),
-                CategoryData("Ngủ ngon", Color(0xFF1E3264)),
-                CategoryData("Tiệc tùng", Color(0xFFAF2896)),
-                CategoryData("Ở nhà", Color(0xFF477D95))
+                CategoryData("Bảng xếp hạng Podcast", Color(0xFF006450))
             )
 
             LazyVerticalGrid(
@@ -184,16 +173,13 @@ fun CategoryCard(title: String, color: Color) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(65.dp) // Thu nhỏ card category 100 -> 65
+            .height(65.dp)
             .clip(RoundedCornerShape(6.dp))
             .background(color)
             .padding(10.dp)
     ) {
         Text(
-            text = title,
-            color = Color.White,
-            fontWeight = FontWeight.Bold,
-            fontSize = 12.sp, // Thu nhỏ chữ 14 -> 12
+            text = title, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 12.sp,
             modifier = Modifier.align(Alignment.TopStart).fillMaxWidth(0.8f)
         )
     }
@@ -202,19 +188,10 @@ fun CategoryCard(title: String, color: Color) {
 @Composable
 fun SearchSuggestionItem(title: String, artist: String, onClick: () -> Unit) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(vertical = 10.dp),
+        modifier = Modifier.fillMaxWidth().clickable { onClick() }.padding(vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
-            modifier = Modifier
-                .size(42.dp) // Thu nhỏ 48 -> 42
-                .clip(RoundedCornerShape(4.dp))
-                .background(Color.DarkGray),
-            contentAlignment = Alignment.Center
-        ) {
+        Box(modifier = Modifier.size(42.dp).clip(RoundedCornerShape(4.dp)).background(Color.DarkGray), contentAlignment = Alignment.Center) {
             Icon(Icons.Default.PlayArrow, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(24.dp))
         }
         Spacer(modifier = Modifier.width(12.dp))

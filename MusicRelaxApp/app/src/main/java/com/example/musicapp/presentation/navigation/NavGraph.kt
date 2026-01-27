@@ -38,7 +38,10 @@ fun NavGraph(
         modifier = modifier
     ) {
         composable(route = Screen.Home.route) {
-            HomeScreen(navController = navController)
+            HomeScreen(
+                navController = navController,
+                onSongSelect = onSongSelect // ĐÃ THÊM: Truyền tham số vào đây
+            )
         }
         composable(route = Screen.Search.route) {
             SearchScreen(
@@ -50,7 +53,6 @@ fun NavGraph(
             LibraryScreen(navController = navController)
         }
         
-        // SỬA TẠI ĐÂY: Dùng cú pháp tham số tùy chọn (?) để không bị crash khi gọi "playlist"
         composable(
             route = "playlist?playlistId={playlistId}",
             arguments = listOf(
