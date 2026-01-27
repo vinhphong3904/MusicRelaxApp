@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import com.example.musicapp.presentation.home.HomeScreen
 import com.example.musicapp.presentation.library.LibraryScreen
 import com.example.musicapp.presentation.library.PlaylistScreen
+import com.example.musicapp.presentation.library.FavoritesScreen
 import com.example.musicapp.presentation.search.SearchScreen
 import com.example.musicapp.presentation.settings.ProfileScreen
 import com.example.musicapp.presentation.history.HistoryScreen
@@ -36,24 +37,28 @@ fun NavGraph(
         modifier = modifier
     ) {
         composable(route = Screen.Home.route) {
-            HomeScreen(
-                navController = navController
-            )
+            HomeScreen(navController = navController)
         }
         composable(route = Screen.Search.route) {
             SearchScreen(
                 navController = navController,
-                onSongSelect = { song: Triple<String, String, Int> ->
-                    onSongSelect(song)
-                    navController.navigate(Screen.Player.route)
-                }
+                onSongSelect = { song -> onSongSelect(song) } // Chỉ gọi onSongSelect, việc navigate đã có MainActivity lo
             )
         }
         composable(route = Screen.Library.route) {
             LibraryScreen(navController = navController)
         }
         composable(route = Screen.Playlist.route) {
-            PlaylistScreen(navController = navController)
+            PlaylistScreen(
+                navController = navController,
+                onSongSelect = { song -> onSongSelect(song) }
+            )
+        }
+        composable(route = Screen.Favorites.route) {
+            FavoritesScreen(
+                navController = navController,
+                onSongSelect = { song -> onSongSelect(song) }
+            )
         }
         composable(route = Screen.Profile.route) {
             ProfileScreen(navController = navController)

@@ -32,47 +32,18 @@ class MainActivity : ComponentActivity() {
             val authViewModel: AuthViewModel = viewModel()
             val uiState by authViewModel.uiState.collectAsState()
 
-            // check login 1 lần duy nhất
             LaunchedEffect(Unit) {
                 authViewModel.checkLogin()
             }
 
-            // Playlist giữ nguyên
-            val playlist = listOf(
-                Triple("Đừng Làm Trái Tim Anh Đau", "Sơn Tùng M-TP", R.drawable.icon),
-                Triple("Chúng Ta Của Tương Lai", "Sơn Tùng M-TP", R.drawable.tieude),
-                Triple("Thiên Lý Ơi", "Jack - J97", R.drawable.nen),
-                Triple("Giá Như", "SOOBIN", R.drawable.tieude),
-                Triple("Exit Sign", "HIEUTHUHAI", R.drawable.icon),
-                Triple("Em Xinh", "MONO", R.drawable.nen),
-                Triple("Lệ Lưu Ly", "Vũ Phụng Tiên", R.drawable.tieude),
-                Triple("Cắt Đôi Nỗi Sầu", "Tăng Duy Tân", R.drawable.icon),
-                Triple("Ngày Mai Người Ta Lấy Chồng", "Anh Tú", R.drawable.nen),
-                Triple("Mưa Tháng Sáu", "Văn Mai Hương", R.drawable.tieude),
-                Triple("Nơi Này Có Anh", "Sơn Tùng M-TP", R.drawable.icon),
-                Triple("Lạc Trôi", "Sơn Tùng M-TP", R.drawable.nen),
-                Triple("Sau Lời Từ Khước", "Phan Mạnh Quỳnh", R.drawable.tieude),
-                Triple("Thanh Xuân", "Da LAB", R.drawable.icon),
-                Triple("Thằng Điên", "JustaTee", R.drawable.nen),
-                Triple("Anh Nhà Ở Đâu Thế", "AMEE", R.drawable.tieude),
-                Triple("Tòng Phu", "Keyo", R.drawable.icon),
-                Triple("See Tình", "Hoàng Thùy Linh", R.drawable.nen),
-                Triple("Waiting For You", "MONO", R.drawable.tieude),
-                Triple("Khuất Lối", "H-Kray", R.drawable.icon)
-            )
-
-            var currentSongIndex by remember { mutableIntStateOf(-1) }
-            val currentPlayingSong = if (currentSongIndex != -1) playlist[currentSongIndex] else null
+            var currentPlayingSong by remember { mutableStateOf<Triple<String, String, Int>?>(null) }
             var isPlaying by remember { mutableStateOf(false) }
             var progress by remember { mutableFloatStateOf(0f) }
 
             LaunchedEffect(isPlaying) {
                 while (isPlaying) {
                     delay(1000)
-                    if (progress < 1f) progress += 0.01f else {
-                        currentSongIndex = (currentSongIndex + 1) % playlist.size
-                        progress = 0f
-                    }
+                    if (progress < 1f) progress += 0.01f else progress = 0f
                 }
             }
 
@@ -101,17 +72,10 @@ class MainActivity : ComponentActivity() {
                                         artistName = song.second,
                                         imageRes = song.third,
                                         isPlaying = isPlaying,
+                                        progress = progress, // Đã truyền progress vào đây
                                         onPlayPauseClick = { isPlaying = !isPlaying },
-                                        onPreviousClick = {
-                                            currentSongIndex = (currentSongIndex - 1 + playlist.size) % playlist.size
-                                            progress = 0f
-                                            isPlaying = true
-                                        },
-                                        onNextClick = {
-                                            currentSongIndex = (currentSongIndex + 1) % playlist.size
-                                            progress = 0f
-                                            isPlaying = true
-                                        },
+                                        onPreviousClick = { /* Logic */ },
+                                        onNextClick = { /* Logic */ },
                                         onExpand = { navController.navigate(Screen.Player.route) }
                                     )
                                 }
@@ -129,20 +93,14 @@ class MainActivity : ComponentActivity() {
                     isPlaying = isPlaying,
                     progress = progress,
                     onSongSelect = { selectedSong ->
-                        val index = playlist.indexOf(selectedSong)
-                        if (index != -1) {
-                            currentSongIndex = index
-                            progress = 0f
-                            isPlaying = true
-                        }
+                        currentPlayingSong = selectedSong
+                        progress = 0f
+                        isPlaying = true
+                        navController.navigate(Screen.Player.route)
                     },
                     onPlayPauseChange = { isPlaying = it },
                     onProgressChange = { progress = it },
-                    onNextPrev = { offset ->
-                        currentSongIndex = (currentSongIndex + offset + playlist.size) % playlist.size
-                        progress = 0f
-                        isPlaying = true
-                    }
+                    onNextPrev = { /* Logic */ }
                 )
             }
         }

@@ -24,79 +24,89 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.musicapp.R
+import com.example.musicapp.data.api.ApiClient
+import com.example.musicapp.data.model.PlaylistDto
+import com.example.musicapp.data.model.PlaylistDetail
+import com.example.musicapp.data.model.SongDto
+import kotlinx.coroutines.launch
 
 @Composable
-fun PlaylistScreen(navController: NavHostController) {
-    val playlists = remember { mutableStateListOf<String>() }
-    var selectedPlaylistName by remember { mutableStateOf<String?>(null) }
+fun PlaylistScreen(
+    navController: NavHostController,
+    onSongSelect: (Triple<String, String, Int>) -> Unit
+) {
+    val playlists = remember { mutableStateListOf<PlaylistDto>() }
+    var isLoading by remember { mutableStateOf(true) }
     
-    var showDialog by remember { mutableStateOf(false) }
-    var showSongPicker by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        try {
+            val response = ApiClient.musicApi.getPlaylists()
+            if (response.success) {
+                playlists.clear()
+                playlists.addAll(response.data)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            isLoading = false
+        }
+    }
 
-    val addedSongs = remember { mutableStateListOf<Triple<String, String, Int>>() }
+    var selectedPlaylistId by remember { mutableStateOf<Int?>(null) }
+    var playlistDetail by remember { mutableStateOf<PlaylistDetail?>(null) }
+    var isDetailLoading by remember { mutableStateOf(false) }
 
-    val allSongs = listOf(
-        Triple("Đừng Làm Trái Tim Anh Đau", "Sơn Tùng M-TP", R.drawable.icon),
-        Triple("Chúng Ta Của Tương Lai", "Sơn Tùng M-TP", R.drawable.tieude),
-        Triple("Thiên Lý Ơi", "Jack - J97", R.drawable.nen),
-        Triple("Giá Như", "SOOBIN", R.drawable.tieude),
-        Triple("Exit Sign", "HIEUTHUHAI", R.drawable.icon),
-        Triple("Em Xinh", "MONO", R.drawable.nen),
-        Triple("Lệ Lưu Ly", "Vũ Phụng Tiên", R.drawable.tieude),
-        Triple("Cắt Đôi Nỗi Sầu", "Tăng Duy Tân", R.drawable.icon),
-        Triple("Ngày Mai Người Ta Lấy Chồng", "Anh Tú", R.drawable.nen),
-        Triple("Mưa Tháng Sáu", "Văn Mai Hương", R.drawable.tieude)
-    )
-
-    val suggestions = allSongs.filter { it !in addedSongs }.take(5)
-
-    Scaffold(
-        containerColor = Color.Black,
-        floatingActionButton = {
-            if (selectedPlaylistName == null) {
-                FloatingActionButton(
-                    onClick = { showDialog = true },
-                    containerColor = Color.White,
-                    contentColor = Color.Black,
-                    shape = CircleShape
-                ) {
-                    Icon(Icons.Default.Add, contentDescription = "Tạo playlist")
+    LaunchedEffect(selectedPlaylistId) {
+        selectedPlaylistId?.let { id ->
+            isDetailLoading = true
+            try {
+                val response = ApiClient.musicApi.getPlaylistDetail(id)
+                if (response.success) {
+                    playlistDetail = response.data
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                isDetailLoading = false
             }
         }
+    }
+
+    Scaffold(
+        containerColor = Color.Black
     ) { padding ->
-        // SỬA TẠI ĐÂY: Chỉ dùng padding bottom, còn top để statusBarsPadding và 12.dp quản lý cho đồng bộ
         val contentModifier = Modifier
             .fillMaxSize()
             .padding(bottom = padding.calculateBottomPadding()) 
             .statusBarsPadding()
             .padding(top = 12.dp)
 
-        if (selectedPlaylistName == null) {
+        if (isLoading) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = Color(0xFF1DB954))
+            }
+        } else if (selectedPlaylistId == null) {
+            // MÀN HÌNH DANH SÁCH PLAYLIST
             Column(modifier = contentModifier) {
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text("Playlist", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 8.dp)) {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color.White)
+                    }
+                    Text("Playlist của tôi", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
                 }
 
                 if (playlists.isEmpty()) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("Chưa có danh sách phát nào", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text("Nhấn vào nút bên dưới để tạo mới", color = Color.Gray, fontSize = 14.sp)
-                        }
+                    Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        Text("Chưa có danh sách phát nào", color = Color.Gray)
                     }
                 } else {
-                    LazyColumn(modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
-                        items(playlists) { name ->
+                    LazyColumn(modifier = Modifier.weight(1f).padding(horizontal = 16.dp)) {
+                        items(playlists) { playlist ->
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(vertical = 12.dp)
-                                    .clickable { selectedPlaylistName = name },
+                                    .clickable { selectedPlaylistId = playlist.id },
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Box(
@@ -107,8 +117,8 @@ fun PlaylistScreen(navController: NavHostController) {
                                 }
                                 Spacer(modifier = Modifier.width(16.dp))
                                 Column {
-                                    Text(name, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                                    Text("Playlist • Kha", color = Color.Gray, fontSize = 13.sp)
+                                    Text(playlist.name, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                                    Text("${playlist.song_count} bài hát", color = Color.Gray, fontSize = 13.sp)
                                 }
                             }
                         }
@@ -116,196 +126,56 @@ fun PlaylistScreen(navController: NavHostController) {
                 }
             }
         } else {
-            LazyColumn(modifier = contentModifier) {
-                item {
-                    IconButton(
-                        onClick = { selectedPlaylistName = null },
-                        modifier = Modifier.padding(horizontal = 8.dp)
-                    ) {
+            // MÀN HÌNH CHI TIẾT PLAYLIST
+            Column(modifier = contentModifier) {
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 8.dp)) {
+                    IconButton(onClick = { selectedPlaylistId = null; playlistDetail = null }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, tint = Color.White)
                     }
+                    Text("Quay lại", color = Color.White)
                 }
 
-                item {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier.size(150.dp).clip(RoundedCornerShape(4.dp)).background(Color(0xFF282828)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(Icons.Default.PlayArrow, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(64.dp))
-                        }
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(selectedPlaylistName!!, color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold, lineHeight = 28.sp)
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Surface(
-                                color = Color(0xFF333333),
-                                shape = RoundedCornerShape(20.dp),
-                                modifier = Modifier.height(32.dp).clickable { showDialog = true }
-                            ) {
-                                Text("Thay đổi", color = Color.White, fontSize = 12.sp, modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp))
+                if (isDetailLoading) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(color = Color(0xFF1DB954))
+                    }
+                } else {
+                    playlistDetail?.let { detail ->
+                        Text(detail.name, color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(16.dp))
+                        
+                        LazyColumn(modifier = Modifier.fillMaxSize()) {
+                            items(detail.songs) { song ->
+                                SongItem(song) {
+                                    onSongSelect(Triple(song.title, "Artist ${song.artist_id}", R.drawable.icon))
+                                }
                             }
-                        }
-                    }
-                }
-
-                item {
-                    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(modifier = Modifier.size(24.dp).clip(CircleShape).background(Color(0xFFFF8A80)), contentAlignment = Alignment.Center) {
-                                Text("K", color = Color.Black, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                            }
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text("Kha", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.Info, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(14.dp))
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text("${addedSongs.size * 3} phút", color = Color.Gray, fontSize = 13.sp)
-                        }
-                    }
-                }
-
-                item {
-                    Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.Share, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(28.dp))
-                        Spacer(modifier = Modifier.width(24.dp))
-                        Icon(Icons.Default.MoreVert, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(28.dp))
-                    }
-                }
-
-                items(addedSongs) { song ->
-                    PlaylistItem(song.first, song.second, song.third)
-                }
-
-                item {
-                    Box(modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp), contentAlignment = Alignment.Center) {
-                        Button(
-                            onClick = { showSongPicker = true },
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.White), 
-                            shape = RoundedCornerShape(25.dp), 
-                            modifier = Modifier.height(48.dp)
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.Add, contentDescription = null, tint = Color.Black)
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text("Thêm vào danh sách phát này", color = Color.Black, fontWeight = FontWeight.Bold)
-                            }
-                        }
-                    }
-                }
-
-                if (suggestions.isNotEmpty()) {
-                    item {
-                        Text("Các bài hát được đề xuất", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp))
-                    }
-                    items(suggestions) { song ->
-                        RecommendedSongItem(song.first, song.second, song.third) {
-                            addedSongs.add(song)
                         }
                     }
                 }
             }
         }
     }
-
-    if (showSongPicker) {
-        AlertDialog(
-            onDismissRequest = { showSongPicker = false },
-            containerColor = Color(0xFF121212),
-            title = { Text("Chọn bài hát để thêm", color = Color.White) },
-            text = {
-                LazyColumn(modifier = Modifier.height(400.dp)) {
-                    items(allSongs) { song ->
-                        Row(
-                            modifier = Modifier.fillMaxWidth().clickable {
-                                if (song !in addedSongs) addedSongs.add(song)
-                                showSongPicker = false
-                            }.padding(vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Image(painter = painterResource(id = song.third), contentDescription = null, modifier = Modifier.size(40.dp).clip(RoundedCornerShape(4.dp)), contentScale = ContentScale.Crop)
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Column {
-                                Text(song.first, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                                Text(song.second, color = Color.Gray, fontSize = 12.sp)
-                            }
-                        }
-                    }
-                }
-            },
-            confirmButton = { TextButton(onClick = { showSongPicker = false }) { Text("Đóng", color = Color(0xFF1DB954)) } }
-        )
-    }
-
-    if (showDialog) {
-        var tempName by remember { mutableStateOf("") }
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            containerColor = Color(0xFF2A2A2A),
-            title = { Text("Tên danh sách phát", color = Color.White) },
-            text = {
-                TextField(
-                    value = tempName,
-                    onValueChange = { tempName = it },
-                    placeholder = { Text("Nhập tên playlist...") },
-                    colors = TextFieldDefaults.colors(
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent
-                    )
-                )
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    if (tempName.isNotBlank()) {
-                        playlists.add(tempName)
-                        showDialog = false
-                    }
-                }) {
-                    Text("Tạo", color = Color(0xFF1DB954), fontWeight = FontWeight.Bold)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDialog = false }) { Text("Hủy", color = Color.Gray) }
-            }
-        )
-    }
 }
 
 @Composable
-fun PlaylistItem(title: String, artist: String, imageRes: Int) {
+fun SongItem(song: SongDto, onClick: () -> Unit) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(painter = painterResource(id = imageRes), contentDescription = null, modifier = Modifier.size(52.dp).clip(RoundedCornerShape(4.dp)), contentScale = ContentScale.Crop)
-        Spacer(modifier = Modifier.width(16.dp))
-        Column(modifier = Modifier.weight(1f)) {
-            Text(title, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
-            Text(artist, color = Color.Gray, fontSize = 14.sp)
+        Box(
+            modifier = Modifier.size(50.dp).clip(RoundedCornerShape(4.dp)).background(Color(0xFF282828)),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(Icons.Default.PlayArrow, contentDescription = null, tint = Color.Gray)
         }
-        Icon(Icons.Default.MoreVert, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(24.dp))
-    }
-}
-
-@Composable
-fun RecommendedSongItem(title: String, artist: String, imageRes: Int, onAdd: () -> Unit) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(painter = painterResource(id = imageRes), contentDescription = null, modifier = Modifier.size(52.dp).clip(RoundedCornerShape(4.dp)), contentScale = ContentScale.Crop)
         Spacer(modifier = Modifier.width(16.dp))
-        Column(modifier = Modifier.weight(1f)) {
-            Text(title, color = Color(0xFF1DB954), fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
-            Text(artist, color = Color.Gray, fontSize = 14.sp)
+        Column {
+            Text(song.title, color = Color.White, fontWeight = FontWeight.SemiBold)
+            Text("Nghệ sĩ #${song.artist_id}", color = Color.Gray, fontSize = 12.sp)
         }
-        Icon(Icons.Default.Add, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(28.dp).clickable { onAdd() })
     }
 }

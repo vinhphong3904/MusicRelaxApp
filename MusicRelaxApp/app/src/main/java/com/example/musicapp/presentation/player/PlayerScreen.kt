@@ -4,6 +4,7 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -20,7 +21,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -39,8 +42,10 @@ fun PlayerScreen(
     onProgressChange: (Float) -> Unit,
     onNextPrev: (Int) -> Unit
 ) {
+    val focusManager = LocalFocusManager.current
+    
     if (currentPlayingSong == null) {
-        navController.popBackStack()
+        LaunchedEffect(Unit) { navController.popBackStack() }
         return
     }
 
@@ -53,23 +58,49 @@ fun PlayerScreen(
         containerColor = Color.Transparent,
         modifier = Modifier.background(backgroundBrush),
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(text = if (pagerState.currentPage == 0) "ĐANG PHÁT" else "LỜI BÀI HÁT", color = Color.Gray, fontSize = 10.sp, fontWeight = FontWeight.Bold)
-                        Text(currentPlayingSong.first, color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Bold)
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.KeyboardArrowDown, contentDescription = null, tint = Color.White, modifier = Modifier.size(30.dp))
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { }) { Icon(Icons.Default.MoreVert, contentDescription = null, tint = Color.White, modifier = Modifier.size(20.dp)) }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent)
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+                    .height(64.dp)
+            ) {
+                // NÚT BACK - Sử dụng pointerInput để bắt sự kiện click ngay lập tức
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .fillMaxHeight()
+                        .width(72.dp)
+                        .pointerInput(Unit) {
+                            detectTapGestures(onTap = {
+                                focusManager.clearFocus()
+                                navController.popBackStack()
+                            })
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowDown, 
+                        contentDescription = "Back", 
+                        tint = Color.White, 
+                        modifier = Modifier.size(40.dp)
+                    )
+                }
+
+                Column(
+                    modifier = Modifier.align(Alignment.Center),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = if (pagerState.currentPage == 0) "ĐANG PHÁT" else "LỜI BÀI HÁT", color = Color.Gray, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                    Text(currentPlayingSong.first, color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                }
+
+                IconButton(
+                    onClick = { },
+                    modifier = Modifier.align(Alignment.CenterEnd)
+                ) {
+                    Icon(Icons.Default.MoreVert, null, tint = Color.White, modifier = Modifier.size(20.dp))
+                }
+            }
         }
     ) { padding ->
         HorizontalPager(
@@ -131,7 +162,7 @@ fun MainPlayerPage(
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxHeight(0.85f) // Thu nhỏ đĩa nhạc
+                    .fillMaxHeight(0.85f)
                     .aspectRatio(1f)
                     .clip(CircleShape)
                     .background(Color.Black),
@@ -159,7 +190,7 @@ fun MainPlayerPage(
                 Text(songTitle, color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.ExtraBold, maxLines = 1)
                 Text(artistName, color = Color.Gray, fontSize = 14.sp)
             }
-            Icon(Icons.Default.AddCircle, contentDescription = null, tint = Color.White, modifier = Modifier.size(24.dp))
+            Icon(Icons.Default.FavoriteBorder, contentDescription = null, tint = Color.White, modifier = Modifier.size(24.dp))
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -175,55 +206,31 @@ fun MainPlayerPage(
             )
         )
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            val totalSeconds = 248
+            val totalSeconds = 250
             val currentSeconds = (progress * totalSeconds).toInt()
             Text(formatTime(currentSeconds), color = Color.Gray, fontSize = 11.sp)
-            Text("-${formatTime(totalSeconds - currentSeconds)}", color = Color.Gray, fontSize = 11.sp)
+            Text(formatTime(totalSeconds), color = Color.Gray, fontSize = 11.sp)
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Icon(Icons.Default.Refresh, contentDescription = null, tint = Color(0xFF1DB954), modifier = Modifier.size(22.dp))
-            
             IconButton(onClick = onPrevClick) {
-                Icon(
-                    painter = painterResource(id = android.R.drawable.ic_media_previous),
-                    contentDescription = null, 
-                    tint = Color.White, 
-                    modifier = Modifier.size(36.dp)
-                )
+                Icon(painterResource(id = android.R.drawable.ic_media_previous), null, tint = Color.White, modifier = Modifier.size(36.dp))
             }
-            
             Surface(
-                modifier = Modifier
-                    .size(64.dp) // Thu nhỏ nút play 72 -> 64
-                    .clip(CircleShape)
-                    .clickable { onPlayPauseClick() },
+                modifier = Modifier.size(64.dp).clip(CircleShape).clickable { onPlayPauseClick() },
                 color = Color.White,
             ) {
                 Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        painter = painterResource(
-                            id = if (isPlaying) android.R.drawable.ic_media_pause else android.R.drawable.ic_media_play
-                        ),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier.size(40.dp)
-                    )
+                    Icon(painterResource(id = if (isPlaying) android.R.drawable.ic_media_pause else android.R.drawable.ic_media_play), null, tint = Color.Black, modifier = Modifier.size(40.dp))
                 }
             }
-
             IconButton(onClick = onNextClick) {
-                Icon(
-                    painter = painterResource(id = android.R.drawable.ic_media_next),
-                    contentDescription = null, 
-                    tint = Color.White, 
-                    modifier = Modifier.size(36.dp)
-                )
+                Icon(painterResource(id = android.R.drawable.ic_media_next), null, tint = Color.White, modifier = Modifier.size(36.dp))
             }
-            
-            Icon(Icons.Default.Star, contentDescription = null, tint = Color.White, modifier = Modifier.size(22.dp))
+            Icon(Icons.Default.Menu, contentDescription = null, tint = Color.White, modifier = Modifier.size(22.dp))
         }
     }
 }
@@ -240,10 +247,7 @@ fun LyricsPage(title: String) {
         Spacer(modifier = Modifier.height(16.dp))
         Text("LỜI BÀI HÁT: $title", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.ExtraBold, lineHeight = 28.sp)
         Spacer(modifier = Modifier.height(16.dp))
-        val lyrics = listOf("Em là ai từ đâu bước đến nơi đây", "Dịu dàng chân phương", "(Dịu dàng chân phương)", "Em là ai tựa như ánh nắng ban mai", "Ngọt ngào trong sương", "Ngắm em thật lâu con tim anh yếu mềm")
-        lyrics.forEach { line ->
-            Text(text = line, color = if (line.contains("(")) Color.Gray else Color.White, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold, modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp), lineHeight = 26.sp)
-        }
+        Text(text = "LỜI BÀI HÁT ĐANG ĐƯỢC CẬP NHẬT...", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
         Spacer(modifier = Modifier.height(80.dp))
     }
 }

@@ -8,6 +8,7 @@ sealed class Screen(val route: String) {
     object Library : Screen("library")
     object Search : Screen("search")
     object Playlist : Screen("playlist")
+    object Favorites : Screen("favorites")
     object Profile : Screen("profile")
     
     object PlaylistDetail : Screen("playlist/{playlistId}") {
