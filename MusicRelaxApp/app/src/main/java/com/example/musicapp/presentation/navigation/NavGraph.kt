@@ -3,8 +3,10 @@ package com.example.musicapp.presentation.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.musicapp.presentation.home.HomeScreen
 import com.example.musicapp.presentation.library.LibraryScreen
 import com.example.musicapp.presentation.library.PlaylistScreen
@@ -15,7 +17,6 @@ import com.example.musicapp.presentation.history.HistoryScreen
 import com.example.musicapp.presentation.settings.SettingsScreen
 import com.example.musicapp.presentation.auth.LoginScreen
 import com.example.musicapp.presentation.auth.RegisterScreen
-import com.example.musicapp.presentation.home.HomeViewModel
 import com.example.musicapp.presentation.player.PlayerScreen
 
 @Composable
@@ -42,18 +43,31 @@ fun NavGraph(
         composable(route = Screen.Search.route) {
             SearchScreen(
                 navController = navController,
-                onSongSelect = { song -> onSongSelect(song) } // Chỉ gọi onSongSelect, việc navigate đã có MainActivity lo
+                onSongSelect = { song -> onSongSelect(song) }
             )
         }
         composable(route = Screen.Library.route) {
             LibraryScreen(navController = navController)
         }
-        composable(route = Screen.Playlist.route) {
+        
+        // SỬA TẠI ĐÂY: Dùng cú pháp tham số tùy chọn (?) để không bị crash khi gọi "playlist"
+        composable(
+            route = "playlist?playlistId={playlistId}",
+            arguments = listOf(
+                navArgument("playlistId") { 
+                    type = NavType.IntType
+                    defaultValue = -1 
+                }
+            )
+        ) { backStackEntry ->
+            val playlistId = backStackEntry.arguments?.getInt("playlistId") ?: -1
             PlaylistScreen(
                 navController = navController,
+                initialPlaylistId = if (playlistId != -1) playlistId else null,
                 onSongSelect = { song -> onSongSelect(song) }
             )
         }
+
         composable(route = Screen.Favorites.route) {
             FavoritesScreen(
                 navController = navController,

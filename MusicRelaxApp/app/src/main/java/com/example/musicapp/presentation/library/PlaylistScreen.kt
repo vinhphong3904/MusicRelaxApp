@@ -33,11 +33,17 @@ import kotlinx.coroutines.launch
 @Composable
 fun PlaylistScreen(
     navController: NavHostController,
+    initialPlaylistId: Int? = null, // THÊM THAM SỐ NÀY
     onSongSelect: (Triple<String, String, Int>) -> Unit
 ) {
     val playlists = remember { mutableStateListOf<PlaylistDto>() }
     var isLoading by remember { mutableStateOf(true) }
     
+    // Khởi tạo state bằng ID nhận từ Library (nếu có)
+    var selectedPlaylistId by remember { mutableStateOf<Int?>(initialPlaylistId) }
+    var playlistDetail by remember { mutableStateOf<PlaylistDetail?>(null) }
+    var isDetailLoading by remember { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
         try {
             val response = ApiClient.musicApi.getPlaylists()
@@ -51,10 +57,6 @@ fun PlaylistScreen(
             isLoading = false
         }
     }
-
-    var selectedPlaylistId by remember { mutableStateOf<Int?>(null) }
-    var playlistDetail by remember { mutableStateOf<PlaylistDetail?>(null) }
-    var isDetailLoading by remember { mutableStateOf(false) }
 
     LaunchedEffect(selectedPlaylistId) {
         selectedPlaylistId?.let { id ->
@@ -129,7 +131,14 @@ fun PlaylistScreen(
             // MÀN HÌNH CHI TIẾT PLAYLIST
             Column(modifier = contentModifier) {
                 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 8.dp)) {
-                    IconButton(onClick = { selectedPlaylistId = null; playlistDetail = null }) {
+                    IconButton(onClick = { 
+                        if (initialPlaylistId != null) {
+                            navController.popBackStack() // Nếu vô thẳng từ Library thì quay hẳn về Library
+                        } else {
+                            selectedPlaylistId = null // Nếu đang ở trong Playlist Screen thì quay lại danh sách
+                            playlistDetail = null
+                        }
+                    }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, tint = Color.White)
                     }
                     Text("Quay lại", color = Color.White)
@@ -146,7 +155,7 @@ fun PlaylistScreen(
                         LazyColumn(modifier = Modifier.fillMaxSize()) {
                             items(detail.songs) { song ->
                                 SongItem(song) {
-                                    onSongSelect(Triple(song.title, "Artist ${song.artist_id}", R.drawable.icon))
+                                    onSongSelect(Triple(song.title, "Nghệ sĩ #${song.artist_id}", R.drawable.icon))
                                 }
                             }
                         }
