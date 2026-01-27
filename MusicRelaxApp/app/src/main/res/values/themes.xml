@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Theme chính của app (Dark Mode làm chủ đạo) -->
+    <style name="Theme.MusicApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Chỉnh toàn bộ nền ứng dụng thành màu đen -->
+        <item name="android:windowBackground">#000000</item>
+        <item name="android:statusBarColor">#000000</item>
+        <item name="android:navigationBarColor">#000000</item>
+        
+        <!-- Màu chủ đạo (Xanh Spotify) -->
+        <item name="colorPrimary">#1DB954</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+    </style>
+
+    <!-- Theme riêng cho Splash (Nền đen) -->
+    <style name="Theme.MusicApp.Splash" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:statusBarColor">#000000</item>
+        <item name="android:navigationBarColor">#000000</item>
+    </style>
+
+</resources>

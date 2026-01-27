@@ -1,0 +1,32 @@
+# ===== Gradle =====
+.gradle/
+build/
+**/build/
+
+# ===== Android outputs =====
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+
+# ===== Local config =====
+local.properties
+gradle.properties
+
+# ===== IDE =====
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# ===== Logs =====
+*.log
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
+
+# ===== Cache =====
+.cache/
+.cxx/
