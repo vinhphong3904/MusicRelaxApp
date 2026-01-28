@@ -86,15 +86,17 @@ fun PlaylistScreen(
     LaunchedEffect(Unit) { loadData() }
 
     LaunchedEffect(selectedPlaylistId) {
-        selectedPlaylistId?.let { refreshPlaylistDetail(it) }
+        if (selectedPlaylistId != null && selectedPlaylistId != -1) {
+            refreshPlaylistDetail(selectedPlaylistId!!)
+        }
     }
 
     Scaffold(containerColor = Color.Black) { padding ->
         val contentModifier = Modifier.fillMaxSize().padding(bottom = padding.calculateBottomPadding()).statusBarsPadding().padding(top = 12.dp)
 
-        if (isLoading) {
+        if (isLoading && playlists.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator(color = Color(0xFF1DB954)) }
-        } else if (selectedPlaylistId == null) {
+        } else if (selectedPlaylistId == null || selectedPlaylistId == -1) {
             Column(modifier = contentModifier) {
                 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 8.dp)) {
                     IconButton(onClick = { navController.popBackStack() }) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = Color.White) }
@@ -169,7 +171,6 @@ fun PlaylistScreen(
                                 playlistDetail?.id?.let { pid ->
                                     ApiClient.musicApi.removeSongFromPlaylist(pid, song.id)
                                     refreshPlaylistDetail(pid)
-                                    // Cập nhật lại số lượng bài hát hiển thị ngoài danh sách tổng
                                     loadData() 
                                 }
                             } catch (e: Exception) { e.printStackTrace() } finally { songToDelete = null }
@@ -215,8 +216,9 @@ fun SongItemUI(song: SongDto, isFavorite: Boolean, onDelete: () -> Unit, onClick
         }
         Spacer(modifier = Modifier.width(16.dp))
         Column(modifier = Modifier.weight(1f)) {
-            Text(song.title, color = Color.White, fontWeight = FontWeight.SemiBold)
-            Text("Nghệ sĩ #${song.artist_id}", color = Color.Gray, fontSize = 12.sp)
+            Text(song.title, color = Color.White, fontWeight = FontWeight.SemiBold, maxLines = 1)
+            // ĐÃ CẬP NHẬT: Hiển thị tên nghệ sĩ thật thay vì ID
+            Text(song.artist_name ?: "Nghệ sĩ #${song.artist_id}", color = Color.Gray, fontSize = 12.sp, maxLines = 1)
         }
         IconButton(onClick = onDelete) {
             Icon(Icons.Default.Delete, contentDescription = "Xóa", tint = Color.Gray.copy(alpha = 0.6f), modifier = Modifier.size(20.dp))

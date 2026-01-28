@@ -47,7 +47,7 @@ fun NavGraph(
         composable(route = Screen.Search.route) {
             SearchScreen(
                 navController = navController,
-                onSongSelect = onSongSelect // ĐÃ SỬA: Dùng trực tiếp SongDto có ID thật
+                onSongSelect = onSongSelect
             )
         }
         
@@ -97,7 +97,10 @@ fun NavGraph(
             )
         }
         composable(route = "history") {
-            HistoryScreen(navController = navController)
+            HistoryScreen(
+                navController = navController,
+                onSongSelect = onSongSelect
+            )
         }
         composable(route = "settings") {
             SettingsScreen(navController = navController)

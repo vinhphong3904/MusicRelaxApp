@@ -53,6 +53,7 @@ fun PlayerScreen(
 ) {
     val focusManager = LocalFocusManager.current
     val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() } // THÊM SNACKBAR
     val sheetState = rememberModalBottomSheetState()
     var showMoreOptions by remember { mutableStateOf(false) }
     var showPlaylistPicker by remember { mutableStateOf(false) }
@@ -60,7 +61,6 @@ fun PlayerScreen(
     
     val playlists = remember { mutableStateListOf<PlaylistDto>() }
 
-    // Tải danh sách playlist khi cần
     LaunchedEffect(showPlaylistPicker) {
         if (showPlaylistPicker) {
             try {
@@ -86,6 +86,7 @@ fun PlayerScreen(
     Scaffold(
         containerColor = Color.Transparent,
         modifier = Modifier.background(backgroundBrush),
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }, // THÊM HOST SNACKBAR
         topBar = {
             Box(modifier = Modifier.fillMaxWidth().statusBarsPadding().height(64.dp)) {
                 Box(
@@ -112,7 +113,7 @@ fun PlayerScreen(
             if (page == 0) {
                 MainPlayerPage(
                     songTitle = currentPlayingSong.title,
-                    artistName = "Nghệ sĩ #${currentPlayingSong.artist_id}",
+                    artistName = currentPlayingSong.artist_name ?: "Nghệ sĩ #${currentPlayingSong.artist_id}", // DÙNG TÊN NGHỆ SĨ
                     imageRes = R.drawable.icon,
                     isPlaying = isPlaying,
                     progress = progress,
@@ -122,14 +123,13 @@ fun PlayerScreen(
                     onPrevClick = { onNextPrev(-1) },
                     onNextClick = { onNextPrev(1) },
                     onProgressChange = onProgressChange,
-                    onMoreClick = { showMoreOptions = true } // MỞ MENU TÙY CHỌN
+                    onMoreClick = { showMoreOptions = true }
                 )
             } else {
                 LyricsPage(currentPlayingSong.title)
             }
         }
 
-        // MENU TÙY CHỌN (MODAL BOTTOM SHEET)
         if (showMoreOptions) {
             ModalBottomSheet(
                 onDismissRequest = { showMoreOptions = false },
@@ -137,7 +137,6 @@ fun PlayerScreen(
                 containerColor = Color(0xFF282828)
             ) {
                 Column(modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)) {
-                    // Option: Yêu thích / Bỏ yêu thích
                     ListItem(
                         headlineContent = { Text(if (isFavorite) "Xóa khỏi mục yêu thích" else "Thêm vào yêu thích", color = Color.White) },
                         leadingContent = { Icon(if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder, null, tint = if (isFavorite) Color(0xFF1DB954) else Color.White) },
@@ -148,7 +147,6 @@ fun PlayerScreen(
                         colors = ListItemDefaults.colors(containerColor = Color.Transparent)
                     )
                     
-                    // Option: Thêm vào Playlist
                     ListItem(
                         headlineContent = { Text("Thêm vào danh sách phát", color = Color.White) },
                         leadingContent = { Icon(Icons.Default.Add, null, tint = Color.White) },
@@ -162,7 +160,6 @@ fun PlayerScreen(
             }
         }
 
-        // MÀN HÌNH CHỌN PLAYLIST
         if (showPlaylistPicker) {
             ModalBottomSheet(
                 onDismissRequest = { showPlaylistPicker = false },
@@ -185,9 +182,13 @@ fun PlayerScreen(
                             modifier = Modifier.clickable { 
                                 scope.launch {
                                     try {
-                                        ApiClient.musicApi.addSongToPlaylist(playlist.id, mapOf("songId" to currentPlayingSong.id))
+                                        val response = ApiClient.musicApi.addSongToPlaylist(playlist.id, mapOf("songId" to currentPlayingSong.id))
                                         showPlaylistPicker = false
-                                    } catch (e: Exception) { e.printStackTrace() }
+                                        snackbarHostState.showSnackbar("Đã thêm vào ${playlist.name}") // HIỆN THÔNG BÁO
+                                    } catch (e: Exception) { 
+                                        e.printStackTrace() 
+                                        snackbarHostState.showSnackbar("Lỗi khi thêm bài hát")
+                                    }
                                 }
                             },
                             colors = ListItemDefaults.colors(containerColor = Color.Transparent)
@@ -197,7 +198,6 @@ fun PlayerScreen(
             }
         }
 
-        // DIALOG TẠO PLAYLIST MỚI
         if (showCreatePlaylistDialog) {
             var newName by remember { mutableStateOf("") }
             AlertDialog(
@@ -217,8 +217,12 @@ fun PlayerScreen(
                                         ApiClient.musicApi.addSongToPlaylist(res.data.id, mapOf("songId" to currentPlayingSong.id))
                                         showCreatePlaylistDialog = false
                                         showPlaylistPicker = false
+                                        snackbarHostState.showSnackbar("Đã tạo và thêm vào $newName") // HIỆN THÔNG BÁO
                                     }
-                                } catch (e: Exception) { e.printStackTrace() }
+                                } catch (e: Exception) { 
+                                    e.printStackTrace() 
+                                    snackbarHostState.showSnackbar("Lỗi khi tạo danh sách phát")
+                                }
                             }
                         }
                     }) { Text("Tạo & Thêm", color = Color(0xFF1DB954), fontWeight = FontWeight.Bold) }
@@ -241,7 +245,7 @@ fun MainPlayerPage(
     onPrevClick: () -> Unit,
     onNextClick: () -> Unit,
     onProgressChange: (Float) -> Unit,
-    onMoreClick: () -> Unit // THÊM
+    onMoreClick: () -> Unit
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "Disk Rotation")
     val rotation by infiniteTransition.animateFloat(
@@ -269,7 +273,6 @@ fun MainPlayerPage(
                     Icon(imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder, null, tint = if (isFavorite) Color(0xFF1DB954) else Color.White, modifier = Modifier.size(28.dp))
                 }
                 
-                // NÚT 3 GẠCH (MORE)
                 IconButton(onClick = onMoreClick) {
                     Icon(Icons.Default.Menu, null, tint = Color.White, modifier = Modifier.size(28.dp))
                 }
