@@ -327,25 +327,27 @@ function mapSong(row) {
 // Lấy Top 10 bài hát nhiều view
 async function getTopSongs(limit = 10) {
   const pool = await getPool();
-  const result = await pool.request().query(`
-    SELECT TOP (@limit)
-      s.id, s.title, s.duration_seconds, s.audio_url,
-      s.cover_image_url, s.view_count, s.slug, s.created_at,
+  const result = await pool.request()
+    .input('limit', sql.Int, limit)
+    .query(`
+      SELECT TOP (@limit)
+        s.id, s.title, s.duration_seconds, s.audio_url,
+        s.cover_image_url, s.view_count, s.slug, s.created_at,
 
-      a.id AS artist_id, a.name AS artist_name,
-      a.image_url AS artist_image_url, a.is_verified, a.slug AS artist_slug,
+        a.id AS artist_id, a.name AS artist_name,
+        a.image_url AS artist_image_url, a.is_verified, a.slug AS artist_slug,
 
-      al.id AS album_id, al.title AS album_title,
-      al.cover_image_url AS album_cover_image_url, al.release_date,
+        al.id AS album_id, al.title AS album_title,
+        al.cover_image_url AS album_cover_image_url, al.release_date,
 
-      g.id AS genre_id, g.name AS genre_name, g.slug AS genre_slug
-    FROM songs s
-    JOIN artists a ON s.artist_id = a.id
-    LEFT JOIN albums al ON s.album_id = al.id
-    LEFT JOIN genres g ON s.genre_id = g.id
-    WHERE s.status = 1
-    ORDER BY s.view_count DESC, s.created_at DESC
-  `);
+        g.id AS genre_id, g.name AS genre_name, g.slug AS genre_slug
+      FROM songs s
+      JOIN artists a ON s.artist_id = a.id
+      LEFT JOIN albums al ON s.album_id = al.id
+      LEFT JOIN genres g ON s.genre_id = g.id
+      WHERE s.status = 1
+      ORDER BY s.view_count DESC, s.created_at DESC
+    `);
 
   return result.recordset.map(mapSong);
 }

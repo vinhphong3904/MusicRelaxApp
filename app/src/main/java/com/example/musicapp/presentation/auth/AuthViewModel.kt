@@ -27,6 +27,11 @@ class AuthViewModel : ViewModel() {
         }
     }
 
+    fun logout() {
+        TokenManager.clearToken()
+        _uiState.value = AuthUiState.Idle
+    }
+
     fun login(username: String, password: String) {
         authLogin(username, password)
     }
@@ -49,13 +54,8 @@ class AuthViewModel : ViewModel() {
                 )
 
                 if (res.success) {
-                    // LƯU TOKEN ĐÚNG CHỖ
                     TokenManager.saveToken(res.token)
-
-                    _uiState.value = AuthUiState.Success(
-                        res.user,
-                        AuthAction.LOGIN
-                    )
+                    _uiState.value = AuthUiState.LoggedIn
                 } else {
                     _uiState.value = AuthUiState.Error(res.message)
                 }
@@ -98,5 +98,3 @@ class AuthViewModel : ViewModel() {
         }
     }
 }
-
-

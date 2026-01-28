@@ -231,15 +231,15 @@ INSERT INTO users (username, email, password_hash, role, status, avatar_url, cre
 VALUES
 ('admin','admin@mail.com',
  '$2a$12$E3ywSQua9gCh10K643w//urAaY//Ioh3S0T16Rtfa6F8KuXp5hfbq',
- 'admin',1,'avatar_default.jpg',SYSDATETIME()),
+ 'admin',1,'http://localhost:8080/uploads/avatars/avatar_default.jpg',SYSDATETIME()),
 
 ('phong','phong@mail.com',
  '$2a$12$E3ywSQua9gCh10K643w//urAaY//Ioh3S0T16Rtfa6F8KuXp5hfbq',
- 'user',1,'avatar_default.jpg',SYSDATETIME()),
+ 'user',1,'http://localhost:8080/uploads/avatars/avatar_default.jpg',SYSDATETIME()),
 
 ('loc','loc@mail.com',
  '$2a$12$E3ywSQua9gCh10K643w//urAaY//Ioh3S0T16Rtfa6F8KuXp5hfbq',
- 'user',1,'avatar_default.jpg',SYSDATETIME()),
+ 'user',1,'http://localhost:8080/uploads/avatars/avatar_default.jpg',SYSDATETIME()),
 
 ('kha','kha@mail.com',
  '$2a$12$E3ywSQua9gCh10K643w//urAaY//Ioh3S0T16Rtfa6F8KuXp5hfbq',
@@ -247,11 +247,11 @@ VALUES
 
 ('phu','phu@mail.com',
  '$2a$12$E3ywSQua9gCh10K643w//urAaY//Ioh3S0T16Rtfa6F8KuXp5hfbq',
- 'user',1,'avatar_default.jpg',SYSDATETIME()),
+ 'user',1,'http://localhost:8080/uploads/avatars/avatar_default.jpg',SYSDATETIME()),
 
 ('cuong','cuong@mail.com',
  '$2a$12$E3ywSQua9gCh10K643w//urAaY//Ioh3S0T16Rtfa6F8KuXp5hfbq',
- 'user',1,'avatar_default.jpg',SYSDATETIME());
+ 'user',1,'avhttp://localhost:8080/uploads/avatars/avatar_default.jpg',SYSDATETIME());
 
 
 INSERT INTO artists (name, bio, image_url, is_verified, slug, status, created_at)
