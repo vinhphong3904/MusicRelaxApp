@@ -1,11 +1,16 @@
 package com.example.musicapp.data.service
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
+import androidx.media3.common.AudioAttributes
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
+import com.example.musicapp.core.player.MusicService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -18,61 +23,65 @@ object MusicPlayerManager {
     private val _progress = MutableStateFlow(0f)
     val progress = _progress.asStateFlow()
 
-    fun init(context: Context) {
+    fun getOrCreatePlayer(context: Context): ExoPlayer {
         if (exoPlayer == null) {
-            exoPlayer = ExoPlayer.Builder(context).build().apply {
+            exoPlayer = ExoPlayer.Builder(context.applicationContext).build().apply {
+                val audioAttributes = AudioAttributes.Builder()
+                    .setUsage(C.USAGE_MEDIA)
+                    .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
+                    .build()
+                setAudioAttributes(audioAttributes, true)
+                setWakeMode(C.WAKE_MODE_NETWORK) 
+                
                 repeatMode = Player.REPEAT_MODE_ALL
                 addListener(object : Player.Listener {
-                    override fun onIsPlayingChanged(isPlaying: Boolean) {
-                        _isPlaying.value = isPlaying
-                        Log.d("MusicPlayer", "Is playing: $isPlaying")
+                    override fun onIsPlayingChanged(playing: Boolean) {
+                        _isPlaying.value = playing
                     }
-
                     override fun onPlayerError(error: PlaybackException) {
-                        super.onPlayerError(error)
-                        Log.e("MusicPlayer", "Error playing music: ${error.message}")
-                        Log.e("MusicPlayer", "Cause: ${error.cause}")
-                    }
-
-                    override fun onPlaybackStateChanged(state: Int) {
-                        when(state) {
-                            Player.STATE_READY -> Log.d("MusicPlayer", "Player is Ready")
-                            Player.STATE_BUFFERING -> Log.d("MusicPlayer", "Player is Buffering")
-                            Player.STATE_ENDED -> Log.d("MusicPlayer", "Player ended")
-                            Player.STATE_IDLE -> Log.d("MusicPlayer", "Player is Idle")
-                        }
+                        Log.e("MusicPlayer", "Lỗi: ${error.message}")
                     }
                 })
             }
         }
+        return exoPlayer!!
     }
 
-    fun play(url: String) {
-        // Chuyển đổi localhost sang IP máy ảo Android chuẩn
-        val finalUrl = url.replace("localhost", "10.0.2.2")
-        Log.d("MusicPlayer", "Attempting to play: $finalUrl")
+    fun getPlayer(): ExoPlayer? = exoPlayer
+
+    fun play(context: Context, url: String, title: String, artist: String) {
+        val player = getOrCreatePlayer(context)
         
-        exoPlayer?.apply {
-            stop() // Dừng bài cũ
+        val metadata = MediaMetadata.Builder()
+            .setTitle(title)
+            .setArtist(artist)
+            .build()
+
+        val mediaItem = MediaItem.Builder()
+            .setUri(url)
+            .setMediaMetadata(metadata)
+            .build()
+
+        player.apply {
+            stop()
             clearMediaItems()
-            setMediaItem(MediaItem.fromUri(finalUrl))
+            setMediaItem(mediaItem)
             prepare()
             play()
         }
+
+        // Chỉ khởi động Service thông thường, để MediaSessionService tự quản lý Notification
+        val intent = Intent(context.applicationContext, MusicService::class.java)
+        context.startService(intent)
     }
 
     fun togglePlayPause() {
-        exoPlayer?.let {
-            if (it.isPlaying) it.pause() else it.play()
-        }
+        exoPlayer?.let { if (it.isPlaying) it.pause() else it.play() }
     }
 
     fun seekTo(position: Float) {
         exoPlayer?.let {
-            val duration = it.duration
-            if (duration > 0) {
-                it.seekTo((position * duration).toLong())
-            }
+            if (it.duration > 0) it.seekTo((position * it.duration).toLong())
         }
     }
 

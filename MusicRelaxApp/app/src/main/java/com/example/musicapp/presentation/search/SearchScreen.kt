@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -21,108 +22,85 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.musicapp.R
 import com.example.musicapp.data.api.ApiClient
+import com.example.musicapp.data.model.SongDto
+import kotlinx.coroutines.delay
 
 @Composable
 fun SearchScreen(
     navController: NavHostController,
-    onSongSelect: (Triple<String, String, Int>) -> Unit
+    onSongSelect: (SongDto) -> Unit
 ) {
     var searchText by remember { mutableStateOf("") }
     var userInitial by remember { mutableStateOf("U") }
+    var searchResults by remember { mutableStateOf<List<SongDto>>(emptyList()) }
+    var isSearchingApi by remember { mutableStateOf(false) }
 
-    // Lấy thông tin user từ server
     LaunchedEffect(Unit) {
         try {
             val response = ApiClient.musicApi.getMe()
             if (response.success) {
                 userInitial = response.user.username.take(1).uppercase()
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-    
-    // Dữ liệu mẫu (Có thể thay thế bằng API tìm kiếm sau này)
-    val playlist = listOf(
-        Triple("Nơi Này Có Anh", "Sơn Tùng M-TP", R.drawable.icon),
-        Triple("Đừng Làm Trái Tim Anh Đau", "Sơn Tùng M-TP", R.drawable.icon),
-        Triple("Chúng Ta Của Tương Lai", "Sơn Tùng M-TP", R.drawable.tieude),
-        Triple("Thiên Lý Ơi", "Jack - J97", R.drawable.nen),
-        Triple("Giá Như", "SOOBIN", R.drawable.tieude),
-        Triple("Exit Sign", "HIEUTHUHAI", R.drawable.icon),
-        Triple("Em Xinh", "MONO", R.drawable.nen),
-        Triple("Lệ Lưu Ly", "Vũ Phụng Tiên", R.drawable.tieude),
-        Triple("Cắt Đôi Nỗi Sầu", "Tăng Duy Tân", R.drawable.icon),
-        Triple("Ngày Mai Người Ta Lấy Chồng", "Anh Tú", R.drawable.nen),
-        Triple("Mưa Tháng Sáu", "Văn Mai Hương", R.drawable.tieude)
-    )
-    
-    val filteredSongs = remember(searchText) {
-        if (searchText.isBlank()) emptyList()
-        else playlist.filter { it.first.contains(searchText, ignoreCase = true) || it.second.contains(searchText, ignoreCase = true) }
+        } catch (e: Exception) { e.printStackTrace() }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black)
-            .statusBarsPadding()
-            .padding(horizontal = 16.dp)
-            .padding(top = 8.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+    // Tối ưu hóa: Nhạy hơn với 1 ký tự và delay thấp hơn
+    LaunchedEffect(searchText) {
+        if (searchText.length >= 1) { // Chỉ cần 1 ký tự là bắt đầu tìm
+            delay(300) // Phản hồi nhanh hơn (300ms thay vì 500ms)
+            isSearchingApi = true
+            try {
+                val response = ApiClient.musicApi.search(searchText)
+                if (response.success) {
+                    searchResults = response.data.songs
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                searchResults = emptyList()
+            } finally {
+                isSearchingApi = false
+            }
+        } else {
+            searchResults = emptyList()
+        }
+    }
+
+    Column(modifier = Modifier.fillMaxSize().background(Color.Black).statusBarsPadding().padding(horizontal = 16.dp).padding(top = 8.dp)) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier
-                        .size(28.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFFFF8A80)),
-                    contentAlignment = Alignment.Center
-                ) {
+                Box(modifier = Modifier.size(28.dp).clip(CircleShape).background(Color(0xFFFF8A80)), contentAlignment = Alignment.Center) {
                     Text(userInitial, color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 12.sp)
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Text("Tìm kiếm", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
             }
-            Icon(Icons.Default.Settings, contentDescription = null, tint = Color.White, modifier = Modifier.size(22.dp))
+            Icon(Icons.Default.Settings, null, tint = Color.White, modifier = Modifier.size(22.dp))
         }
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(42.dp)
-                .clip(RoundedCornerShape(6.dp)),
-            color = Color.White
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(horizontal = 10.dp)
-            ) {
-                Icon(Icons.Default.Search, contentDescription = null, tint = Color.Black, modifier = Modifier.size(20.dp))
+        Surface(modifier = Modifier.fillMaxWidth().height(42.dp).clip(RoundedCornerShape(6.dp)), color = Color.White) {
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 10.dp)) {
+                Icon(Icons.Default.Search, null, tint = Color.Black, modifier = Modifier.size(20.dp))
                 Spacer(modifier = Modifier.width(10.dp))
                 BasicTextField(
-                    value = searchText,
-                    onValueChange = { searchText = it },
+                    value = searchText, onValueChange = { searchText = it },
                     modifier = Modifier.weight(1f),
                     textStyle = TextStyle(color = Color.Black, fontSize = 14.sp),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                     decorationBox = { innerTextField ->
-                        if (searchText.isEmpty()) {
-                            Text("Bạn muốn nghe gì?", color = Color.DarkGray, fontSize = 14.sp)
-                        }
+                        if (searchText.isEmpty()) Text("Bạn muốn nghe gì?", color = Color.DarkGray, fontSize = 14.sp)
                         innerTextField()
                     }
                 )
+                if (isSearchingApi) {
+                    CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp, color = Color.Black)
+                }
             }
         }
 
@@ -131,34 +109,21 @@ fun SearchScreen(
         if (searchText.isEmpty()) {
             Text("Duyệt tìm tất cả", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
             Spacer(modifier = Modifier.height(12.dp))
-            
-            val categories = listOf(
-                CategoryData("Bản phát hành sắp ra mắt", Color(0xFF0D725B)),
-                CategoryData("Mới phát hành", Color(0xFF778F13)),
-                CategoryData("Nhạc Việt", Color(0xFF477D95)),
-                CategoryData("Pop", Color(0xFF477D95)),
-                CategoryData("K-Pop", Color(0xFFE91E63)),
-                CategoryData("Hip-Hop", Color(0xFFE8115B)),
-                CategoryData("Bảng xếp hạng", Color(0xFF8D67AB)),
-                CategoryData("Bảng xếp hạng Podcast", Color(0xFF006450))
-            )
-
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(bottom = 16.dp)
-            ) {
-                items(categories) { category ->
-                    CategoryCard(category.title, category.color)
-                }
+            val categories = listOf(CategoryData("Pop", Color(0xFF477D95)), CategoryData("Nhạc Việt", Color(0xFFE91E63)), CategoryData("K-Pop", Color(0xFF1DB954)))
+            LazyVerticalGrid(columns = GridCells.Fixed(2), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxSize()) {
+                items(categories) { CategoryCard(it.title, it.color) }
             }
         } else {
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(filteredSongs) { song ->
-                    SearchSuggestionItem(song.first, song.second) {
-                        onSongSelect(song)
+            if (searchResults.isEmpty() && !isSearchingApi) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("Không tìm thấy kết quả nào", color = Color.Gray)
+                }
+            } else {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    items(searchResults) { song ->
+                        SearchSuggestionItem(song.title, "Nghệ sĩ #${song.artist_id}") {
+                            onSongSelect(song)
+                        }
                     }
                 }
             }
@@ -170,29 +135,16 @@ data class CategoryData(val title: String, val color: Color)
 
 @Composable
 fun CategoryCard(title: String, color: Color) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(65.dp)
-            .clip(RoundedCornerShape(6.dp))
-            .background(color)
-            .padding(10.dp)
-    ) {
-        Text(
-            text = title, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 12.sp,
-            modifier = Modifier.align(Alignment.TopStart).fillMaxWidth(0.8f)
-        )
+    Box(modifier = Modifier.fillMaxWidth().height(65.dp).clip(RoundedCornerShape(6.dp)).background(color).padding(10.dp)) {
+        Text(text = title, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 12.sp, modifier = Modifier.align(Alignment.TopStart).fillMaxWidth(0.8f))
     }
 }
 
 @Composable
 fun SearchSuggestionItem(title: String, artist: String, onClick: () -> Unit) {
-    Row(
-        modifier = Modifier.fillMaxWidth().clickable { onClick() }.padding(vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    Row(modifier = Modifier.fillMaxWidth().clickable { onClick() }.padding(vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
         Box(modifier = Modifier.size(42.dp).clip(RoundedCornerShape(4.dp)).background(Color.DarkGray), contentAlignment = Alignment.Center) {
-            Icon(Icons.Default.PlayArrow, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(24.dp))
+            Icon(Icons.Default.PlayArrow, null, tint = Color.Gray, modifier = Modifier.size(24.dp))
         }
         Spacer(modifier = Modifier.width(12.dp))
         Column {

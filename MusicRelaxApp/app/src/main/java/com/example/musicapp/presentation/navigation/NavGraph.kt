@@ -18,16 +18,19 @@ import com.example.musicapp.presentation.settings.SettingsScreen
 import com.example.musicapp.presentation.auth.LoginScreen
 import com.example.musicapp.presentation.auth.RegisterScreen
 import com.example.musicapp.presentation.player.PlayerScreen
+import com.example.musicapp.data.model.SongDto
 
 @Composable
 fun NavGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier,
     startDestination: String = Screen.Home.route,
-    currentPlayingSong: Triple<String, String, Int>?,
+    currentPlayingSong: SongDto?,
     isPlaying: Boolean,
     progress: Float,
-    onSongSelect: (Triple<String, String, Int>) -> Unit,
+    isFavorite: Boolean,
+    onFavoriteToggle: (Boolean) -> Unit,
+    onSongSelect: (SongDto) -> Unit,
     onPlayPauseChange: (Boolean) -> Unit,
     onProgressChange: (Float) -> Unit,
     onNextPrev: (Int) -> Unit
@@ -38,44 +41,39 @@ fun NavGraph(
         modifier = modifier
     ) {
         composable(route = Screen.Home.route) {
-            HomeScreen(
-                navController = navController,
-                onSongSelect = onSongSelect // ĐÃ THÊM: Truyền tham số vào đây
-            )
+            HomeScreen(navController = navController, onSongSelect = onSongSelect)
         }
+        
         composable(route = Screen.Search.route) {
             SearchScreen(
                 navController = navController,
-                onSongSelect = { song -> onSongSelect(song) }
+                onSongSelect = onSongSelect // ĐÃ SỬA: Dùng trực tiếp SongDto có ID thật
             )
         }
+        
         composable(route = Screen.Library.route) {
             LibraryScreen(navController = navController)
         }
         
         composable(
             route = "playlist?playlistId={playlistId}",
-            arguments = listOf(
-                navArgument("playlistId") { 
-                    type = NavType.IntType
-                    defaultValue = -1 
-                }
-            )
+            arguments = listOf(navArgument("playlistId") { type = NavType.IntType; defaultValue = -1 })
         ) { backStackEntry ->
             val playlistId = backStackEntry.arguments?.getInt("playlistId") ?: -1
             PlaylistScreen(
                 navController = navController,
                 initialPlaylistId = if (playlistId != -1) playlistId else null,
-                onSongSelect = { song -> onSongSelect(song) }
+                onSongSelect = onSongSelect
             )
         }
 
         composable(route = Screen.Favorites.route) {
             FavoritesScreen(
                 navController = navController,
-                onSongSelect = { song -> onSongSelect(song) }
+                onSongSelect = onSongSelect
             )
         }
+        
         composable(route = Screen.Profile.route) {
             ProfileScreen(navController = navController)
         }
@@ -91,6 +89,8 @@ fun NavGraph(
                 currentPlayingSong = currentPlayingSong,
                 isPlaying = isPlaying,
                 progress = progress,
+                isFavorite = isFavorite,
+                onFavoriteToggle = onFavoriteToggle,
                 onPlayPauseChange = onPlayPauseChange,
                 onProgressChange = onProgressChange,
                 onNextPrev = onNextPrev

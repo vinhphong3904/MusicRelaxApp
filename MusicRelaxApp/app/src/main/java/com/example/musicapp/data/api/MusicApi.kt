@@ -14,12 +14,8 @@ import com.example.musicapp.data.model.HistoryResponse
 import com.example.musicapp.data.model.PlaylistRequest
 import com.example.musicapp.data.model.CreatePlaylistResponse
 import com.example.musicapp.data.model.DeletePlaylistResponse
-import retrofit2.http.Body
-import retrofit2.http.DELETE
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.POST
-import retrofit2.http.Path
+import com.example.musicapp.data.model.SearchResponse
+import retrofit2.http.*
 
 interface MusicApi {
 
@@ -60,9 +56,37 @@ interface MusicApi {
         @Path("id") id: Int
     ): PlaylistDetailResponse
 
+    @POST("playlists/{id}/songs")
+    suspend fun addSongToPlaylist(
+        @Path("id") playlistId: Int,
+        @Body body: Map<String, Int>
+    ): Any
+
+    // THÊM HÀM XÓA BÀI HÁT KHỎI PLAYLIST
+    @DELETE("playlists/{id}/songs/{songId}")
+    suspend fun removeSongFromPlaylist(
+        @Path("id") playlistId: Int,
+        @Path("songId") songId: Int
+    ): Any
+
     @GET("favorites")
     suspend fun getFavorites(): FavoriteResponse
 
+    @POST("favorites")
+    suspend fun addFavorite(
+        @Body body: Map<String, Int>
+    ): Any
+
+    @DELETE("favorites/{songId}")
+    suspend fun removeFavorite(
+        @Path("songId") songId: Int
+    ): Any
+
     @GET("histories")
     suspend fun getHistories(): HistoryResponse
+
+    @GET("search")
+    suspend fun search(
+        @Query("keyword") keyword: String
+    ): SearchResponse
 }

@@ -24,14 +24,17 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import com.example.musicapp.data.api.ApiClient
 import com.example.musicapp.data.model.PlaylistDto
 import com.example.musicapp.data.model.PlaylistRequest
+import com.example.musicapp.data.service.GlobalAppState
 import com.example.musicapp.presentation.navigation.Screen
 import kotlinx.coroutines.launch
 
@@ -39,32 +42,42 @@ import kotlinx.coroutines.launch
 @Composable
 fun LibraryScreen(navController: NavHostController) {
     val scope = rememberCoroutineScope()
+    val lifecycleOwner = LocalLifecycleOwner.current
+    
     var isSearching by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
-    
     val focusRequester = remember { FocusRequester() }
 
     var playlists by remember { mutableStateOf<List<PlaylistDto>>(emptyList()) }
     var userName by remember { mutableStateOf("User") }
-    var favoriteCount by remember { mutableIntStateOf(0) }
     var historyCount by remember { mutableIntStateOf(0) }
     var isLoading by remember { mutableStateOf(true) }
 
     var showCreateDialog by remember { mutableStateOf(false) }
     var playlistToDelete by remember { mutableStateOf<PlaylistDto?>(null) }
 
+    // Đồng bộ số lượng từ cờ hiệu toàn cục
+    val favoriteCount = GlobalAppState.favoriteSongIds.size
+    val playlistsFlag = GlobalAppState.playlistsChangedFlag
+
     val refreshData = {
         scope.launch {
             try {
+                // 1. Lấy thông tin user
                 val userResponse = ApiClient.musicApi.getMe()
                 if (userResponse.success) userName = userResponse.user.username
                 
+                // 2. Lấy danh sách playlist
                 val playlistResponse = ApiClient.musicApi.getPlaylists()
                 if (playlistResponse.success) playlists = playlistResponse.data
 
+                // 3. ĐỒNG BỘ LẠI CỜ HIỆU YÊU THÍCH
                 val favResponse = ApiClient.musicApi.getFavorites()
-                if (favResponse.success) favoriteCount = favResponse.data.size
+                if (favResponse.success) {
+                    GlobalAppState.updateFavorites(favResponse.data.map { it.song_id })
+                }
 
+                // 4. Lấy lịch sử
                 val historyResponse = ApiClient.musicApi.getHistories()
                 if (historyResponse.success) historyCount = historyResponse.data.size
             } catch (e: Exception) {
@@ -75,7 +88,18 @@ fun LibraryScreen(navController: NavHostController) {
         }
     }
 
-    LaunchedEffect(Unit) { refreshData() }
+    // Tự động refresh khi danh sách playlist có thay đổi từ màn hình khác
+    LaunchedEffect(playlistsFlag) {
+        if (playlistsFlag > 0) refreshData()
+    }
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) refreshData()
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
 
     LaunchedEffect(isSearching) {
         if (isSearching) focusRequester.requestFocus()
@@ -114,12 +138,18 @@ fun LibraryScreen(navController: NavHostController) {
                 }
             }
 
-            if (isLoading) {
+            if (isLoading && playlists.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator(color = Color(0xFF1DB954)) }
             } else {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     item {
-                        LibraryItem(name = "Bài hát đã thích", type = "Danh sách phát • $favoriteCount bài hát", icon = Icons.Default.Favorite, iconTint = Color(0xFF1DB954), onClick = { navController.navigate(Screen.Favorites.route) })
+                        LibraryItem(
+                            name = "Bài hát đã thích", 
+                            type = "Danh sách phát • $favoriteCount bài hát", 
+                            icon = Icons.Default.Favorite, 
+                            iconTint = Color(0xFF1DB954), 
+                            onClick = { navController.navigate(Screen.Favorites.route) }
+                        )
                     }
                     item {
                         LibraryItem(name = "Lịch sử nghe", type = "Danh sách phát • $historyCount bài hát", icon = Icons.Default.Refresh, iconTint = Color.Blue, onClick = { navController.navigate("history") })
@@ -142,10 +172,7 @@ fun LibraryScreen(navController: NavHostController) {
                                 items(playlists) { playlist ->
                                     PlaylistCarouselItem(
                                         playlist = playlist,
-                                        onClick = { 
-                                            // ĐÃ SỬA: Dùng cú pháp tham số tùy chọn ?để khớp với NavGraph
-                                            navController.navigate("playlist?playlistId=${playlist.id}") 
-                                        },
+                                        onClick = { navController.navigate("playlist?playlistId=${playlist.id}") },
                                         onLongClick = { playlistToDelete = playlist }
                                     )
                                 }
@@ -182,6 +209,7 @@ fun LibraryScreen(navController: NavHostController) {
                                 if (ApiClient.musicApi.createPlaylist(PlaylistRequest(tempName)).success) {
                                     showCreateDialog = false
                                     refreshData()
+                                    GlobalAppState.notifyPlaylistsChanged()
                                 }
                             }
                         }
@@ -199,11 +227,8 @@ fun LibraryScreen(navController: NavHostController) {
                 text = { Text("Xóa '${playlist.name}'?", color = Color.Gray) },
                 confirmButton = {
                     TextButton(onClick = {
-                        scope.launch {
-                            if (ApiClient.musicApi.deletePlaylist(playlist.id).success) {
-                                playlistToDelete = null
-                                refreshData()
-                            }
+                        GlobalAppState.deletePlaylistRemote(scope, playlist.id) {
+                            playlistToDelete = null
                         }
                     }) { Text("Xóa", color = Color.Red, fontWeight = FontWeight.Bold) }
                 },

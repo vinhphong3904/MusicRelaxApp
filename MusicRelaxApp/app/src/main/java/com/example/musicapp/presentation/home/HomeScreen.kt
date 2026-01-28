@@ -29,6 +29,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.musicapp.R
 import com.example.musicapp.data.api.ApiClient
+import com.example.musicapp.data.model.SongDto
 import com.example.musicapp.data.model.UserDto
 import com.example.musicapp.presentation.navigation.Screen
 import kotlinx.coroutines.launch
@@ -37,7 +38,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen(
     navController: NavHostController,
-    onSongSelect: (Triple<String, String, Int>) -> Unit
+    onSongSelect: (SongDto) -> Unit 
 ) {
     val viewModel: HomeViewModel = viewModel(
         factory = HomeViewModel.HomeViewModelFactory(ApiClient.musicApi)
@@ -76,7 +77,6 @@ fun HomeScreen(
                 Column(modifier = Modifier.fillMaxSize()) {
                     HomeHeader(userInitial = state.userInitial) { scope.launch { drawerState.open() } }
 
-                    // THÊM PULL TO REFRESH ĐỂ CẬP NHẬT DỮ LIỆU MỚI
                     PullToRefreshBox(
                         isRefreshing = state.isLoading,
                         onRefresh = { viewModel.loadHome() },
@@ -87,9 +87,22 @@ fun HomeScreen(
                                 if (state.recommendSongs.isNotEmpty()) {
                                     Text("Dành cho bạn", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp))
                                     LazyRow(contentPadding = PaddingValues(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                                        items(state.recommendSongs) { song ->
-                                            SongSquareCard(title = song.title, artist = song.artist.name, imageRes = R.drawable.icon) {
-                                                onSongSelect(Triple(song.title, song.artist.name, R.drawable.icon))
+                                        items(state.recommendSongs) { homeSong ->
+                                            SongSquareCard(title = homeSong.title, artist = homeSong.artist.name, imageRes = R.drawable.icon) {
+                                                // Ánh xạ HomeSongDto sang SongDto
+                                                onSongSelect(SongDto(
+                                                    id = homeSong.id,
+                                                    title = homeSong.title,
+                                                    artist_id = homeSong.artist.id,
+                                                    album_id = homeSong.album?.id,
+                                                    genre_id = homeSong.genre?.id,
+                                                    duration_seconds = homeSong.duration_seconds,
+                                                    audio_url = homeSong.audio_url,
+                                                    cover_image_url = homeSong.cover_image_url,
+                                                    view_count = homeSong.view_count.toString(),
+                                                    slug = homeSong.slug,
+                                                    created_at = homeSong.created_at
+                                                ))
                                             }
                                         }
                                     }
@@ -100,9 +113,22 @@ fun HomeScreen(
                                 Text("Giai điệu thịnh hành", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 16.dp, top = 20.dp, bottom = 10.dp))
                             }
 
-                            items(state.topSongs) { song ->
-                                MusicModernCard(artistName = song.artist.name, songName = song.title, artistImage = R.drawable.nen) {
-                                    onSongSelect(Triple(song.title, song.artist.name, R.drawable.nen))
+                            items(state.topSongs) { homeSong ->
+                                MusicModernCard(artistName = homeSong.artist.name, songName = homeSong.title, artistImage = R.drawable.nen) {
+                                    // Ánh xạ HomeSongDto sang SongDto
+                                    onSongSelect(SongDto(
+                                        id = homeSong.id,
+                                        title = homeSong.title,
+                                        artist_id = homeSong.artist.id,
+                                        album_id = homeSong.album?.id,
+                                        genre_id = homeSong.genre?.id,
+                                        duration_seconds = homeSong.duration_seconds,
+                                        audio_url = homeSong.audio_url,
+                                        cover_image_url = homeSong.cover_image_url,
+                                        view_count = homeSong.view_count.toString(),
+                                        slug = homeSong.slug,
+                                        created_at = homeSong.created_at
+                                    ))
                                 }
                             }
                         }
