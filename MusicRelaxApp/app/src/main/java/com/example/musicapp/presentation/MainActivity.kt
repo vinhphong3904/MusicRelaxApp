@@ -124,7 +124,7 @@ class MainActivity : ComponentActivity() {
                                 currentPlayingSong?.let { song ->
                                     MiniPlayer(
                                         songTitle = song.title,
-                                        artistName = "Nghệ sĩ #${song.artist_id}",
+                                        artistName = song.artist_name ?: "Nghệ sĩ #${song.artist_id}",
                                         imageRes = R.drawable.icon,
                                         isPlaying = isPlaying,
                                         progress = progress,
@@ -174,7 +174,7 @@ class MainActivity : ComponentActivity() {
                         currentPlayingSong = song
                         val songFileName = removeAccent(song.title.lowercase()).replace(" ", "-").replace(Regex("[^a-z0-9-]") , "")
                         val songUrl = "http://$SERVER_IP:8080/play/$songFileName.mp3"
-                        MusicPlayerManager.play(context, songUrl, song.title, "Music Relax")
+                        MusicPlayerManager.play(context, songUrl, song.title, song.artist_name ?: "Nghệ sĩ")
                         navController.navigate(Screen.Player.route)
                     },
                     onPlayPauseChange = { MusicPlayerManager.togglePlayPause() },
